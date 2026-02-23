@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowmind — Shame-Free Design Grammar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ── Core Palette ── */
+    --sand-50:  #FDFAF5;
+    --sand-100: #F5EFE2;
+    --sand-200: #EAE0CC;
+    --sand-300: #D9CBB0;
+    --clay-400: #C4A882;
+    --clay-500: #A8865C;
+
+    --sage-100: #E8EDDF;
+    --sage-200: #CDD9C5;
+    --sage-400: #88A47C;
+    --sage-600: #4E7A5F;
+
+    --mist-100: #DDE8F0;
+    --mist-400: #7AAFC7;
+    --mist-600: #3D7FA6;
+
+    --amber-soft: #F5C87A;
+    --amber-warm: #E8A93A;
+
+    --ink-900: #2B2318;
+    --ink-600: #5C4D3A;
+    --ink-400: #8A7A66;
+    --ink-200: #B8A896;
+
+    --surface: var(--sand-50);
+    --text-primary: var(--ink-900);
+    --text-secondary: var(--ink-600);
+    --text-muted: var(--ink-400);
+    --border: var(--sand-200);
+
+    /* ── Radius System ── */
+    --r-sm: 8px;
+    --r-md: 14px;
+    --r-lg: 20px;
+    --r-xl: 28px;
+    --r-pill: 100px;
+
+    /* ── Spacing ── */
+    --sp-xs: 4px;
+    --sp-sm: 8px;
+    --sp-md: 16px;
+    --sp-lg: 24px;
+    --sp-xl: 40px;
+    --sp-2xl: 64px;
+
+    /* ── Shadows ── */
+    --shadow-sm: 0 1px 4px rgba(43,35,24,0.06), 0 0 0 1px rgba(43,35,24,0.04);
+    --shadow-md: 0 4px 16px rgba(43,35,24,0.08), 0 0 0 1px rgba(43,35,24,0.04);
+    --shadow-lg: 0 8px 32px rgba(43,35,24,0.10), 0 0 0 1px rgba(43,35,24,0.05);
+
+    /* ── Motion ── */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-bounce: cubic-bezier(0.34, 1.4, 0.64, 1);
+    --t-fast: 150ms;
+    --t-mid: 280ms;
+    --t-slow: 500ms;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--sand-50);
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-size: 15px;
+    padding-bottom: 120px;
+  }
+
+  /* ── Layout ── */
+  .page-header {
+    background: var(--ink-900);
+    color: var(--sand-100);
+    padding: var(--sp-2xl) var(--sp-xl);
+    position: relative;
+    overflow: hidden;
+  }
+  .page-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(200,160,100,0.15), transparent),
+                radial-gradient(ellipse 40% 60% at 20% 80%, rgba(80,120,90,0.12), transparent);
+  }
+  .page-header > * { position: relative; }
+  .page-header .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--clay-400);
+    margin-bottom: var(--sp-sm);
+  }
+  .page-header h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 400;
+    line-height: 1.1;
+    margin-bottom: var(--sp-md);
+  }
+  .page-header h1 em { font-style: italic; color: var(--amber-soft); }
+  .page-header .subtitle {
+    max-width: 540px;
+    color: var(--sand-300);
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 0 var(--sp-xl); }
+
+  .section {
+    padding: var(--sp-2xl) 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--clay-500);
+    margin-bottom: var(--sp-sm);
+  }
+
+  h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 28px;
+    font-weight: 400;
+    margin-bottom: var(--sp-sm);
+    line-height: 1.2;
+  }
+  h3 {
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    margin-bottom: var(--sp-sm);
+  }
+
+  .section-intro {
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin-bottom: var(--sp-xl);
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  /* ── Color Swatches ── */
+  .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: var(--sp-sm); }
+  .swatch {
+    border-radius: var(--r-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .swatch-color { height: 64px; }
+  .swatch-info { background: white; padding: 8px 10px; }
+  .swatch-name { font-size: 11px; font-weight: 500; color: var(--ink-600); }
+  .swatch-hex  { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--ink-400); }
+
+  .palette-group { margin-bottom: var(--sp-xl); }
+  .palette-group-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--sp-sm);
+  }
+
+  /* ── Typography ── */
+  .type-specimen {
+    background: white;
+    border-radius: var(--r-lg);
+    padding: var(--sp-xl);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--sp-md);
+  }
+  .type-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-400);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: var(--sp-sm);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: var(--sp-sm);
+  }
+
+  /* ── Motion Grid ── */
+  .motion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-md); }
+  @media(max-width:600px) { .motion-grid { grid-template-columns: 1fr; } }
+
+  .motion-card {
+    background: white;
+    border-radius: var(--r-lg);
+    padding: var(--sp-lg);
+    box-shadow: var(--shadow-sm);
+  }
+  .motion-card h4 { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+  .motion-card p  { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+  .motion-card .demo-area {
+    background: var(--sand-100);
+    border-radius: var(--r-md);
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--sp-md);
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ── Component Examples ── */
+  .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-md); }
+  @media(max-width:640px) { .comp-grid { grid-template-columns: 1fr; } }
+
+  .comp-card {
+    background: white;
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  .comp-card-label {
+    padding: 10px var(--sp-md);
+    background: var(--sand-100);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--clay-500);
+    border-bottom: 1px solid var(--border);
+  }
+  .comp-card-body { padding: var(--sp-lg); }
+
+  /* ── Notification Components ── */
+  .notif {
+    border-radius: var(--r-lg);
+    padding: var(--sp-md) var(--sp-lg);
+    display: flex;
+    gap: var(--sp-md);
+    align-items: flex-start;
+    margin-bottom: var(--sp-sm);
+    animation: fadeSlideIn var(--t-slow) var(--ease-out) both;
+  }
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .notif-icon {
+    font-size: 18px;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .notif-title { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+  .notif-body  { font-size: 13px; line-height: 1.55; }
+
+  .notif-celebrate { background: linear-gradient(135deg, #FFF8E8, #FFF3D4); border: 1px solid rgba(232,169,58,0.25); }
+  .notif-gentle    { background: var(--sage-100); border: 1px solid rgba(136,164,124,0.3); }
+  .notif-neutral   { background: var(--mist-100); border: 1px solid rgba(122,175,199,0.3); }
+  .notif-error     { background: #FFF5F0; border: 1px solid rgba(200,120,80,0.25); }
+
+  /* Task items */
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-md);
+    padding: var(--sp-md) 0;
+    border-bottom: 1px solid var(--sand-100);
+    transition: all var(--t-mid) var(--ease-out);
+  }
+  .task-item:last-child { border-bottom: none; }
+
+  .task-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--sand-300);
+    flex-shrink: 0;
+    margin-top: 2px;
+    cursor: pointer;
+    transition: all var(--t-fast) var(--ease-out);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: transparent;
+    background: transparent;
+  }
+  .task-check:hover { border-color: var(--sage-400); background: var(--sage-100); }
+  .task-check.done {
+    background: var(--sage-400);
+    border-color: var(--sage-400);
+    color: white;
+    transform: scale(1.1);
+  }
+  .task-text { font-size: 14px; line-height: 1.55; }
+  .task-text.done { text-decoration: line-through; color: var(--text-muted); }
+  .task-label {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: var(--r-pill);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+  .label-step { background: var(--mist-100); color: var(--mist-600); }
+  .label-small { background: var(--sage-100); color: var(--sage-600); }
+
+  /* Stars */
+  .star-burst {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, var(--amber-soft), var(--amber-warm));
+    color: var(--ink-900);
+    padding: var(--sp-sm) var(--sp-md);
+    border-radius: var(--r-pill);
+    font-weight: 500;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(232,169,58,0.35);
+    animation: popIn var(--t-slow) var(--ease-bounce) both;
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.6); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* Progress bar — shame-free version */
+  .progress-wrap { margin: var(--sp-sm) 0; }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .progress-bar {
+    height: 6px;
+    background: var(--sand-200);
+    border-radius: var(--r-pill);
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: var(--r-pill);
+    background: linear-gradient(90deg, var(--sage-400), var(--mist-400));
+    transition: width 1s var(--ease-out);
+  }
+
+  /* ── Voice/Copy Grid ── */
+  .copy-table { width: 100%; border-collapse: collapse; }
+  .copy-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    padding: var(--sp-sm) var(--sp-md);
+    background: var(--sand-100);
+    border-bottom: 1px solid var(--border);
+  }
+  .copy-table th:first-child { border-radius: var(--r-sm) 0 0 0; }
+  .copy-table th:last-child  { border-radius: 0 var(--r-sm) 0 0; }
+  .copy-table td {
+    padding: var(--sp-sm) var(--sp-md);
+    font-size: 13px;
+    line-height: 1.6;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .copy-table tr:last-child td { border-bottom: none; }
+  .copy-table .bad  { color: #B85240; background: #FFF5F0; }
+  .copy-table .good { color: #3D6B4F; background: #F0F5F0; }
+  .copy-table .why  { color: var(--text-secondary); font-size: 12px; }
+
+  /* ── Anti-pattern vs Good pattern ── */
+  .versus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-md); }
+  @media(max-width:580px) { .versus-grid { grid-template-columns: 1fr; } }
+
+  .versus-card {
+    border-radius: var(--r-lg);
+    padding: var(--sp-lg);
+    position: relative;
+  }
+  .versus-bad  { background: #FDF3EF; border: 1px solid rgba(200,100,80,0.2); }
+  .versus-good { background: #F0F6F2; border: 1px solid rgba(78,122,95,0.2); }
+  .versus-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: var(--sp-sm);
+  }
+  .versus-bad  .versus-tag { color: #C05030; }
+  .versus-good .versus-tag { color: #3D7A55; }
+  .versus-card h4 { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+  .versus-card p  { font-size: 13px; line-height: 1.6; color: var(--text-secondary); }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: var(--sp-2xl) var(--sp-xl);
+  }
+  .empty-state .empty-art { font-size: 40px; margin-bottom: var(--sp-md); opacity: 0.7; }
+  .empty-state h4 { font-family: 'Instrument Serif', serif; font-size: 20px; font-weight: 400; margin-bottom: 6px; }
+  .empty-state p  { font-size: 14px; color: var(--text-secondary); max-width: 240px; margin: 0 auto; line-height: 1.65; }
+
+  /* Haptic indicator */
+  .haptic-demo {
+    display: flex;
+    gap: var(--sp-md);
+    flex-wrap: wrap;
+    margin-top: var(--sp-md);
+  }
+  .haptic-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    padding: 8px 14px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .haptic-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+  .haptic-dot.gentle { background: var(--sage-400); }
+  .haptic-dot.neutral { background: var(--mist-400); }
+  .haptic-dot.celebrate { background: var(--amber-warm); }
+  .haptic-dot.none { background: var(--sand-300); }
+
+  /* Principle cards */
+  .principle-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--sp-md); }
+  .principle-card {
+    background: white;
+    border-radius: var(--r-lg);
+    padding: var(--sp-lg);
+    box-shadow: var(--shadow-sm);
+    border-top: 3px solid var(--clay-400);
+  }
+  .principle-num {
+    font-family: 'Instrument Serif', serif;
+    font-size: 36px;
+    color: var(--sand-200);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .principle-card h4 { font-size: 14px; font-weight: 500; margin-bottom: 6px; }
+  .principle-card p  { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+
+  /* interactive demo buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: var(--r-pill);
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    border: none;
+    transition: all var(--t-fast) var(--ease-out);
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--ink-900);
+    color: var(--sand-100);
+  }
+  .btn-primary:hover { background: var(--ink-600); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .btn-gentle {
+    background: var(--sage-100);
+    color: var(--sage-600);
+    border: 1px solid rgba(136,164,124,0.4);
+  }
+  .btn-gentle:hover { background: var(--sage-200); transform: translateY(-1px); }
+
+  /* Sticky nav */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(253,250,245,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 var(--sp-xl);
+  }
+  .sticky-nav-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    gap: var(--sp-xl);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .sticky-nav-inner::-webkit-scrollbar { display: none; }
+  .nav-link {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 14px 0;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all var(--t-fast) var(--ease-out);
+  }
+  .nav-link:hover { color: var(--text-primary); border-color: var(--clay-400); }
+
+  /* misc utilities */
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: var(--r-pill);
+    background: var(--sand-200);
+    color: var(--clay-500);
+    font-weight: 500;
+    margin-right: 4px;
+    margin-bottom: 4px;
+  }
+
+  .divider { height: 1px; background: var(--border); margin: var(--sp-xl) 0; }
+
+  .rule-block {
+    border-left: 3px solid var(--clay-400);
+    padding: var(--sp-sm) var(--sp-md);
+    background: var(--sand-100);
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    margin: var(--sp-md) 0;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--ink-600);
+    line-height: 1.65;
+  }
+
+  /* toast demo */
+  #toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 320px;
+  }
+  .toast {
+    border-radius: var(--r-lg);
+    padding: var(--sp-md) var(--sp-lg);
+    box-shadow: var(--shadow-lg);
+    animation: toastIn var(--t-slow) var(--ease-bounce) both;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  @keyframes toastIn {
+    from { opacity:0; transform: translateX(20px) scale(0.95); }
+    to   { opacity:1; transform: translateX(0)   scale(1); }
+  }
+  @keyframes toastOut {
+    from { opacity:1; transform: translateX(0) scale(1); }
+    to   { opacity:0; transform: translateX(20px) scale(0.95); }
+  }
+
+  /* spacing utility */
+  .mt-sm { margin-top: var(--sp-sm); }
+  .mt-md { margin-top: var(--sp-md); }
+  .mt-lg { margin-top: var(--sp-lg); }
+  .mt-xl { margin-top: var(--sp-xl); }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="page-header">
+  <div class="container">
+    <p class="eyebrow">Flowmind — Design Grammar v0.1</p>
+    <h1>The <em>Shame-Free</em> Design System</h1>
+    <p class="subtitle">Every color, motion, word, and interaction in Flowmind has one job: keep the cortisol-shame pathway from activating. This is the canonical grammar for how.</p>
+  </div>
+</div>
+
+<!-- Sticky Nav -->
+<nav class="sticky-nav">
+  <div class="sticky-nav-inner">
+    <a href="#principles" class="nav-link">Principles</a>
+    <a href="#color" class="nav-link">Color</a>
+    <a href="#typography" class="nav-link">Typography</a>
+    <a href="#motion" class="nav-link">Motion</a>
+    <a href="#components" class="nav-link">Components</a>
+    <a href="#voice" class="nav-link">Voice & Copy</a>
+    <a href="#antipatterns" class="nav-link">Anti-patterns</a>
+    <a href="#haptics" class="nav-link">Haptics</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- ───────────────── PRINCIPLES ───────────────── -->
+  <section class="section" id="principles">
+    <p class="section-label">Foundations</p>
+    <h2>Seven Core Principles</h2>
+    <p class="section-intro">Every design decision is measured against these. If a proposed element violates one, it goes back. No exceptions.</p>
+
+    <div class="principle-grid">
+      <div class="principle-card">
+        <div class="principle-num">01</div>
+        <h4>Effort is always honored</h4>
+        <p>The system sees every micro-step completed. Nothing a user does inside Flowmind goes unacknowledged.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">02</div>
+        <h4>Absence is never punished</h4>
+        <p>If a user hasn't opened the app in 3 days, their return is a welcome, not a reckoning. No streak-loss alerts. No red numbers.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">03</div>
+        <h4>The system does not raise its voice</h4>
+        <p>No red. No bold warnings. No exclamation marks on negative states. Urgency is communicated through tone, never alarm.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">04</div>
+        <h4>Language separates behavior from identity</h4>
+        <p>"This task wasn't started" — not "you missed this." Tasks have states. Users have worth. Never conflate them.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">05</div>
+        <h4>Everything is undoable</h4>
+        <p>Mistakes are cheap. Deletion is reversible. No destructive action without a calm, easy escape. Fear of error causes paralysis.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">06</div>
+        <h4>Ambient calm over reactive urgency</h4>
+        <p>The UI rests at a calm baseline. Joy and energy rise contextually. The resting state should feel like a quiet room, not a dashboard.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">07</div>
+        <h4>Celebrate small, celebrate often</h4>
+        <p>Dopamine doesn't wait for big wins. Every micro-step gets acknowledgment — proportional, genuine, not patronizing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────── COLOR ───────────────── -->
+  <section class="section" id="color">
+    <p class="section-label">Visual Language</p>
+    <h2>Color System</h2>
+    <p class="section-intro">The palette is built on warm organic neutrals rather than the cold clinical whites and saturated primaries of productivity tools. Every hue was chosen to reduce cortisol, not increase it.</p>
+
+    <div class="rule-block">
+      Rule: Red is never used in user-facing negative states. Orange is used only at low saturation. The color language of failure and urgency is entirely absent.
+    </div>
+
+    <div class="palette-group mt-lg">
+      <p class="palette-group-label">Foundation — Sands & Clays</p>
+      <div class="swatch-grid">
+        <div class="swatch"><div class="swatch-color" style="background:#FDFAF5"></div><div class="swatch-info"><p class="swatch-name">Sand 50</p><p class="swatch-hex">#FDFAF5</p></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#F5EFE2"></div><div class="swatch-info"><p class="swatch-name">Sand 100</p><p class="swatch-hex">#F5EFE2</p></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#EAE0CC"></div><div class="swatch-info"><p class="swatch-name">Sand 200</p><p class="swatch-hex">#EAE0CC</p></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#C4A882"></div><div class="swatch-info"><p class="swatch-name">Clay 400</p><p class="swatch-hex">#C4A882</p></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#A8865C"></div><div class="swatch-info"><p class="swatch-name">Clay 500</p><p class="swatch-hex">#A8865C</p></div></div>
+      </div>
+    </div>
+
+    <div class="palette-group">
+      <p class="palette-group-label">Action & Completion — Sage</p>
+      <div class="swatch-grid">
+        <div class="swatch"><div class="swatch-color" style="background:#E8EDDF"></div><div class="swatch-info"><p class="swatch-name">Sage 100</p><p class="swatch-hex">#E8EDDF</p></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#CDD9C5"></div><div class="swatch-info"><p class="swatch-name">Sage 200</p><p class="swatch-hex">#CDD9C5</p></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#88A47C"></div><div class="swatch-info"><p class="swatch-name">Sage 400</p><p class="swatch-hex">#88A47C</p></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#4E7A5F"></div><div class="swatch-info"><p class="swatch-name">Sage 600</p><p class="swatch-hex">#4E7A5F</p></div></div>
+      </div>
+    </div>
+
+    <div class="palette-group">
+      <p class="palette-group-label">Information & Navigation — Mist</p>
+      <div class="swatch-grid">
+        <div class="swatch"><div class="swatch-color" style="background:#DDE8F0"></div><div class="swatch-info"><p class="swatch-name">Mist 100</p><p class="swatch-hex">#DDE8F0</p></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#7AAFC7"></div><div class="swatch-info"><p class="swatch-name">Mist 400</p><p class="swatch-hex">#7AAFC7</p></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#3D7FA6"></div><div class="swatch-info"><p class="swatch-name">Mist 600</p><p class="swatch-hex">#3D7FA6</p></div></div>
+      </div>
+    </div>
+
+    <div class="palette-group">
+      <p class="palette-group-label">Celebration & Rewards — Amber</p>
+      <div class="swatch-grid">
+        <div class="swatch"><div class="swatch-color" style="background:#F5C87A"></div><div class="swatch-info"><p class="swatch-name">Amber Soft</p><p class="swatch-hex">#F5C87A</p></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#E8A93A"></div><div class="swatch-info"><p class="swatch-name">Amber Warm</p><p class="swatch-hex">#E8A93A</p></div></div>
+      </div>
+    </div>
+
+    <div class="palette-group">
+      <p class="palette-group-label">Text — Ink</p>
+      <div class="swatch-grid">
+        <div class="swatch"><div class="swatch-color" style="background:#2B2318"></div><div class="swatch-info"><p class="swatch-name">Ink 900</p><p class="swatch-hex">#2B2318</p></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#5C4D3A"></div><div class="swatch-info"><p class="swatch-name">Ink 600</p><p class="swatch-hex">#5C4D3A</p></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#8A7A66"></div><div class="swatch-info"><p class="swatch-name">Ink 400</p><p class="swatch-hex">#8A7A66</p></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#B8A896"></div><div class="swatch-info"><p class="swatch-name">Ink 200</p><p class="swatch-hex">#B8A896</p></div></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <h3>Semantic Color Roles</h3>
+    <div class="comp-grid mt-md">
+      <div style="background:white; border-radius:var(--r-lg); padding:var(--sp-lg); box-shadow:var(--shadow-sm);">
+        <h4 style="font-size:13px; font-weight:500; margin-bottom:var(--sp-sm);">Completion / Positive</h4>
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;"><div style="width:12px;height:12px;border-radius:50%;background:#88A47C"></div><span style="font-size:13px; color:var(--text-secondary);">Sage 400 — checkmarks, done states, success</span></div>
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;"><div style="width:12px;height:12px;border-radius:50%;background:#E8A93A"></div><span style="font-size:13px; color:var(--text-secondary);">Amber Warm — stars, rewards, celebration</span></div>
+        <div style="display:flex; align-items:center; gap:8px;"><div style="width:12px;height:12px;border-radius:50%;background:#CDD9C5"></div><span style="font-size:13px; color:var(--text-secondary);">Sage 200 — progress fills, soft positive bg</span></div>
+      </div>
+      <div style="background:white; border-radius:var(--r-lg); padding:var(--sp-lg); box-shadow:var(--shadow-sm);">
+        <h4 style="font-size:13px; font-weight:500; margin-bottom:var(--sp-sm);">Incomplete / Nudge (never punish)</h4>
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;"><div style="width:12px;height:12px;border-radius:50%;background:#DDE8F0"></div><span style="font-size:13px; color:var(--text-secondary);">Mist 100 — pending state, upcoming, neutral</span></div>
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;"><div style="width:12px;height:12px;border-radius:50%;background:#EAE0CC"></div><span style="font-size:13px; color:var(--text-secondary);">Sand 200 — empty states, resting, waiting</span></div>
+        <div style="display:flex; align-items:center; gap:8px;"><div style="width:12px;height:12px;border-radius:50%;background:#FFF5F0"></div><span style="font-size:13px; color:var(--text-secondary);">Warm blush — gentle alerts (soft orange, never red)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────── TYPOGRAPHY ───────────────── -->
+  <section class="section" id="typography">
+    <p class="section-label">Visual Language</p>
+    <h2>Typography</h2>
+    <p class="section-intro">The type system pairs a warm, humanist serif for display moments with a clean, legible sans for body. Never use condensed, angular, or high-contrast typefaces — they read as tense and demanding.</p>
+
+    <div class="type-specimen">
+      <p class="type-meta">Display — Instrument Serif / Italic — Emotions, headlines, empty states, celebration</p>
+      <p style="font-family:'Instrument Serif',serif; font-size:36px; line-height:1.2; color:var(--ink-900);">You did something.</p>
+      <p style="font-family:'Instrument Serif',serif; font-size:36px; font-style:italic; line-height:1.2; color:var(--clay-500);">That matters.</p>
+    </div>
+
+    <div class="type-specimen">
+      <p class="type-meta">UI Body — DM Sans / 300–500 weight — All interface text</p>
+      <p style="font-family:'DM Sans',sans-serif; font-size:17px; font-weight:400; line-height:1.75; color:var(--ink-900);">Send me an email about the thing by Friday</p>
+      <p style="font-family:'DM Sans',sans-serif; font-size:15px; font-weight:300; line-height:1.75; color:var(--ink-600); margin-top:4px;">Flowmind turned this into 4 tiny steps. You only need to do one right now.</p>
+      <p style="font-family:'DM Sans',sans-serif; font-size:13px; font-weight:400; line-height:1.65; color:var(--ink-400); margin-top:4px;">Any time today works. There's no wrong order.</p>
+    </div>
+
+    <div class="type-specimen">
+      <p class="type-meta">Mono — DM Mono / 400 weight — Labels, metadata, timestamps, code tokens</p>
+      <p style="font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--clay-500);">Step 2 of 4 &nbsp;·&nbsp; ⭐ 3 stars available</p>
+    </div>
+
+    <div class="divider"></div>
+    <h3>Type Scale</h3>
+    <div style="background:white; border-radius:var(--r-lg); padding:var(--sp-xl); box-shadow:var(--shadow-sm);" class="mt-md">
+      <div style="display:grid; gap:var(--sp-md);">
+        <div style="display:flex; align-items:baseline; gap:var(--sp-lg); border-bottom:1px solid var(--border); padding-bottom:var(--sp-md);">
+          <span style="font-family:'DM Mono',monospace; font-size:10px; color:var(--ink-400); width:80px; flex-shrink:0;">32–40px</span>
+          <span style="font-family:'Instrument Serif',serif; font-size:36px; line-height:1.1;">Section Heading</span>
+        </div>
+        <div style="display:flex; align-items:baseline; gap:var(--sp-lg); border-bottom:1px solid var(--border); padding-bottom:var(--sp-md);">
+          <span style="font-family:'DM Mono',monospace; font-size:10px; color:var(--ink-400); width:80px; flex-shrink:0;">20–24px</span>
+          <span style="font-size:22px; font-weight:400;">Card title or key moment</span>
+        </div>
+        <div style="display:flex; align-items:baseline; gap:var(--sp-lg); border-bottom:1px solid var(--border); padding-bottom:var(--sp-md);">
+          <span style="font-family:'DM Mono',monospace; font-size:10px; color:var(--ink-400); width:80px; flex-shrink:0;">15–17px</span>
+          <span style="font-size:16px; font-weight:400; color:var(--ink-600);">Body text, task text, input fields</span>
+        </div>
+        <div style="display:flex; align-items:baseline; gap:var(--sp-lg); border-bottom:1px solid var(--border); padding-bottom:var(--sp-md);">
+          <span style="font-family:'DM Mono',monospace; font-size:10px; color:var(--ink-400); width:80px; flex-shrink:0;">13px</span>
+          <span style="font-size:13px; color:var(--ink-400);">Supporting text, hints, secondary labels</span>
+        </div>
+        <div style="display:flex; align-items:baseline; gap:var(--sp-lg);">
+          <span style="font-family:'DM Mono',monospace; font-size:10px; color:var(--ink-400); width:80px; flex-shrink:0;">10–11px</span>
+          <span style="font-family:'DM Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.12em; color:var(--clay-500);">Metadata / Tag labels / System labels</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-block mt-lg">
+      Rule: Maximum font weight in the UI is 500 (medium). Never use bold (700+) for negative states, warnings, or incomplete tasks. Bold draws attention — in Flowmind, bold is only used for celebration or core actions.
+    </div>
+  </section>
+
+  <!-- ───────────────── MOTION ───────────────── -->
+  <section class="section" id="motion">
+    <p class="section-label">Interaction Design</p>
+    <h2>Motion Grammar</h2>
+    <p class="section-intro">Motion in Flowmind is calm, organic, and intentional. Fast snappy transitions feel demanding. Slow dragging transitions feel lethargic. The sweet spot signals care — the app responds to you, not at you.</p>
+
+    <div class="rule-block">
+      Rule: Nothing in the UI vibrates, flashes, pulses, or bounces to express urgency or failure. Celebratory motion (reward earned, task done) is the only context for bouncy or energetic animation.
+    </div>
+
+    <div class="motion-grid mt-lg">
+      <div class="motion-card">
+        <div class="demo-area" onclick="demoFadeSlide(this)" title="Click to replay">
+          <div id="fadeSlideTarget" style="background:var(--sage-100); border-radius:var(--r-md); padding:10px 20px; font-size:14px; color:var(--sage-600); font-weight:500;">Step complete ✓</div>
+        </div>
+        <h4>Completion — Fade + Slide Up</h4>
+        <p>280ms, ease-out. Used for: task completion, step done, form submitted. Calm and satisfying. Signals finality without drama.</p>
+        <p class="mt-sm" style="font-family:'DM Mono',monospace; font-size:10px; color:var(--clay-500);">280ms · cubic-bezier(0.22, 1, 0.36, 1)</p>
+      </div>
+
+      <div class="motion-card">
+        <div class="demo-area" onclick="demoPop(this)" title="Click to replay">
+          <div id="popTarget" class="star-burst">⭐ +3 stars earned</div>
+        </div>
+        <h4>Celebration — Scale Pop</h4>
+        <p>500ms, bounce ease. Used exclusively for: rewards earned, milestones hit, streak moments. The only place over-enthusiasm is welcome.</p>
+        <p class="mt-sm" style="font-family:'DM Mono',monospace; font-size:10px; color:var(--clay-500);">500ms · cubic-bezier(0.34, 1.4, 0.64, 1)</p>
+      </div>
+
+      <div class="motion-card">
+        <div class="demo-area" onclick="demoToast()" title="Click to show toast" style="cursor:pointer;">
+          <span style="font-size:13px; color:var(--ink-400);">Click to preview notification →</span>
+        </div>
+        <h4>Notifications — Slide from edge</h4>
+        <p>Enters from the right, exits the same way. Never drops from top (associated with system alerts). Never bounces. Gentle arrival, easy departure.</p>
+        <p class="mt-sm" style="font-family:'DM Mono',monospace; font-size:10px; color:var(--clay-500);">500ms enter · 300ms exit · ease-out</p>
+      </div>
+
+      <div class="motion-card">
+        <div class="demo-area" style="cursor:default; flex-direction:column; gap:8px;">
+          <div style="height:6px; width:80%; background:var(--sand-200); border-radius:var(--r-pill); overflow:hidden;">
+            <div id="progressDemo" style="height:100%; width:0%; background:linear-gradient(90deg,var(--sage-400),var(--mist-400)); border-radius:var(--r-pill); transition:width 1.2s cubic-bezier(0.22,1,0.36,1);"></div>
+          </div>
+          <span id="progressLabel" style="font-size:12px; color:var(--ink-400);">3 of 6 steps</span>
+        </div>
+        <h4>Progress — Ease-Out Fill</h4>
+        <p>1200ms, ease-out. Progress moves smoothly and confidently forward. Never shrinks (even when tasks are removed). Never shown as a percentage that could feel failing.</p>
+        <p class="mt-sm" style="font-family:'DM Mono',monospace; font-size:10px; color:var(--clay-500);">1200ms · ease-out · never backwards</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <h3>What we never animate</h3>
+    <div class="versus-grid mt-md">
+      <div class="versus-card versus-bad">
+        <p class="versus-tag">❌ Banned Motion Patterns</p>
+        <p>Red badge pulsing to indicate overdue tasks. Screen shake on error. Progress bar decreasing. Blinking reminders. Countdown timers with urgency styling. Loading spinners without calming language. Streak counter exploding on loss.</p>
+      </div>
+      <div class="versus-card versus-good">
+        <p class="versus-tag">✓ Approved Motion Patterns</p>
+        <p>Gentle fade-in on new content. Soft scale-pop on celebration. Smooth ease-out progress fills. Items completing with a slide-and-fade. Stars floating up on reward. Screen dimming calmly when focus mode activates.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────── COMPONENTS ───────────────── -->
+  <section class="section" id="components">
+    <p class="section-label">UI Kit</p>
+    <h2>Core Components</h2>
+    <p class="section-intro">Every component below exists in one of three states: resting, positive, or gentle-nudge. There is no alarm state. There is no failure state.</p>
+
+    <div class="comp-grid">
+
+      <!-- Notifications -->
+      <div class="comp-card">
+        <p class="comp-card-label">Notification System</p>
+        <div class="comp-card-body">
+          <div class="notif notif-celebrate" style="animation-delay:0ms">
+            <span class="notif-icon">⭐</span>
+            <div>
+              <p class="notif-title">Nicely done.</p>
+              <p class="notif-body">You finished "Reply to Sarah" — that's step 2 of 4. 3 stars added.</p>
+            </div>
+          </div>
+          <div class="notif notif-gentle" style="animation-delay:100ms">
+            <span class="notif-icon">🌿</span>
+            <div>
+              <p class="notif-title">Your meds are due.</p>
+              <p class="notif-body">You set a reminder for this time. No rush — just a heads up.</p>
+            </div>
+          </div>
+          <div class="notif notif-neutral" style="animation-delay:200ms">
+            <span class="notif-icon">📅</span>
+            <div>
+              <p class="notif-title">You have a meeting at 3pm.</p>
+              <p class="notif-body">Leaving 20 min early gets you there with time to settle in.</p>
+            </div>
+          </div>
+          <div class="notif notif-error" style="animation-delay:300ms">
+            <span class="notif-icon">💛</span>
+            <div>
+              <p class="notif-title">That's okay.</p>
+              <p class="notif-body">The dentist appointment moved. We've updated the reminder. It happens.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task list -->
+      <div class="comp-card">
+        <p class="comp-card-label">Task & Micro-step List</p>
+        <div class="comp-card-body">
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:var(--sp-md);">
+            "Write the investor deck" → broken into micro-steps
+          </div>
+          <div class="task-item">
+            <div class="task-check done" id="tc1" onclick="toggleCheck('tc1', 'tt1')">✓</div>
+            <div>
+              <p class="task-text done" id="tt1">Open a blank doc</p>
+              <span class="task-label label-small">tiny step</span>
+            </div>
+          </div>
+          <div class="task-item">
+            <div class="task-check done" id="tc2" onclick="toggleCheck('tc2', 'tt2')">✓</div>
+            <div>
+              <p class="task-text done" id="tt2">Write the title at the top</p>
+              <span class="task-label label-small">tiny step</span>
+            </div>
+          </div>
+          <div class="task-item">
+            <div class="task-check" id="tc3" onclick="toggleCheck('tc3', 'tt3')"></div>
+            <div>
+              <p class="task-text" id="tt3">Add 3 bullet points about the problem</p>
+              <span class="task-label label-step">step 3 of 8</span>
+            </div>
+          </div>
+          <div class="task-item" style="opacity:0.5">
+            <div class="task-check"></div>
+            <div>
+              <p class="task-text">Write one sentence about the solution</p>
+              <span class="task-label label-step">step 4 of 8</span>
+            </div>
+          </div>
+          <div class="progress-wrap mt-md">
+            <div class="progress-label">
+              <span>2 done</span>
+              <span>6 left — no rush</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width:25%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div class="comp-card">
+        <p class="comp-card-label">Empty State</p>
+        <div class="comp-card-body">
+          <div class="empty-state">
+            <div class="empty-art">🌤</div>
+            <h4>Nothing here yet.</h4>
+            <p>That's actually fine. When you're ready to add something, it'll be easy.</p>
+            <button class="btn btn-gentle mt-md" style="margin:var(--sp-md) auto 0; display:inline-flex;">+ Add something</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reward card -->
+      <div class="comp-card">
+        <p class="comp-card-label">Reward Earned</p>
+        <div class="comp-card-body" style="text-align:center; padding:var(--sp-xl) var(--sp-lg);">
+          <div style="font-size:48px; margin-bottom:var(--sp-md); animation: popIn 0.6s cubic-bezier(0.34,1.4,0.64,1) both 0.3s; opacity:0; animation-fill-mode:forwards;">⭐</div>
+          <h4 style="font-family:'Instrument Serif',serif; font-size:22px; font-weight:400; margin-bottom:8px;">You earned 3 stars.</h4>
+          <p style="font-size:14px; color:var(--text-secondary); margin-bottom:var(--sp-lg); line-height:1.65;">That's 47 total. Your Spotify reward is 10 stars away. Keep going — or don't. You've already done great.</p>
+          <div style="display:flex; gap:var(--sp-sm); justify-content:center; flex-wrap:wrap;">
+            <button class="btn btn-primary" style="font-size:13px; padding:8px 18px;">See my stars</button>
+            <button class="btn btn-gentle" style="font-size:13px; padding:8px 18px;">Back to tasks</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Return state (user absent) -->
+      <div class="comp-card" style="grid-column: span 2;">
+        <p class="comp-card-label">Return State — User Opens App After 3+ Days Away</p>
+        <div class="comp-card-body">
+          <div style="background:linear-gradient(135deg,var(--sand-100),var(--sage-100)); border-radius:var(--r-lg); padding:var(--sp-xl); display:flex; gap:var(--sp-lg); align-items:center; flex-wrap:wrap;">
+            <div style="font-size:40px;">☀️</div>
+            <div style="flex:1; min-width:200px;">
+              <h4 style="font-family:'Instrument Serif',serif; font-size:22px; font-weight:400; margin-bottom:6px;">Welcome back.</h4>
+              <p style="font-size:14px; color:var(--text-secondary); line-height:1.65; max-width:400px;">Nothing expired while you were gone. Your tasks are right where you left them. Want to pick up where you left off, or start fresh with something small?</p>
+              <div style="display:flex; gap:var(--sp-sm); flex-wrap:wrap; margin-top:var(--sp-md);">
+                <button class="btn btn-gentle" style="font-size:13px; padding:8px 18px;">Show me what was in progress</button>
+                <button class="btn btn-gentle" style="font-size:13px; padding:8px 18px;">Start something new</button>
+              </div>
+            </div>
+          </div>
+          <p style="font-size:12px; color:var(--text-muted); margin-top:var(--sp-sm); font-style:italic;">
+            ← This screen replaces streak-loss alerts, overdue counts, or any "you've been gone" shame triggers.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ───────────────── VOICE ───────────────── -->
+  <section class="section" id="voice">
+    <p class="section-label">Content Strategy</p>
+    <h2>Voice & Copy Rules</h2>
+    <p class="section-intro">The language Flowmind uses is one of the most powerful levers on the shame pathway. Every string in the app should pass three tests: Does it separate the task's state from the user's identity? Does it carry zero implicit blame? Does it offer a door, not a wall?</p>
+
+    <div class="rule-block">
+      The Flowmind voice is: a thoughtful friend who happens to have a PhD in cognitive neuroscience. Warm, informed, never clinical. Direct, never demanding. Honest, never harsh.
+    </div>
+
+    <div style="background:white; border-radius:var(--r-lg); box-shadow:var(--shadow-sm); overflow:hidden;" class="mt-lg">
+      <table class="copy-table">
+        <thead>
+          <tr>
+            <th style="width:35%">🚫 Don't say this</th>
+            <th style="width:35%">✓ Say this instead</th>
+            <th style="width:30%">Why it matters</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="bad">"You missed this task."</td>
+            <td class="good">"This one wasn't started yet."</td>
+            <td class="why">Separates task state from identity. The task has a state; you have worth.</td>
+          </tr>
+          <tr>
+            <td class="bad">"⚠️ Overdue! 3 tasks late."</td>
+            <td class="good">"3 things are waiting when you're ready."</td>
+            <td class="why">Removes urgency framing and alarm language. "Waiting" implies patience, not judgment.</td>
+          </tr>
+          <tr>
+            <td class="bad">"You haven't taken your meds."</td>
+            <td class="good">"Your meds reminder — just in case."</td>
+            <td class="why">"You haven't" is accusatory. "Just in case" is collaborative.</td>
+          </tr>
+          <tr>
+            <td class="bad">"Streak broken! You lost your 7-day streak."</td>
+            <td class="good">"Welcome back. Everything's here."</td>
+            <td class="why">Streak-loss language is specifically toxic for ADHD users. It restarts the shame cycle.</td>
+          </tr>
+          <tr>
+            <td class="bad">"Get back on track."</td>
+            <td class="good">"Pick up wherever feels easiest."</td>
+            <td class="why">"Back on track" implies you were off-track — a failure framing. Flowmind doesn't define a 'track.'</td>
+          </tr>
+          <tr>
+            <td class="bad">"You only have 2 hours left today!"</td>
+            <td class="good">"A couple hours of day left if you want them."</td>
+            <td class="why">Urgency language triggers cortisol. Optionality language keeps the user in choice, not panic.</td>
+          </tr>
+          <tr>
+            <td class="bad">"Nothing completed today."</td>
+            <td class="good">"Ready for you whenever you are."</td>
+            <td class="why">Counting zeros is a shame trigger. A waiting, patient presence is not.</td>
+          </tr>
+          <tr>
+            <td class="bad">"Try to be more consistent."</td>
+            <td class="good">Don't say this at all.</td>
+            <td class="why">Flowmind never prescribes behavioral norms or implies the user should be different.</td>
+          </tr>
+          <tr>
+            <td class="bad">"Error: something went wrong."</td>
+            <td class="good">"That didn't go through — want to try again?"</td>
+            <td class="why">Neutral framing + optionality + no blame. Errors are not catastrophes.</td>
+          </tr>
+          <tr>
+            <td class="bad">"You're doing great! 🎉🎉🎉"</td>
+            <td class="good">"That's done. Nice."</td>
+            <td class="why">Hollow cheerleading feels patronizing to adults. Brief, genuine acknowledgment lands better.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+    <h3>Celebratory Copy — Use Sparingly, Mean It</h3>
+    <p class="section-intro">When Flowmind celebrates, it should feel warm and specific — not like a notification from a fitness app. Use the Instrument Serif italic for emotional peaks.</p>
+    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:var(--sp-sm);" class="mt-md">
+      <div style="background:linear-gradient(135deg,#FFF8E8,#FFF3D0); border:1px solid rgba(232,169,58,0.2); border-radius:var(--r-lg); padding:var(--sp-md);">
+        <p style="font-family:'Instrument Serif',serif; font-style:italic; font-size:18px; margin-bottom:4px;">That one counted.</p>
+        <p style="font-size:11px; color:var(--clay-500);">On completing a difficult step</p>
+      </div>
+      <div style="background:linear-gradient(135deg,#FFF8E8,#FFF3D0); border:1px solid rgba(232,169,58,0.2); border-radius:var(--r-lg); padding:var(--sp-md);">
+        <p style="font-family:'Instrument Serif',serif; font-style:italic; font-size:18px; margin-bottom:4px;">You started. That's the hard part.</p>
+        <p style="font-size:11px; color:var(--clay-500);">On first step of a task</p>
+      </div>
+      <div style="background:linear-gradient(135deg,#FFF8E8,#FFF3D0); border:1px solid rgba(232,169,58,0.2); border-radius:var(--r-lg); padding:var(--sp-md);">
+        <p style="font-family:'Instrument Serif',serif; font-style:italic; font-size:18px; margin-bottom:4px;">The whole thing is done.</p>
+        <p style="font-size:11px; color:var(--clay-500);">On completing all steps of a task</p>
+      </div>
+      <div style="background:linear-gradient(135deg,#FFF8E8,#FFF3D0); border:1px solid rgba(232,169,58,0.2); border-radius:var(--r-lg); padding:var(--sp-md);">
+        <p style="font-family:'Instrument Serif',serif; font-style:italic; font-size:18px; margin-bottom:4px;">7 things, done.</p>
+        <p style="font-size:11px; color:var(--clay-500);">On weekly summary</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────── ANTI-PATTERNS ───────────────── -->
+  <section class="section" id="antipatterns">
+    <p class="section-label">What to Avoid</p>
+    <h2>Anti-patterns</h2>
+    <p class="section-intro">These are the specific design patterns that other apps use which directly activate the shame pathway. They are banned in Flowmind — even when the team is tempted by their familiarity.</p>
+
+    <div class="versus-grid">
+      <div class="versus-card versus-bad">
+        <p class="versus-tag">❌ Streak Mechanics</p>
+        <h4>Duolingo-style streak counters</h4>
+        <p>Any system that makes absence visible as a loss — broken chains, lost flames, zero-day markers — punishes the exact behavior pattern ADHD creates. When users return, they are already in shame. Do not add to it.</p>
+      </div>
+      <div class="versus-card versus-good">
+        <p class="versus-tag">✓ Instead</p>
+        <h4>Cumulative momentum</h4>
+        <p>Show total stars earned (not lost). Show "most productive morning" not "days since last active." Celebrate the return, not the consistency. Momentum is additive, not subtractive.</p>
+      </div>
+
+      <div class="versus-card versus-bad">
+        <p class="versus-tag">❌ Red Badges & Alert Counts</p>
+        <h4>The "12 overdue" red badge</h4>
+        <p>App badges with high numbers, red indicators, and overdue counts are a cortisol delivery mechanism. ADHD users often avoid opening apps specifically to avoid seeing these. The app becomes a source of dread.</p>
+      </div>
+      <div class="versus-card versus-good">
+        <p class="versus-tag">✓ Instead</p>
+        <h4>Neutral or no badge</h4>
+        <p>If a badge must exist, use a soft neutral color and a low number (or none). Lead with positive framing: "3 things ready for you" not "3 overdue."</p>
+      </div>
+
+      <div class="versus-card versus-bad">
+        <p class="versus-tag">❌ Countdown Timers</p>
+        <h4>Pomodoro / deadline timers</h4>
+        <p>Time pressure is a shame accelerant for ADHD. Countdown timers create urgency that often triggers freeze responses. Time blindness is a symptom, not a moral failure — designing around it means removing time as a punitive force.</p>
+      </div>
+      <div class="versus-card versus-good">
+        <p class="versus-tag">✓ Instead</p>
+        <h4>Time anchors, not timers</h4>
+        <p>Show "this usually takes about 10 minutes" as ambient context. Offer optional focus sessions with count-up timers (showing effort, not countdown). Hard deadlines shown without panic formatting.</p>
+      </div>
+
+      <div class="versus-card versus-bad">
+        <p class="versus-tag">❌ Productivity Metrics</p>
+        <h4>Daily score, completion rates, weekly averages</h4>
+        <p>Dashboards showing productivity percentages, completion rates, or comparison to past performance transform the app into a measuring tool — and ADHD users will always feel measured against neurotypical norms.</p>
+      </div>
+      <div class="versus-card versus-good">
+        <p class="versus-tag">✓ Instead</p>
+        <h4>Moments and milestones</h4>
+        <p>Celebrate specific wins ("You finished a thing you'd been avoiding for 2 weeks"). Show stars earned, not tasks missed. Let the user discover patterns themselves rather than having the app define them as a deficit.</p>
+      </div>
+
+      <div class="versus-card versus-bad">
+        <p class="versus-tag">❌ Prescriptive Scheduling</p>
+        <h4>"You should do this at 9am"</h4>
+        <p>Any feature that creates externally-imposed structure the user didn't define becomes something to fail against. Fixed schedules presented as the right answer frame the user's different rhythm as wrong.</p>
+      </div>
+      <div class="versus-card versus-good">
+        <p class="versus-tag">✓ Instead</p>
+        <h4>User-authored structure</h4>
+        <p>Suggest, never prescribe. "Some people find morning easier for this — want to set a reminder?" The user defines the structure; Flowmind helps hold it. The locus of control stays with the user.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────── HAPTICS ───────────────── -->
+  <section class="section" id="haptics">
+    <p class="section-label">Mobile Experience</p>
+    <h2>Haptic Language</h2>
+    <p class="section-intro">Haptics are physical feedback — they bypass the visual cortex and go straight to felt experience. Flowmind uses haptics as a gentle, embodied communication layer. Never jarring, never punitive.</p>
+
+    <div class="haptic-demo">
+      <div class="haptic-pill"><div class="haptic-dot celebrate"></div>Medium pulse — step completed</div>
+      <div class="haptic-pill"><div class="haptic-dot celebrate"></div>Double pulse — task fully done</div>
+      <div class="haptic-pill"><div class="haptic-dot celebrate"></div>Triple soft — reward earned</div>
+      <div class="haptic-pill"><div class="haptic-dot gentle"></div>Single light — reminder delivered</div>
+      <div class="haptic-pill"><div class="haptic-dot neutral"></div>Soft single — navigation, confirmation</div>
+      <div class="haptic-pill"><div class="haptic-dot none"></div>None — errors, missed tasks, overdue states</div>
+    </div>
+
+    <div class="rule-block mt-lg">
+      Rule: Errors and missed tasks produce zero haptic feedback. Haptics are celebratory or informational only. Vibration should never be associated with a negative outcome.
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <section class="section" style="border-bottom:none; text-align:center; padding:var(--sp-2xl) 0;">
+    <p style="font-family:'Instrument Serif',serif; font-size:28px; font-weight:400; margin-bottom:var(--sp-sm);">The brain isn't broken.</p>
+    <p style="font-family:'Instrument Serif',serif; font-style:italic; font-size:28px; color:var(--clay-500); margin-bottom:var(--sp-lg);">The tools have been.</p>
+    <p style="font-size:13px; color:var(--text-muted); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.1em;">Flowmind Design Grammar v0.1 · Shame-Free System</p>
+  </section>
+
+</div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script>
+  // Progress bar demo auto-start
+  setTimeout(() => {
+    const fill = document.getElementById('progressDemo');
+    if (fill) fill.style.width = '50%';
+  }, 800);
+
+  // Fade slide demo
+  function demoFadeSlide(area) {
+    const el = area.querySelector('#fadeSlideTarget') || area.firstElementChild;
+    el.style.animation = 'none';
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(8px)';
+    requestAnimationFrame(() => {
+      el.style.animation = 'fadeSlideIn 0.5s cubic-bezier(0.22,1,0.36,1) forwards';
+    });
+  }
+
+  // Pop demo
+  function demoPop(area) {
+    const el = area.querySelector('#popTarget') || area.firstElementChild;
+    el.style.animation = 'none';
+    el.style.opacity = '0';
+    el.style.transform = 'scale(0.6)';
+    requestAnimationFrame(() => {
+      el.style.animation = 'popIn 0.6s cubic-bezier(0.34,1.4,0.64,1) forwards';
+    });
+  }
+
+  // Toast notification demo
+  function demoToast() {
+    const container = document.getElementById('toast-container');
+    const messages = [
+      { icon: '✓', title: 'Step done.', body: 'You just completed "Write the title." +2 stars.', bg: 'linear-gradient(135deg,#F0F5F0,#E8EDDF)', border: 'rgba(136,164,124,0.3)' },
+      { icon: '⭐', title: 'Stars earned.', body: 'You have 50 total. Spotify reward is almost there.', bg: 'linear-gradient(135deg,#FFF8E8,#FFF3D4)', border: 'rgba(232,169,58,0.3)' },
+      { icon: '💛', title: 'No problem.', body: 'Task moved to tomorrow. It\'ll be there when you\'re ready.', bg: '#FFF5F0', border: 'rgba(200,120,80,0.2)' }
+    ];
+    const msg = messages[Math.floor(Math.random() * messages.length)];
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.style.background = msg.bg;
+    toast.style.border = `1px solid ${msg.border}`;
+    toast.innerHTML = `<span style="font-size:18px;flex-shrink:0">${msg.icon}</span><div><strong style="font-size:14px;display:block;margin-bottom:2px">${msg.title}</strong><span style="font-size:13px;color:#5C4D3A">${msg.body}</span></div>`;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.style.animation = 'toastOut 0.3s ease-out forwards';
+      setTimeout(() => toast.remove(), 300);
+    }, 3500);
+  }
+
+  // Task check toggle
+  function toggleCheck(checkId, textId) {
+    const check = document.getElementById(checkId);
+    const text = document.getElementById(textId);
+    if (!check || !text) return;
+    const isDone = check.classList.contains('done');
+    if (isDone) {
+      check.classList.remove('done');
+      check.textContent = '';
+      text.classList.remove('done');
+    } else {
+      check.classList.add('done');
+      check.textContent = '✓';
+      text.classList.add('done');
+      // small celebration
+      demoToast();
+    }
+  }
+</script>
+</body>
+</html>
