@@ -4,11 +4,18 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ─────────────────────────────────────────────────────────────────────────
+   Fonts: DM Sans (body), Instrument Serif (display), DM Mono (labels)
+   Load via next/font/google in app/layout.tsx and set these variables:
+     --font-dm-sans, --font-instrument-serif, --font-dm-mono
+   ───────────────────────────────────────────────────────────────────────── */
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans:  var(--font-dm-sans);
+  --font-serif: var(--font-instrument-serif);
+  --font-mono:  var(--font-dm-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -38,82 +45,169 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+  --radius-sm:  calc(var(--radius) - 6px);
+  --radius-md:  var(--radius);
+  --radius-lg:  calc(var(--radius) + 6px);
+  --radius-xl:  calc(var(--radius) + 14px);
+  --radius-2xl: calc(var(--radius) + 28px);
+  --radius-3xl: calc(var(--radius) + 42px);
+  --radius-4xl: 100px;
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* ── Flowmind Palette ────────────────────────────────────────────────── */
+
+  /* Foundation — Sands & Clays */
+  --sand-50:  #FDFAF5;
+  --sand-100: #F5EFE2;
+  --sand-200: #EAE0CC;
+  --sand-300: #D9CBB0;
+  --clay-400: #C4A882;
+  --clay-500: #A8865C;
+
+  /* Action & Completion — Sage */
+  --sage-100: #E8EDDF;
+  --sage-200: #CDD9C5;
+  --sage-400: #88A47C;
+  --sage-600: #4E7A5F;
+
+  /* Information & Navigation — Mist */
+  --mist-100: #DDE8F0;
+  --mist-400: #7AAFC7;
+  --mist-600: #3D7FA6;
+
+  /* Celebration & Rewards — Amber */
+  --amber-soft: #F5C87A;
+  --amber-warm: #E8A93A;
+
+  /* Text — Ink */
+  --ink-900: #2B2318;
+  --ink-600: #5C4D3A;
+  --ink-400: #8A7A66;
+  --ink-200: #B8A896;
+
+  /* ── Radius System ───────────────────────────────────────────────────── */
+  --radius:  0.875rem; /* 14px — base (r-md) */
+  --r-sm:    8px;
+  --r-md:    14px;
+  --r-lg:    20px;
+  --r-xl:    28px;
+  --r-pill:  100px;
+
+  /* ── Spacing ─────────────────────────────────────────────────────────── */
+  --sp-xs:  4px;
+  --sp-sm:  8px;
+  --sp-md:  16px;
+  --sp-lg:  24px;
+  --sp-xl:  40px;
+  --sp-2xl: 64px;
+
+  /* ── Shadows (warm ink-tinted, never cold grey) ──────────────────────── */
+  --shadow-sm: 0 1px 4px rgba(43, 35, 24, 0.06), 0 0 0 1px rgba(43, 35, 24, 0.04);
+  --shadow-md: 0 4px 16px rgba(43, 35, 24, 0.08), 0 0 0 1px rgba(43, 35, 24, 0.04);
+  --shadow-lg: 0 8px 32px rgba(43, 35, 24, 0.10), 0 0 0 1px rgba(43, 35, 24, 0.05);
+
+  /* ── Motion ──────────────────────────────────────────────────────────── */
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --t-fast:  150ms;
+  --t-mid:   280ms;
+  --t-slow:  500ms;
+
+  /* ── shadcn/ui Semantic Tokens ───────────────────────────────────────── */
+  --background:          var(--sand-50);
+  --foreground:          var(--ink-900);
+
+  --card:                #FFFFFF;
+  --card-foreground:     var(--ink-900);
+
+  --popover:             #FFFFFF;
+  --popover-foreground:  var(--ink-900);
+
+  /* Primary = ink on sand — the main CTA */
+  --primary:             var(--ink-900);
+  --primary-foreground:  var(--sand-100);
+
+  /* Secondary = sand-100 surface — subtle, resting */
+  --secondary:           var(--sand-100);
+  --secondary-foreground: var(--ink-600);
+
+  /* Muted = sand-100 bg, ink-400 text */
+  --muted:               var(--sand-100);
+  --muted-foreground:    var(--ink-400);
+
+  /* Accent = sage — action, completion, gentle positive */
+  --accent:              var(--sage-100);
+  --accent-foreground:   var(--sage-600);
+
+  /* Destructive = warm blush orange — never red */
+  --destructive:         #C87850;
+
+  --border:              var(--sand-200);
+  --input:               var(--sand-200);
+  --ring:                var(--clay-400);
+
+  /* ── Charts ──────────────────────────────────────────────────────────── */
+  --chart-1: var(--sage-400);
+  --chart-2: var(--mist-400);
+  --chart-3: var(--clay-400);
+  --chart-4: var(--amber-warm);
+  --chart-5: var(--mist-600);
+
+  /* ── Sidebar ─────────────────────────────────────────────────────────── */
+  --sidebar:                    var(--sand-100);
+  --sidebar-foreground:         var(--ink-900);
+  --sidebar-primary:            var(--ink-900);
+  --sidebar-primary-foreground: var(--sand-50);
+  --sidebar-accent:             var(--sage-100);
+  --sidebar-accent-foreground:  var(--sage-600);
+  --sidebar-border:             var(--sand-200);
+  --sidebar-ring:               var(--clay-400);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Dark mode: ink tones as surfaces, sand tones as text */
+  --background:          var(--ink-900);
+  --foreground:          var(--sand-100);
+
+  --card:                #3D3025;
+  --card-foreground:     var(--sand-50);
+
+  --popover:             #3D3025;
+  --popover-foreground:  var(--sand-50);
+
+  --primary:             var(--sand-200);
+  --primary-foreground:  var(--ink-900);
+
+  --secondary:           #3D3025;
+  --secondary-foreground: var(--sand-200);
+
+  --muted:               #3D3025;
+  --muted-foreground:    var(--ink-200);
+
+  --accent:              #243020;
+  --accent-foreground:   var(--sage-200);
+
+  --destructive:         #D4916A;
+
+  --border:              rgba(212, 200, 180, 0.12);
+  --input:               rgba(212, 200, 180, 0.15);
+  --ring:                var(--ink-400);
+
+  --chart-1: var(--sage-400);
+  --chart-2: var(--mist-400);
+  --chart-3: var(--clay-400);
+  --chart-4: var(--amber-soft);
+  --chart-5: var(--mist-600);
+
+  --sidebar:                    #3D3025;
+  --sidebar-foreground:         var(--sand-100);
+  --sidebar-primary:            var(--sage-400);
+  --sidebar-primary-foreground: var(--sand-50);
+  --sidebar-accent:             #243020;
+  --sidebar-accent-foreground:  var(--sage-200);
+  --sidebar-border:             rgba(212, 200, 180, 0.12);
+  --sidebar-ring:               var(--ink-400);
 }
 
 @layer base {
@@ -122,5 +216,10 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
