@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, Instrument_Serif, DM_Mono } from "next/font/google";
 import "./globals.css";
 import { BreadcrumbNav } from "@/components/breadcrumb-nav";
+import { UserProfileProvider } from "@/lib/user-profile-context";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -39,7 +40,9 @@ export default function RootLayout({
         <header className="sticky top-0 z-10 backdrop-blur bg-background/80 border-b border-border px-4 py-3">
           <BreadcrumbNav />
         </header>
-        <main className="flex flex-1 flex-col">{children}</main>
+        <main className="flex flex-1 flex-col">
+          <UserProfileProvider>{children}</UserProfileProvider>
+        </main>
       </body>
     </html>
   );
