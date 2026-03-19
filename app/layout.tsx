@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Instrument_Serif, DM_Mono } from "next/font/google";
 import "./globals.css";
-import { BreadcrumbNav } from "@/components/breadcrumb-nav";
+import { ConditionalHeader } from "@/components/conditional-header";
 import { UserProfileProvider } from "@/lib/user-profile-context";
 
 const dmSans = DM_Sans({
@@ -37,9 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${dmSans.variable} ${instrumentSerif.variable} ${dmMono.variable} antialiased min-h-svh flex flex-col`}>
-        <header className="sticky top-0 z-10 backdrop-blur bg-background/80 border-b border-border px-4 py-3">
-          <BreadcrumbNav />
-        </header>
+        <ConditionalHeader />
         <main className="flex flex-1 flex-col">
           <UserProfileProvider>{children}</UserProfileProvider>
         </main>

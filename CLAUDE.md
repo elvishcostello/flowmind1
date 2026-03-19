@@ -100,6 +100,26 @@ Use Zod schemas to validate and type structured responses from the AI. Define sc
 
 ---
 
+## Mobile-First Layout
+
+This app targets mobile browsers. All pages must use the mobile-first centered layout pattern:
+
+```tsx
+<div className="flex flex-1 justify-center">
+  <div className="w-full max-w-sm flex flex-col flex-1">
+    {/* page content */}
+  </div>
+</div>
+```
+
+- The outer div fills available height and centers horizontally
+- The inner `max-w-sm` container constrains content to a phone-width column
+- On desktop this renders as a tall narrow panel — that is intentional
+
+**Every page must use this wrapper.** Do not render full-width layouts.
+
+---
+
 ## Styling & Theming
 
 shadcn/ui components are in `components/ui/` as owned source code — edit them freely. Theming is via CSS custom properties in `globals.css`. To update branding:
