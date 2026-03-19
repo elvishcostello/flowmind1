@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUserProfile } from "@/lib/user-profile-context";
 
-export default function CleaningPage() {
+export default function LoopsPage() {
   const { userProfile } = useUserProfile();
   const router = useRouter();
 

@@ -40,7 +40,7 @@ export default function FeelingPage() {
           <Repeat2 className="h-5 w-5 shrink-0" />
           <span>that&apos;s an open loop</span>
         </div>
-        <Button onClick={() => router.push("/signin/cleaning")} className="w-full">
+        <Button onClick={() => router.push("/signin/cleaning-intro")} className="w-full">
           Continue
         </Button>
       </div>

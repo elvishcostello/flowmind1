@@ -15,7 +15,8 @@ import {
 const SEGMENT_LABELS: Record<string, string> = {
   signin: "Sign In",
   feeling: "You Know That Feeling",
-  cleaning: "Introduction to Cleaning",
+  "cleaning-intro": "Introduction to Cleaning",
+  loops: "Loops",
 };
 
 export function BreadcrumbNav() {
