@@ -42,7 +42,7 @@ export default function CleaningIntroPage() {
             <span>Watch your loops close</span>
           </div>
         </div>
-        <Button onClick={() => router.push("/loops")} className="w-full">
+        <Button onClick={() => router.push("/rewards-intro")} className="w-full">
           Continue
         </Button>
       </div>

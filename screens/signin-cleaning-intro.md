@@ -15,4 +15,4 @@ Layout from top to bottom:
    - `Check` — "Check off each task"
    - `Star` — "Watch your loops close"
 
-3. A full-width Continue `Button` that navigates to `/loops`.
+3. A full-width Continue `Button` that navigates to `/rewards-intro`.

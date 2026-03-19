@@ -18,6 +18,8 @@ const SEGMENT_LABELS: Record<string, string> = {
   feeling: "You Know That Feeling",
   "cleaning-intro": "Introduction to Cleaning",
   loops: "Loops",
+  "rewards-intro": "Introduction to Rewards",
+  "your-loops": "Your Loops",
 };
 
 export function BreadcrumbNav() {
