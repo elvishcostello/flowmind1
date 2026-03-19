@@ -12,9 +12,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-const SEGMENT_LABELS: Record<string, string> = {
-  fridge: "Fridge",
-};
+const SEGMENT_LABELS: Record<string, string> = {};
 
 export function BreadcrumbNav() {
   const pathname = usePathname();
