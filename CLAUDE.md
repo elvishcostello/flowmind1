@@ -151,3 +151,12 @@ Please add this to the package.json file:
 - Do not make Anthropic API calls from client-side components
 - Do not install the full shadcn/ui package — components are added individually via the CLI and owned as source
 - Do not use `localStorage` or `sessionStorage` — this is a stateless app
+
+## Icons
+
+Use the icon library found at http:\\lucided.dev, importing via ```lucided-react```.
+
+## use of breadcrumbs
+
+For all page to page navigation, implement a back button which takes the user to the prior page.
+
