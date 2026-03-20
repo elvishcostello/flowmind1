@@ -17,6 +17,7 @@ DO NOT implement the anthropic SDK features for now. That is in for completeness
 - **Components:** shadcn/ui (source copied into `components/ui/`, not a black-box import, use the 'radix' components.)
 - **AI:** `@anthropic-ai/sdk` — raw SDK, no Vercel AI SDK or other abstraction layer (see note above, stub in, but do not implenent)
 - **Validation:** Zod — used to validate and type structured AI responses
+- **Persistence:** Supabase — hosted Postgres with built-in auth and row-level security. See `PERSISTENCE.md` for full details.
 - **Hosting:** Vercel (connected to GitHub, auto-deploys on push to `main`)
 
 Keep the package footprint minimal. Do not introduce new dependencies without discussion.
@@ -32,11 +33,15 @@ This is a **monorepo** — frontend and backend live together in a single Next.j
 ├── app/
 │   ├── page.tsx              # React pages (frontend)
 │   ├── components/           # Shared UI components
-│   └── api/                  # API routes (server-side, never exposed to client)
+│   ├── api/                  # API routes (server-side, never exposed to client)
+│   └── auth/callback/        # OAuth callback route (see PERSISTENCE.md)
 ├── lib/
+│   ├── supabase/
+│   │   └── client.ts         # Supabase browser client utility
 │   ├── canned-responses.ts   # Hardcoded demo responses, keyed by workflow
 │   └── types.ts              # Shared TypeScript types and Zod schemas
-├── middleware.ts              # Demo mode router — intercepts requests before API routes
+├── middleware.ts              # Demo mode router + Supabase session refresh
+├── PERSISTENCE.md            # Data layer: Supabase, auth, schema, RLS
 └── .env.local                # Local secrets (never commit this)
 ```
 
@@ -54,6 +59,8 @@ DEMO_MODE=false  # Live mode, calls Anthropic API
 ### How it works
 
 `middleware.ts` intercepts all incoming requests. In demo mode, it matches the request path against a set of regex patterns and returns the appropriate canned response. The real API route handlers never execute.
+
+**Important:** `middleware.ts` also handles Supabase session refresh for non-demo requests. Both concerns live in the same file — do not create a second middleware. See `PERSISTENCE.md` for the composition pattern.
 
 ```typescript
 const mockedRoutes = [
@@ -100,6 +107,26 @@ Use Zod schemas to validate and type structured responses from the AI. Define sc
 
 ---
 
+## Mobile-First Layout
+
+This app targets mobile browsers. All pages must use the mobile-first centered layout pattern:
+
+```tsx
+<div className="flex flex-1 justify-center">
+  <div className="w-full max-w-sm flex flex-col flex-1">
+    {/* page content */}
+  </div>
+</div>
+```
+
+- The outer div fills available height and centers horizontally
+- The inner `max-w-sm` container constrains content to a phone-width column
+- On desktop this renders as a tall narrow panel — that is intentional
+
+**Every page must use this wrapper.** Do not render full-width layouts.
+
+---
+
 ## Styling & Theming
 
 shadcn/ui components are in `components/ui/` as owned source code — edit them freely. Theming is via CSS custom properties in `globals.css`. To update branding:
@@ -119,6 +146,10 @@ Use the `cn()` utility (from `lib/utils.ts`) when merging Tailwind classes to av
 |---|---|---|
 | `ANTHROPIC_API_KEY` | `.env.local` / Vercel dashboard | Anthropic API access |
 | `DEMO_MODE` | `.env.local` / Vercel dashboard | Toggle canned responses |
+| `NEXT_PUBLIC_SUPABASE_URL` | `.env.local` / Vercel dashboard | Supabase project endpoint |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `.env.local` / Vercel dashboard | Supabase public API key |
+
+See `PERSISTENCE.md` for details on Supabase configuration.
 
 Never put secrets in the codebase. Never commit `.env.local`.
 
@@ -150,4 +181,14 @@ Please add this to the package.json file:
 - Do not put API keys or secrets in source code or commit them
 - Do not make Anthropic API calls from client-side components
 - Do not install the full shadcn/ui package — components are added individually via the CLI and owned as source
-- Do not use `localStorage` or `sessionStorage` — this is a stateless app
+- Do not use `localStorage` or `sessionStorage` — this is a stateless app; use Supabase for all persistence (see `PERSISTENCE.md`)
+- Do not create a second `middleware.ts` — demo mode and Supabase session refresh are composed in the same file
+
+## Icons
+
+Use the icon library found at http:\\lucided.dev, importing via ```lucided-react```.
+
+## use of breadcrumbs
+
+For all page to page navigation, implement a back button which takes the user to the prior page.
+
