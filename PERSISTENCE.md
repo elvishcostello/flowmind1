@@ -214,12 +214,14 @@ Do not check auth state in individual components — handle it once at the top l
 
 ## Middleware
 
-The existing `middleware.ts` handles demo mode routing. The Supabase session refresher must be composed into the **same file** — Next.js only recognises one `middleware.ts` at the project root.
+The existing `proxy.ts` handles demo mode routing. The Supabase session refresher must be composed into the **same file** — Next.js only recognises one `proxy.ts` at the project root.
+
+> **Note:** Next.js 16 replaced `middleware.ts` with `proxy.ts`. The exported function must be named `proxy` (or a default export). Do not use the old `middleware` name or filename.
 
 Order matters:
 
 ```typescript
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // 1. Demo mode — return early with canned response if matched
   if (process.env.DEMO_MODE === 'true') {
     for (const route of mockedRoutes) {
@@ -237,7 +239,7 @@ export async function middleware(request: NextRequest) {
 }
 ```
 
-Do not create a second `middleware.ts`. Do not move middleware into the `app/` directory.
+Do not create a second `proxy.ts`. Do not move proxy logic into the `app/` directory.
 
 ---
 
@@ -286,7 +288,7 @@ Always handle errors. Never assume a write succeeded without checking `error`.
 - Do not use `localStorage` or `sessionStorage` for any data — this app is stateless on the client
 - Do not make Supabase calls from API routes — the SDK is used directly from client components
 - Do not bypass RLS by using the service role key in client code — the anon key only
-- Do not create a second `middleware.ts` — compose everything into the existing one
+- Do not create a second `proxy.ts` — compose everything into the existing one
 - Do not store auth tokens manually — Supabase SSR handles session cookies automatically
 - Do not skip RLS policies on new tables — always enable RLS immediately after `create table`
 - Do not create `user_profiles` without also creating `user_activity` in the same operation — they must stay in sync

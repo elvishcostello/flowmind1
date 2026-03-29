@@ -61,9 +61,11 @@ DEMO_MODE=false  # Live mode, calls Anthropic API
 
 ### How it works
 
-`middleware.ts` intercepts all incoming requests. In demo mode, it matches the request path against a set of regex patterns and returns the appropriate canned response. The real API route handlers never execute.
+`proxy.ts` intercepts all incoming requests. In demo mode, it matches the request path against a set of regex patterns and returns the appropriate canned response. The real API route handlers never execute.
 
-**Important:** `middleware.ts` also handles Supabase session refresh for non-demo requests. Both concerns live in the same file — do not create a second middleware. See `PERSISTENCE.md` for the composition pattern.
+**Important:** `proxy.ts` also handles Supabase session refresh for non-demo requests. Both concerns live in the same file — do not create a second proxy. See `PERSISTENCE.md` for the composition pattern.
+
+> **Note:** Next.js 16 replaced `middleware.ts` with `proxy.ts`. The exported function must be named `proxy` (or a default export) rather than `middleware`.
 
 ```typescript
 const mockedRoutes = [
@@ -186,7 +188,7 @@ Please add this to the package.json file:
 - Do not make Anthropic API calls from client-side components
 - Do not install the full shadcn/ui package — components are added individually via the CLI and owned as source
 - Do not use `localStorage` or `sessionStorage` — this is a stateless app; use Supabase for all persistence (see `PERSISTENCE.md`)
-- Do not create a second `middleware.ts` — demo mode and Supabase session refresh are composed in the same file
+- Do not create a second `proxy.ts` — demo mode and Supabase session refresh are composed in the same file
 - Do not fire ad-hoc analytics events — all events must be defined in the catalogue in `ANALYTICS.md`
 - Do not call `mixpanel.track()` directly — always use the `track()` utility from `lib/analytics.ts`
 - Do not point `.env.local` at the production Mixpanel token — use the `flowmind-dev` project locally
