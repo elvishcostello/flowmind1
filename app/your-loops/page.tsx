@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useUserProfile } from "@/lib/user-profile-context";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Star, Settings, Repeat2 } from "lucide-react";
+import { Star, Repeat2 } from "lucide-react";
+import { SettingsSheet } from "@/components/settings-sheet";
 
 export default function YourLoopsPage() {
   const { userProfile } = useUserProfile();
@@ -13,7 +14,7 @@ export default function YourLoopsPage() {
 
   useEffect(() => {
     if (!userProfile) {
-      router.push("/signin");
+      router.push("/");
     }
   }, [userProfile, router]);
 
@@ -33,9 +34,7 @@ export default function YourLoopsPage() {
           <Button variant="outline" size="sm" className="rounded-full">
             reflect
           </Button>
-          <Button variant="ghost" size="icon">
-            <Settings className="h-4 w-4" />
-          </Button>
+          <SettingsSheet />
         </div>
 
         {/* Content area */}

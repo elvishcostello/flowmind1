@@ -10,7 +10,7 @@ export default function LoopsPage() {
 
   useEffect(() => {
     if (!userProfile) {
-      router.push("/signin");
+      router.push("/");
     }
   }, [userProfile, router]);
 

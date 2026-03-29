@@ -11,8 +11,11 @@ All screens in the app with their navigation relationships.
 | rewards-intro         | Introduction to Rewards  | `/rewards-intro`         | loops                 | your-loops            |
 | your-loops            | Your Loops               | `/your-loops`            | rewards-intro         | -                     |
 
+| settings              | Settings                 | overlay (Sheet)          | any main screen header  | signin-feeling / `/`  |
+
 ## Notes
 
 - All non-home screens include a `BreadcrumbNav` back button that calls `router.back()`.
-- Most screens guard against unauthenticated access: if no `userProfile` is present in context, they redirect to `/signin`.
+- Most screens guard against unauthenticated access: if no `userProfile` is present in context, they redirect to `/`.
 - if the exit is not specified, you can ignore this
+- The settings screen is a `Sheet` overlay (not a page), triggered by a gear icon in the top-right of main screen headers. Implemented in `components/settings-sheet.tsx`.

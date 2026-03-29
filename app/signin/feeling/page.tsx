@@ -12,7 +12,7 @@ export default function FeelingPage() {
 
   useEffect(() => {
     if (!userProfile) {
-      router.push("/signin");
+      router.push("/");
     }
   }, [userProfile, router]);
 
