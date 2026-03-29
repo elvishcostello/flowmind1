@@ -59,7 +59,7 @@ export default function YourLoopsPage() {
           <div className="flex-1" />
 
           <div className="flex justify-end">
-            <Button>+ Add a Loop</Button>
+            <Button onClick={() => router.push("/outer-loop")}>+ Add a Loop</Button>
           </div>
         </div>
       </div>

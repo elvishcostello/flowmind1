@@ -18,7 +18,15 @@ const SEGMENT_LABELS: Record<string, string> = {
   "cleaning-intro": "Introduction to Cleaning",
   loops: "Loops",
   "rewards-intro": "Introduction to Rewards",
-  "your-loops": "Your Loops",
+  "your-loops": "Home",
+  "outer-loop": "Add a Loop",
+  "inner-loop": "Inner Loop",
+};
+
+// Explicit ancestor crumbs for app routes — defines the full trail above each route
+const APP_ROUTE_ANCESTORS: Record<string, { label: string; href: string }[]> = {
+  "outer-loop": [{ label: "Home", href: "/your-loops" }],
+  "inner-loop": [{ label: "Home", href: "/your-loops" }, { label: "Add a Loop", href: "/outer-loop" }],
 };
 
 export function BreadcrumbNav() {
@@ -27,8 +35,12 @@ export function BreadcrumbNav() {
 
   const segments = pathname === "/" ? [] : pathname.split("/").filter(Boolean);
   const isHome = segments.length === 0;
+  const ancestors = segments.length > 0 ? APP_ROUTE_ANCESTORS[segments[0]] : undefined;
+
+  const root = ancestors ? null : { label: "Home", href: "/" };
+
   const crumbs = [
-    { label: "Home", href: "/" },
+    ...(ancestors ?? (root ? [root] : [])),
     ...segments.map((seg, i) => ({
       label: SEGMENT_LABELS[seg] ?? seg,
       href: "/" + segments.slice(0, i + 1).join("/"),
@@ -39,7 +51,7 @@ export function BreadcrumbNav() {
     <div className="flex items-center gap-3">
       {!isHome && (
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push(crumbs[crumbs.length - 2].href)}
           aria-label="Go back"
           className="text-muted-foreground hover:text-foreground transition-colors"
         >

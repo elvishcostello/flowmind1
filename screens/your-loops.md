@@ -1,6 +1,6 @@
 Create a Next.js client component at `app/your-loops/page.tsx` for route `/your-loops`.
 
-Auth guard: on mount, if no `userProfile` in context, redirect to `/signin`. Return `null` while unauthenticated.
+Auth guard: on mount, if no `userProfile` in context, redirect to `/`. Return `null` while unauthenticated.
 
 # layout
 
@@ -56,4 +56,4 @@ a button at the bottom right:
 + Add a Loop
 ```
 
-The button is not yet hooked up.
+The button navigates to `/outer-loop`.

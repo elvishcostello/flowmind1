@@ -10,6 +10,8 @@ All screens in the app with their navigation relationships.
 | loops                 | Loops                    | `/loops`                 | signin-cleaning-intro | —                     |
 | rewards-intro         | Introduction to Rewards  | `/rewards-intro`         | loops                 | your-loops            |
 | your-loops            | Your Loops               | `/your-loops`            | rewards-intro         | -                     |
+| outer-loop            | Outer Loop               | `/outer-loop`            | TBD                   | inner-loop            |
+| inner-loop            | Inner Loop               | `/inner-loop`            | outer-loop            | -                     |
 
 | settings              | Settings                 | overlay (Sheet)          | any main screen header  | signin-feeling / `/`  |
 
