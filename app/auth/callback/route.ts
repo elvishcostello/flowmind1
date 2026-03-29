@@ -21,7 +21,36 @@ export async function GET(request: Request) {
         },
       }
     )
-    await supabase.auth.exchangeCodeForSession(code)
+    const { data: { session } } = await supabase.auth.exchangeCodeForSession(code)
+
+    if (session) {
+      const displayName =
+        session.user.user_metadata?.full_name ||
+        session.user.email ||
+        'Flowmind User'
+
+      const { error: profileError } = await supabase
+        .from('user_profiles')
+        .upsert(
+          {
+            id: session.user.id,
+            display_name: displayName,
+            email: session.user.email,
+          },
+          { onConflict: 'id', ignoreDuplicates: true }
+        )
+
+      if (profileError) console.error('user_profiles upsert failed:', profileError)
+
+      const { error: activityError } = await supabase
+        .from('user_activity')
+        .upsert(
+          { id: session.user.id },
+          { onConflict: 'id', ignoreDuplicates: true }
+        )
+
+      if (activityError) console.error('user_activity upsert failed:', activityError)
+    }
   }
 
   return NextResponse.redirect(`${origin}/`)

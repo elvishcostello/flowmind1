@@ -30,6 +30,26 @@ export default function Home() {
     }
   }, [session, router]);
 
+  useEffect(() => {
+    if (!session) return;
+
+    const supabase = createClient();
+
+    supabase
+      .rpc('increment', { row_id: session.user.id })
+      .then(({ error }) => {
+        if (error) console.error('increment session_count failed:', error);
+      });
+
+    supabase
+      .from('user_activity')
+      .update({ last_access: new Date().toISOString() })
+      .eq('id', session.user.id)
+      .then(({ error }) => {
+        if (error) console.error('last_access update failed:', error);
+      });
+  }, [session?.user.id]);
+
   if (session === undefined) return <div className="flex flex-1" />;
   if (!session) return <SignInScreen />;
   return <div className="flex flex-1" />;

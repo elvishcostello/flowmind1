@@ -107,6 +107,10 @@ create policy "Users can read own profile"
   on public.user_profiles for select
   using (auth.uid() = id);
 
+create policy "Users can insert own profile"
+  on public.user_profiles for insert
+  with check (auth.uid() = id);
+
 create policy "Users can update own profile"
   on public.user_profiles for update
   using (auth.uid() = id);
@@ -116,12 +120,16 @@ create policy "Users can read own activity"
   on public.user_activity for select
   using (auth.uid() = id);
 
+create policy "Users can insert own activity"
+  on public.user_activity for insert
+  with check (auth.uid() = id);
+
 create policy "Users can update own activity"
   on public.user_activity for update
   using (auth.uid() = id);
 ```
 
-**Important:** If a query returns empty results unexpectedly, check RLS first. Tables with RLS enabled but no matching policy silently return nothing — they do not throw errors.
+**Important:** If a query returns empty results unexpectedly, check RLS first. Tables with RLS enabled but no matching policy silently return nothing — they do not throw errors. Insert policies are required in addition to update policies — a missing insert policy will silently prevent row creation without throwing an error.
 
 ---
 
@@ -183,6 +191,86 @@ export async function GET(request: Request) {
 ```typescript
 await supabase.auth.signOut()
 ```
+
+---
+
+## First Login — Row Creation
+
+On the first login, two rows must be created in the same operation: one in `user_profiles` and one in `user_activity`. This happens in the OAuth callback route (`app/auth/callback/route.ts`), immediately after `exchangeCodeForSession` succeeds.
+
+**Use upsert, not insert.** Google OAuth can re-enter this callback on subsequent logins. Upsert with `onConflict: 'id'` and `ignoreDuplicates: true` makes the operation safe and idempotent — existing rows are left untouched.
+
+**Source of display_name:** Pull from `session.user.user_metadata.full_name`. Fall back to `session.user.email` if `full_name` is absent or empty.
+
+```typescript
+const { data: { session } } = await supabase.auth.exchangeCodeForSession(code)
+
+if (session) {
+  const displayName =
+    session.user.user_metadata?.full_name ||
+    session.user.email ||
+    'Flowmind User'
+
+  const { error: profileError } = await supabase
+    .from('user_profiles')
+    .upsert(
+      {
+        id: session.user.id,
+        display_name: displayName,
+        email: session.user.email,
+      },
+      { onConflict: 'id', ignoreDuplicates: true }
+    )
+
+  if (profileError) console.error('user_profiles upsert failed:', profileError)
+
+  const { error: activityError } = await supabase
+    .from('user_activity')
+    .upsert(
+      { id: session.user.id },
+      { onConflict: 'id', ignoreDuplicates: true }
+    )
+
+  if (activityError) console.error('user_activity upsert failed:', activityError)
+}
+```
+
+Both upserts must complete before the redirect. Always check and log errors — never assume a write succeeded.
+
+---
+
+## Session Activity Update
+
+On each confirmed login, update `user_activity` to reflect the new session. This happens in the top-level auth guard component — the one that calls `supabase.auth.getSession()` — inside a `useEffect` that fires when a non-null session is first confirmed.
+
+Two operations run together:
+
+1. **Increment session_count** — via the `increment` Postgres function (already created in Supabase)
+2. **Update last_access** — to the current timestamp
+
+```typescript
+useEffect(() => {
+  if (!session) return
+
+  const supabase = createClient()
+
+  supabase
+    .rpc('increment', { row_id: session.user.id })
+    .then(({ error }) => {
+      if (error) console.error('increment session_count failed:', error)
+    })
+
+  supabase
+    .from('user_activity')
+    .update({ last_access: new Date().toISOString() })
+    .eq('id', session.user.id)
+    .then(({ error }) => {
+      if (error) console.error('last_access update failed:', error)
+    })
+}, [session?.user.id])
+```
+
+Use `session?.user.id` as the dependency — not the full session object — so the effect fires once per login, not on every re-render.
 
 ---
 
@@ -269,13 +357,14 @@ const { error } = await supabase
   .update({ onboarding_completed_at: new Date().toISOString() })
   .eq('id', session.user.id)
 
-// Update activity on each session start
+// Increment session count (via Postgres function)
+const { error } = await supabase
+  .rpc('increment', { row_id: session.user.id })
+
+// Update last_access
 const { error } = await supabase
   .from('user_activity')
-  .update({
-    last_access: new Date().toISOString(),
-    session_count: supabase.rpc('increment', { row_id: session.user.id })
-  })
+  .update({ last_access: new Date().toISOString() })
   .eq('id', session.user.id)
 ```
 
@@ -290,7 +379,8 @@ Always handle errors. Never assume a write succeeded without checking `error`.
 - Do not bypass RLS by using the service role key in client code — the anon key only
 - Do not create a second `proxy.ts` — compose everything into the existing one
 - Do not store auth tokens manually — Supabase SSR handles session cookies automatically
-- Do not skip RLS policies on new tables — always enable RLS immediately after `create table`
+- Do not skip RLS policies on new tables — always enable RLS immediately after `create table`, and always add insert policies alongside select/update policies
+- Do not use insert without upsert in the auth callback — the callback can be re-entered on subsequent logins
 - Do not create `user_profiles` without also creating `user_activity` in the same operation — they must stay in sync
 - Do not implement loops persistence here — that belongs in `LOOPS.md` in a future sprint
 - Do not use Supabase to store behavioural analytics or compute DAU/WAU/MAU — that is Mixpanel's job (see `ANALYTICS.md`)
