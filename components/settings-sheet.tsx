@@ -21,6 +21,7 @@ export function SettingsSheet() {
   const [open, setOpen] = useState(false);
 
   const displayName = userProfile?.username ?? "Your Account";
+  const email = userProfile?.email;
   const initial = displayName.charAt(0).toUpperCase();
 
   const handleSignOut = async () => {
@@ -55,6 +56,9 @@ export function SettingsSheet() {
           </div>
           <div className="flex flex-col min-w-0">
             <span className="font-medium text-sm truncate">{displayName}</span>
+            {email && (
+              <span className="text-xs text-muted-foreground truncate">{email}</span>
+            )}
           </div>
         </div>
 

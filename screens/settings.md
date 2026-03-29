@@ -58,12 +58,11 @@ Structure the sheet content in three vertical zones:
 
 ### User Identity
 
-Pull the current user's **display name** and **email** from your auth provider (e.g. Supabase `useUser()` hook or equivalent session context).
+Pull the current user's **display name** and **email** from `useUserProfile()` — both fields are available on the `UserProfile` type (`username` and `email`).
 
-- Display name: render as bold, slightly larger text
-- Email: render below name in muted/secondary text style
-- If display name is unavailable, fall back to email only
-- If neither is available, show "Your Account" as placeholder
+- Display name: render as `font-medium text-sm`
+- Email: render below name as `text-xs text-muted-foreground`, only if present
+- If display name is unavailable, fall back to `"Your Account"` as placeholder
 
 ### Sign Out
 
