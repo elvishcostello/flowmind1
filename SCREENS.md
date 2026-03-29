@@ -5,7 +5,6 @@ All screens in the app with their navigation relationships.
 | screen_id             | name                     | route                    | entry_from            | exits_to              |
 |-----------------------|--------------------------|--------------------------|-----------------------|-----------------------|
 | home                  | Home                     | `/`                      | —                     | signin                |
-| signin                | Sign In                  | `/signin`                | home                  | signin-feeling        |
 | signin-feeling        | You Know That Feeling    | `/signin/feeling`        | signin                | signin-cleaning-intro |
 | signin-cleaning-intro | Introduction to Cleaning | `/signin/cleaning-intro` | signin-feeling        | rewards-intro         |
 | loops                 | Loops                    | `/loops`                 | signin-cleaning-intro | —                     |

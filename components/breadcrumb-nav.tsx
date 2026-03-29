@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/breadcrumb";
 
 const SEGMENT_LABELS: Record<string, string> = {
-  signin: "Sign In",
   feeling: "You Know That Feeling",
   "cleaning-intro": "Introduction to Cleaning",
   loops: "Loops",
