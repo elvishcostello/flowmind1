@@ -1,12 +1,14 @@
 # PERSISTENCE.md — Data Layer Context for Claude Code
 
-This file describes the persistence strategy for Flowmind. Read it alongside CLAUDE.md before making any changes to data, auth, or middleware.
+This file describes the persistence strategy for Flowmind. Read it alongside CLAUDE.md and ANALYTICS.md before making any changes to data, auth, or middleware.
 
 ---
 
 ## Overview
 
 Persistence is handled by **Supabase** — a hosted Postgres platform with built-in auth, row-level security, and a thin JavaScript SDK. There is no server to maintain. The database is the canonical source of truth. Local (in-memory React) state is a copy only.
+
+Supabase covers app data and auth only. Behavioural analytics — DAU/WAU/MAU, feature usage, funnels — are Mixpanel's responsibility and never touch this database. See `ANALYTICS.md`.
 
 Do not introduce any other persistence mechanism. Do not use `localStorage`, `sessionStorage`, or any client-side storage.
 
@@ -62,30 +64,32 @@ Import this wherever you need to read or write data. Do not instantiate the clie
 
 ## Schema
 
-Two tables. Keep them simple.
+Two tables covering user data only. Loops are handled in a separate sprint — see `LOOPS.md` when that file exists.
+
+User data is vertically partitioned into profile (static) and activity (app logic cache). This keeps the frequently-written activity row separate from the rarely-changed profile row.
+
+**Invariant:** `user_profiles` and `user_activity` rows must always be created together at signup, even if activity values are null/zero. Never create one without the other.
 
 ```sql
--- Users table
--- Mirrors Supabase auth, plus any app-specific profile fields
-create table public.users (
+-- Static profile info — written once at signup, rarely updated
+create table public.user_profiles (
   id uuid references auth.users(id) primary key,
+  display_name text not null,
   email text,
-  display_name text,
+  timezone text,
+  acquisition_source text,              -- e.g. 'direct', 'referral', 'demo'
+  onboarding_completed_at timestamptz,  -- one-time milestone, not a session metric
   created_at timestamptz default now()
 );
 
--- Loops table
-create table public.loops (
-  id uuid default gen_random_uuid() primary key,
-  user_id uuid references public.users(id) not null,
-  title text,
-  created_at timestamptz default now(),
-  updated_at timestamptz default now(),
-  metadata jsonb  -- for any structured but variable fields
+-- App logic cache — updated each session, used for in-app behaviour only
+-- Not a source of truth for analytics — that is Mixpanel's job
+create table public.user_activity (
+  id uuid references auth.users(id) primary key,
+  session_count integer default 0,  -- used for in-app logic e.g. show tip on 5th session
+  last_access timestamptz           -- used for 'last seen' in any future admin view
 );
 ```
-
-The `metadata` JSONB column on `loops` is intentional — some loop fields are structured but variable. Scalar fields that are queried or sorted on should be promoted to real columns. Blobby or rarely-queried fields go in `metadata`.
 
 ---
 
@@ -95,34 +99,26 @@ RLS is enabled on both tables. Users can only read and write their own data. Thi
 
 ```sql
 -- Enable RLS
-alter table public.users enable row level security;
-alter table public.loops enable row level security;
+alter table public.user_profiles enable row level security;
+alter table public.user_activity enable row level security;
 
--- Users can only access their own profile
+-- user_profiles
 create policy "Users can read own profile"
-  on public.users for select
+  on public.user_profiles for select
   using (auth.uid() = id);
 
 create policy "Users can update own profile"
-  on public.users for update
+  on public.user_profiles for update
   using (auth.uid() = id);
 
--- Users can only access their own loops
-create policy "Users can read own loops"
-  on public.loops for select
-  using (auth.uid() = user_id);
+-- user_activity
+create policy "Users can read own activity"
+  on public.user_activity for select
+  using (auth.uid() = id);
 
-create policy "Users can insert own loops"
-  on public.loops for insert
-  with check (auth.uid() = user_id);
-
-create policy "Users can update own loops"
-  on public.loops for update
-  using (auth.uid() = user_id);
-
-create policy "Users can delete own loops"
-  on public.loops for delete
-  using (auth.uid() = user_id);
+create policy "Users can update own activity"
+  on public.user_activity for update
+  using (auth.uid() = id);
 ```
 
 **Important:** If a query returns empty results unexpectedly, check RLS first. Tables with RLS enabled but no matching policy silently return nothing — they do not throw errors.
@@ -247,33 +243,38 @@ Do not create a second `middleware.ts`. Do not move middleware into the `app/` d
 
 ## Data Flow
 
-The canonical pattern for reading and writing data:
+The canonical pattern for reading and writing user data:
 
 ```typescript
 const supabase = createClient()
 
-// Read
+// Read profile
 const { data, error } = await supabase
-  .from('loops')
+  .from('user_profiles')
   .select('*')
-  .order('created_at', { ascending: false })
+  .eq('id', session.user.id)
+  .single()
 
-// Write
+// Update profile
 const { error } = await supabase
-  .from('loops')
-  .insert({ title: 'New loop', user_id: session.user.id })
+  .from('user_profiles')
+  .update({ display_name: 'New Name' })
+  .eq('id', session.user.id)
 
-// Update
+// Mark onboarding complete
 const { error } = await supabase
-  .from('loops')
-  .update({ title: 'Updated title' })
-  .eq('id', loopId)
+  .from('user_profiles')
+  .update({ onboarding_completed_at: new Date().toISOString() })
+  .eq('id', session.user.id)
 
-// Delete
+// Update activity on each session start
 const { error } = await supabase
-  .from('loops')
-  .delete()
-  .eq('id', loopId)
+  .from('user_activity')
+  .update({
+    last_access: new Date().toISOString(),
+    session_count: supabase.rpc('increment', { row_id: session.user.id })
+  })
+  .eq('id', session.user.id)
 ```
 
 Always handle errors. Never assume a write succeeded without checking `error`.
@@ -288,3 +289,7 @@ Always handle errors. Never assume a write succeeded without checking `error`.
 - Do not create a second `middleware.ts` — compose everything into the existing one
 - Do not store auth tokens manually — Supabase SSR handles session cookies automatically
 - Do not skip RLS policies on new tables — always enable RLS immediately after `create table`
+- Do not create `user_profiles` without also creating `user_activity` in the same operation — they must stay in sync
+- Do not implement loops persistence here — that belongs in `LOOPS.md` in a future sprint
+- Do not use Supabase to store behavioural analytics or compute DAU/WAU/MAU — that is Mixpanel's job (see `ANALYTICS.md`)
+- Do not add a `user_sessions` event log — Mixpanel's `session_started` event replaces it entirely
