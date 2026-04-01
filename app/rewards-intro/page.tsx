@@ -50,7 +50,7 @@ export default function RewardsIntroPage() {
           </CardContent>
         </Card>
 
-        <Button className="w-full" onClick={() => router.push("/your-loops")}>
+        <Button className="w-full" onClick={() => router.replace("/your-loops")}>
           Continue
         </Button>
       </div>

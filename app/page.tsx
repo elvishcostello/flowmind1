@@ -26,7 +26,7 @@ export default function Home() {
 
   useEffect(() => {
     if (session) {
-      router.push("/signin/feeling");
+      router.replace("/your-loops");
     }
   }, [session, router]);
 

@@ -33,7 +33,7 @@ export function SettingsSheet() {
 
   const handleReturnToOrientation = () => {
     setOpen(false);
-    router.push("/signin/feeling");
+    router.replace("/signin/feeling");
   };
 
   return (

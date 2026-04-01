@@ -15,11 +15,7 @@ Use the standard mobile-first page wrapper (see CLAUDE.md):
 
 ## Navigation
 
-This screen is part of the signed-in app. The global `BreadcrumbNav` header is shown (not suppressed).
-
-`BreadcrumbNav` renders the full trail: **Home › Add a Loop › Inner Loop**. The back arrow navigates to `/outer-loop`. This is controlled by `APP_ROUTE_ANCESTORS` in `components/breadcrumb-nav.tsx`.
-
-Do not use `router.back()` for navigation here — the breadcrumb component handles it via `router.push(parent)`.
+Loops flow, step 2. Shows `← Back` (navigates to `/outer-loop`) per nav pattern in CLAUDE.md.
 
 ## Invocation
 

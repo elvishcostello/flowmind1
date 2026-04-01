@@ -15,11 +15,7 @@ Use the standard mobile-first page wrapper (see CLAUDE.md):
 
 ## Navigation
 
-This screen is part of the signed-in app. The global `BreadcrumbNav` header is shown (not suppressed).
-
-`BreadcrumbNav` treats `/your-loops` as the breadcrumb root for this route — the back arrow and "Home" crumb both navigate to `/your-loops`, not `/`. This is controlled by `APP_ROUTE_SEGMENTS` in `components/breadcrumb-nav.tsx`.
-
-Do not use `router.back()` for navigation here — the breadcrumb component handles it via `router.push(parent)`.
+Loops flow, step 1. Shows `← Back` (navigates to `/your-loops`) per nav pattern in CLAUDE.md.
 
 ## Layout
 
