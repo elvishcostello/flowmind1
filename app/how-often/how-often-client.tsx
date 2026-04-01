@@ -5,11 +5,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useUserProfile } from "@/lib/user-profile-context";
 import { Button } from "@/components/ui/button";
 
-interface HowLongClientProps {
+interface HowOftenClientProps {
   options: string[];
 }
 
-export function HowLongClient({ options }: HowLongClientProps) {
+export function HowOftenClient({ options }: HowOftenClientProps) {
   const { userProfile } = useUserProfile();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -18,6 +18,7 @@ export function HowLongClient({ options }: HowLongClientProps) {
   const subCategories: string[] = JSON.parse(
     decodeURIComponent(searchParams.get("sub-category") ?? "[]")
   );
+  const howLong = searchParams.get("how-long") ?? "";
 
   useEffect(() => {
     if (!userProfile) {
@@ -30,7 +31,7 @@ export function HowLongClient({ options }: HowLongClientProps) {
   return (
     <div className="flex flex-1 justify-center">
       <div className="w-full max-w-sm flex flex-col flex-1 p-6 space-y-8">
-        <p className="text-base">How long has this been on your mind?</p>
+        <p className="text-base">How often does this need doing?</p>
 
         <div className="space-y-3">
           {options.map((option) => (
@@ -38,11 +39,6 @@ export function HowLongClient({ options }: HowLongClientProps) {
               key={option}
               variant="outline"
               className="w-full"
-              onClick={() =>
-                router.push(
-                  `/how-often?category=${encodeURIComponent(category)}&sub-category=${encodeURIComponent(searchParams.get("sub-category") ?? "[]")}&how-long=${encodeURIComponent(option)}`
-                )
-              }
             >
               {option}
             </Button>
