@@ -20,7 +20,7 @@ export default function RewardsIntroPage() {
 
   useEffect(() => {
     if (!userProfile) {
-      router.push("/signin");
+      router.push("/");
     }
   }, [userProfile, router]);
 

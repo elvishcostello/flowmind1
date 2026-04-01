@@ -17,6 +17,8 @@ DO NOT implement the anthropic SDK features for now. That is in for completeness
 - **Components:** shadcn/ui (source copied into `components/ui/`, not a black-box import, use the 'radix' components.)
 - **AI:** `@anthropic-ai/sdk` — raw SDK, no Vercel AI SDK or other abstraction layer (see note above, stub in, but do not implenent)
 - **Validation:** Zod — used to validate and type structured AI responses
+- **Persistence:** Supabase — hosted Postgres with built-in auth and row-level security. See `PERSISTENCE.md` for full details.
+- **Analytics:** Mixpanel — product analytics for DAU/WAU/MAU and feature instrumentation. See `ANALYTICS.md` for the event catalogue and integration pattern.
 - **Hosting:** Vercel (connected to GitHub, auto-deploys on push to `main`)
 
 Keep the package footprint minimal. Do not introduce new dependencies without discussion.
@@ -32,11 +34,17 @@ This is a **monorepo** — frontend and backend live together in a single Next.j
 ├── app/
 │   ├── page.tsx              # React pages (frontend)
 │   ├── components/           # Shared UI components
-│   └── api/                  # API routes (server-side, never exposed to client)
+│   ├── api/                  # API routes (server-side, never exposed to client)
+│   └── auth/callback/        # OAuth callback route (see PERSISTENCE.md)
 ├── lib/
+│   ├── supabase/
+│   │   └── client.ts         # Supabase browser client utility
+│   ├── analytics.ts          # Mixpanel track() utility and event catalogue
 │   ├── canned-responses.ts   # Hardcoded demo responses, keyed by workflow
 │   └── types.ts              # Shared TypeScript types and Zod schemas
-├── middleware.ts              # Demo mode router — intercepts requests before API routes
+├── middleware.ts              # Demo mode router + Supabase session refresh
+├── PERSISTENCE.md            # Data layer: Supabase, auth, schema, RLS
+├── ANALYTICS.md              # Mixpanel event catalogue and integration pattern
 └── .env.local                # Local secrets (never commit this)
 ```
 
@@ -53,7 +61,11 @@ DEMO_MODE=false  # Live mode, calls Anthropic API
 
 ### How it works
 
-`middleware.ts` intercepts all incoming requests. In demo mode, it matches the request path against a set of regex patterns and returns the appropriate canned response. The real API route handlers never execute.
+`proxy.ts` intercepts all incoming requests. In demo mode, it matches the request path against a set of regex patterns and returns the appropriate canned response. The real API route handlers never execute.
+
+**Important:** `proxy.ts` also handles Supabase session refresh for non-demo requests. Both concerns live in the same file — do not create a second proxy. See `PERSISTENCE.md` for the composition pattern.
+
+> **Note:** Next.js 16 replaced `middleware.ts` with `proxy.ts`. The exported function must be named `proxy` (or a default export) rather than `middleware`.
 
 ```typescript
 const mockedRoutes = [
@@ -139,6 +151,11 @@ Use the `cn()` utility (from `lib/utils.ts`) when merging Tailwind classes to av
 |---|---|---|
 | `ANTHROPIC_API_KEY` | `.env.local` / Vercel dashboard | Anthropic API access |
 | `DEMO_MODE` | `.env.local` / Vercel dashboard | Toggle canned responses |
+| `NEXT_PUBLIC_SUPABASE_URL` | `.env.local` / Vercel dashboard | Supabase project endpoint |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `.env.local` / Vercel dashboard | Supabase public API key |
+| `NEXT_PUBLIC_MIXPANEL_TOKEN` | `.env.local` / Vercel dashboard | Mixpanel project token (use dev token locally, prod token on Vercel) |
+
+See `PERSISTENCE.md` for Supabase configuration. See `ANALYTICS.md` for Mixpanel configuration and event catalogue.
 
 Never put secrets in the codebase. Never commit `.env.local`.
 
@@ -170,7 +187,11 @@ Please add this to the package.json file:
 - Do not put API keys or secrets in source code or commit them
 - Do not make Anthropic API calls from client-side components
 - Do not install the full shadcn/ui package — components are added individually via the CLI and owned as source
-- Do not use `localStorage` or `sessionStorage` — this is a stateless app
+- Do not use `localStorage` or `sessionStorage` — this is a stateless app; use Supabase for all persistence (see `PERSISTENCE.md`)
+- Do not create a second `proxy.ts` — demo mode and Supabase session refresh are composed in the same file
+- Do not fire ad-hoc analytics events — all events must be defined in the catalogue in `ANALYTICS.md`
+- Do not call `mixpanel.track()` directly — always use the `track()` utility from `lib/analytics.ts`
+- Do not point `.env.local` at the production Mixpanel token — use the `flowmind-dev` project locally
 
 ## Icons
 

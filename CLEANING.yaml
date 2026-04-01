@@ -1,0 +1,149 @@
+Kitchen:
+  icon: ChefHat
+  subcats:
+    - subcat: "Wash the dishes"
+      icon: UtensilsCrossed
+    - subcat: "Empty the trash"
+      icon: Trash2
+    - subcat: "Wipe down counters"
+      icon: Sparkles
+    - subcat: "Wipe the stovetop"
+      icon: Sparkles
+    - subcat: "Clean the floor"
+      icon: Sparkles
+    - subcat: "Clean the microwave"
+      icon: Microwave
+    - subcat: "Organize the pantry"
+      icon: LayoutGrid
+    - subcat: "Clean the fridge"
+      icon: Refrigerator
+    - subcat: "Other"
+      icon: Pencil
+
+Bathroom:
+  icon: Droplets
+  subcats:
+    - subcat: "Clean the sink"
+      icon: Drop
+    - subcat: "Clean the toilet"
+      icon: Toilet
+    - subcat: "Wipe the mirror"
+      icon: Sparkles
+    - subcat: "Replace towels"
+      icon: Layers
+    - subcat: "Scrub the shower"
+      icon: ShowerHead
+    - subcat: "Mop the floor"
+      icon: Sparkles
+    - subcat: "Restock supplies"
+      icon: Box
+    - subcat: "Other"
+      icon: Pencil
+
+Bedroom:
+  icon: Bed
+  subcats:
+    - subcat: "Sort the laundry"
+      icon: WashingMachine
+    - subcat: "Pick up the floor"
+      icon: ArrowUpToLine
+    - subcat: "Change the sheets"
+      icon: Bed
+    - subcat: "Dust surfaces"
+      icon: Feather
+    - subcat: "Organize the closet"
+      icon: Shirt
+    - subcat: "Vacuum"
+      icon: Wind
+    - subcat: "Other"
+      icon: Pencil
+
+Living Room:
+  icon: Sofa
+  subcats:
+    - subcat: "Clear the surfaces"
+      icon: Sparkles
+    - subcat: "Clear the clutter"
+      icon: Trash2
+    - subcat: "Vacuum"
+      icon: Wind
+    - subcat: "Wipe down furniture"
+      icon: Sparkles
+    - subcat: "Clean windows"
+      icon: Sparkles
+    - subcat: "Organize shelves"
+      icon: LayoutList
+    - subcat: "Other"
+      icon: Pencil
+
+Office:
+  icon: Monitor
+  subcats:
+    - subcat: "Clear the desk"
+      icon: Sparkles
+    - subcat: "Sort the inbox pile"
+      icon: Mail
+    - subcat: "File papers"
+      icon: Folder
+    - subcat: "Wipe down surfaces"
+      icon: Sparkles
+    - subcat: "Organize supplies"
+      icon: Box
+    - subcat: "Untangle cables"
+      icon: Cable
+    - subcat: "Other"
+      icon: Pencil
+
+Outside:
+  icon: Trees
+  subcats:
+    - subcat: "Take out trash and recycling"
+      icon: Trash2
+    - subcat: "Sweep the porch"
+      icon: Wind
+    - subcat: "Water plants"
+      icon: Sprout
+    - subcat: "Mow the lawn"
+      icon: Sprout
+    - subcat: "Rake leaves"
+      icon: Leaf
+    - subcat: "Shovel snow"
+      icon: CloudSnow
+    - subcat: "Other"
+      icon: Pencil
+
+Car:
+  icon: Car
+  subcats:
+    - subcat: "Clear out trash"
+      icon: Trash2
+    - subcat: "Vacuum interior"
+      icon: Wind
+    - subcat: "Wipe down dashboard"
+      icon: Sparkles
+    - subcat: "Clean windows"
+      icon: Sparkles
+    - subcat: "Wash the exterior"
+      icon: Droplets
+    - subcat: "Tidy the trunk"
+      icon: Package
+    - subcat: "Other"
+      icon: Pencil
+
+Pet:
+  icon: PawPrint
+  subcats:
+    - subcat: "Clean water bowl"
+      icon: Drop
+    - subcat: "Wash food bowl"
+      icon: UtensilsCrossed
+    - subcat: "Clean litter box"
+      icon: Box
+    - subcat: "Vacuum pet hair"
+      icon: Wind
+    - subcat: "Wash pet bedding"
+      icon: Sparkles
+    - subcat: "Give them a bath"
+      icon: Droplets
+    - subcat: "Other"
+      icon: Pencil
