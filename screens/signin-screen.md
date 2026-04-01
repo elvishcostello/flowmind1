@@ -1,17 +1,19 @@
 **Flow:** Onboarding, step 0. Stack root — no back button (header suppressed, see CLAUDE.md Navigation).
 
-Read CLAUDE.md and PERSISTENCE.md before starting.
+**Route:** `/` (rendered conditionally inside `app/page.tsx`)
 
-Implement Google OAuth sign-in. Specifically:
+## Invocation
+None
 
-1. Create `lib/supabase/client.ts` — the Supabase browser client utility as described in PERSISTENCE.md
+## Content
+1. "Welcome to Flowmind" heading
+2. "You're one of the first people here." subtitle
+3. "Sign in with Google" button (full-width)
 
-2. Create `app/auth/callback/route.ts` — the OAuth callback route as described in PERSISTENCE.md
-
-3. Create a `SignInScreen` component at `app/components/SignInScreen.tsx` — a mobile-first sign-in screen matching the app's existing visual style, with a single "Sign in with Google" button. Follow the mobile-first layout pattern in CLAUDE.md.
-
-4. Wrap the root layout in `app/page.tsx` with the session guard described in PERSISTENCE.md — if no session exists show `SignInScreen`, if a session exists show the existing app content.
-
-5. Update `middleware.ts` to add Supabase session refresh alongside the existing demo mode logic. The demo mode logic must remain intact and run first. Follow the composition pattern in PERSISTENCE.md.
-
-Do not implement any other features. Do not modify any other files.
+## Implementation
+Implement Google OAuth sign-in:
+1. Create `lib/supabase/client.ts` — browser client utility (see PERSISTENCE.md)
+2. Create `app/auth/callback/route.ts` — OAuth callback route (see PERSISTENCE.md)
+3. Create `app/components/SignInScreen.tsx` — sign-in screen with welcome text and "Sign in with Google" button
+4. In `app/page.tsx`: if no session → `<SignInScreen />`, if session → `router.replace("/your-loops")`
+5. In `proxy.ts`: add Supabase session refresh alongside demo mode logic (see PERSISTENCE.md)

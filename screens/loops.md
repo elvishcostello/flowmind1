@@ -1,7 +1,9 @@
-**Flow:** Stub. No flow assignment yet.
+**Flow:** Stub — no flow assignment yet.
 
-Create a Next.js client component at `app/loops/page.tsx` for route `/loops`.
+**Route:** `/loops`
 
-Auth guard: on mount, if no `userProfile` in context, redirect to `/signin`. Return `null` while unauthenticated.
+## Invocation
+None
 
-This is a stub page — render only an empty `<div className="flex flex-1" />`. No other content.
+## Content
+Stub — empty page.

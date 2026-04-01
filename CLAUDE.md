@@ -197,6 +197,32 @@ Please add this to the package.json file:
 
 Use the icon library found at http:\\lucided.dev, importing via ```lucided-react```.
 
+## Screen Spec Conventions
+
+All screen specs in `screens/*.md` follow a standard format. The following are **implicit** for every protected screen — specs do not repeat them:
+
+- **Auth guard:** On mount, redirect to `/` if `userProfile` is absent. Return `null` while unauthenticated.
+- **Mobile wrapper:** Every screen uses the standard `flex flex-1 justify-center` / `max-w-sm` wrapper from "Mobile-First Layout" below. Specs do not include the code block.
+- **Standard padding:** Content area uses `p-6 space-y-8` unless the spec notes otherwise.
+
+### Spec format
+
+```
+**Flow:** [label]
+**Route:** /path  (or **Component:** for overlays)
+
+## Invocation
+None  — or —  ?param=<type>  description
+
+## Content
+Numbered list of UI elements, top to bottom.
+Interactions inline (e.g. "tap → /next-route").
+
+## Behavior   ← optional, only for non-obvious interactions
+```
+
+---
+
 ## Navigation
 
 All in-app navigation uses a single `← Back` button. There are no breadcrumb trails.
