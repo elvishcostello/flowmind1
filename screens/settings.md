@@ -1,4 +1,4 @@
-# Settings Screen — Flowmind Implementation Instructions
+**Flow:** Settings overlay (Sheet), accessible from the Loops flow top bar. Not a full page — does not affect the nav stack.
 
 ## Overview
 
@@ -76,116 +76,21 @@ Use `useRouter` from `next/navigation` for the redirect.
 
 ### Return to Orientation
 
-Navigate to `/signin-feeling` using `useRouter().push('/signin-feeling')`.
+Navigate to `/signin/feeling` using `router.replace('/signin/feeling')` (stack reset — see CLAUDE.md Navigation).
 
 Close the sheet before or during navigation.
 
-This button should be labeled **"Return to Orientation"** — not "back" or "restart". The framing should feel intentional, not like an error recovery.
+This button should be labeled **"Return to Orientation"** — not "back" or "restart".
 
 ---
 
 ## Styling Notes
 
-Follow Flowmind's shame-free, low-friction design grammar:
-
-- **Identity block**: subtle, not prominent. The user shouldn't feel surveilled by their own name. Use `text-muted-foreground` for email.
+- **Identity block**: subtle, not prominent. Use `text-muted-foreground` for email.
 - **Return to Orientation button**: `variant="outline"`, full width, normal weight label
-- **Sign Out button**: `variant="ghost"`, full width, use `text-destructive` color class to signal it's a terminal action — but keep it visually quiet, not alarming
-- Both bottom-zone buttons should have a visible separator (`<Separator />` from shadcn) above them, separating them from future settings content
+- **Sign Out button**: `variant="ghost"`, full width, use `text-destructive` color class
+- Both bottom-zone buttons should have a visible `<Separator />` above them
 - Sheet width: default shadcn sheet width is fine on mobile; cap at `max-w-sm` on larger screens
-
----
-
-## Example Component Skeleton
-
-```tsx
-"use client";
-
-import { Settings } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Separator } from "@/components/ui/separator";
-// import your auth hook here, e.g.:
-// import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
-
-export function SettingsSheet() {
-  const router = useRouter();
-  // const user = useUser();
-  // const supabase = useSupabaseClient();
-
-  const handleSignOut = async () => {
-    // await supabase.auth.signOut();
-    router.push("/");
-  };
-
-  const handleReturnToOrientation = () => {
-    router.push("/signin-feeling");
-  };
-
-  return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Open settings">
-          <Settings className="h-5 w-5" />
-        </Button>
-      </SheetTrigger>
-
-      <SheetContent side="right" className="flex flex-col max-w-sm">
-        <SheetHeader>
-          <SheetTitle>Settings</SheetTitle>
-        </SheetHeader>
-
-        {/* Identity block */}
-        <div className="flex items-center gap-3 py-4">
-          {/* Avatar placeholder */}
-          <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground text-sm font-medium">
-            {/* First initial of display name or "?" */}
-          </div>
-          <div className="flex flex-col">
-            <span className="font-medium text-sm">
-              {/* user?.user_metadata?.display_name ?? user?.email ?? "Your Account" */}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {/* user?.email */}
-            </span>
-          </div>
-        </div>
-
-        {/* Middle zone — future settings sections go here */}
-        <div className="flex-1">
-          {/* TODO: Add notification settings, appearance, AI behavior, etc. */}
-        </div>
-
-        {/* Bottom zone */}
-        <div className="flex flex-col gap-2 pb-4">
-          <Separator className="mb-2" />
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={handleReturnToOrientation}
-          >
-            Return to Orientation
-          </Button>
-          <Button
-            variant="ghost"
-            className="w-full text-destructive hover:text-destructive"
-            onClick={handleSignOut}
-          >
-            Sign Out
-          </Button>
-        </div>
-      </SheetContent>
-    </Sheet>
-  );
-}
-```
 
 ---
 
@@ -194,8 +99,7 @@ export function SettingsSheet() {
 - [ ] `SettingsSheet` component created at `components/settings-sheet.tsx`
 - [ ] Auth hook wired up — display name and email render correctly
 - [ ] Sign out calls auth provider and redirects to `/`
-- [ ] Return to Orientation navigates to `/signin-feeling`
-- [ ] Gear icon appears in the top-right of the `Today` screen header
-- [ ] Gear icon appears in the top-right of any other main screens that have a persistent header
-- [ ] Sheet closes cleanly on both actions (navigation triggers auto-close; add `open` state control if needed)
+- [ ] Return to Orientation navigates to `/signin/feeling`
+- [ ] Gear icon appears in the top-right of the `Your Loops` screen header
+- [ ] Sheet closes cleanly on both actions
 - [ ] Tested on mobile viewport — sheet doesn't overflow, buttons have adequate tap targets (min 44px height)

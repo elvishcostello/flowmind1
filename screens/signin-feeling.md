@@ -1,3 +1,5 @@
+**Flow:** Onboarding, step 1. Shows `← Back` per nav pattern in CLAUDE.md.
+
 Create a Next.js client component at `app/signin/feeling/page.tsx` for route `/signin/feeling`.
 
 Auth guard: on mount, if no `userProfile` in context, redirect to `/signin`. Return `null` while unauthenticated.

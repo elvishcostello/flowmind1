@@ -1,3 +1,5 @@
+**Flow:** Onboarding, step 3 (final). Shows `← Back` per nav pattern in CLAUDE.md.
+
 Create a Next.js client component for the route `/rewards-intro`.
 
 Auth guard: on mount, if no `userProfile` in context, redirect to `/signin`. Return `null` while unauthenticated.
@@ -18,4 +20,4 @@ Layout from top to bottom:
     - then a horizontal separator
     - text widget that says '+ add your own'
 
-3. A full-width Continue `Button` that navigates to `/your-loops`.
+3. A full-width Continue `Button` that navigates to `/your-loops` using `router.replace()` (stack reset — see CLAUDE.md Navigation).

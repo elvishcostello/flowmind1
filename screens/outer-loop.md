@@ -1,8 +1,10 @@
+**Flow:** Loops flow, step 1. Shows `← Back` (navigates to `/your-loops`) per nav pattern in CLAUDE.md.
+
 Create a Next.js client component at `app/outer-loop/page.tsx` for route `/outer-loop`.
 
 Auth guard: on mount, if no `userProfile` in context, redirect to `/`. Return `null` while unauthenticated.
 
-# Layout
+## Layout
 
 Use the standard mobile-first page wrapper (see CLAUDE.md):
 ```tsx
@@ -12,16 +14,6 @@ Use the standard mobile-first page wrapper (see CLAUDE.md):
   </div>
 </div>
 ```
-
-## Navigation
-
-This screen is part of the signed-in app. The global `BreadcrumbNav` header is shown (not suppressed).
-
-`BreadcrumbNav` treats `/your-loops` as the breadcrumb root for this route — the back arrow and "Home" crumb both navigate to `/your-loops`, not `/`. This is controlled by `APP_ROUTE_SEGMENTS` in `components/breadcrumb-nav.tsx`.
-
-Do not use `router.back()` for navigation here — the breadcrumb component handles it via `router.push(parent)`.
-
-## Layout
 
 The page is centered vertically and horizontally with `p-6`. Content is constrained to `max-w-sm` and uses `space-y-8`.
 
@@ -38,4 +30,3 @@ Layout from top to bottom:
   - the category name below it
 
   Tapping a card navigates to `/inner-loop?category=<name>` (URL-encoded).
-

@@ -1,3 +1,5 @@
+**Flow:** Onboarding, step 0. Stack root — no back button (header suppressed, see CLAUDE.md Navigation).
+
 Read CLAUDE.md and PERSISTENCE.md before starting.
 
 Implement Google OAuth sign-in. Specifically:

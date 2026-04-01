@@ -197,7 +197,32 @@ Please add this to the package.json file:
 
 Use the icon library found at http:\\lucided.dev, importing via ```lucided-react```.
 
-## use of breadcrumbs
+## Navigation
 
-For all page to page navigation, implement a back button which takes the user to the prior page.
+All in-app navigation uses a single `← Back` button. There are no breadcrumb trails.
+
+### Back button
+- Rendered by `BackNav` in `components/breadcrumb-nav.tsx`
+- Uses `router.back()` — follows real browser history, no hardcoded route map
+- Lives in the global sticky header managed by `ConditionalHeader`
+
+### Stack roots (no back button)
+The global header is suppressed on these routes — they are navigation dead ends with no back:
+- `/` — sign-in / auth gate
+- `/your-loops` — main home screen (has its own custom top bar)
+
+To add more stack roots, add the path to `SUPPRESS_HEADER` in `components/conditional-header.tsx`.
+
+### Stack reset
+When navigating to a stack root programmatically, use `router.replace()` instead of `router.push()`. This replaces the current history entry so the user cannot back-navigate into the previous flow.
+
+```tsx
+// Completing onboarding → your-loops becomes the new root
+router.replace("/your-loops");
+```
+
+### What not to do
+- Do not use `router.push(explicitParent)` for back navigation — use `router.back()`
+- Do not add a route parent map — history is the source of truth
+- Do not show breadcrumb trails
 

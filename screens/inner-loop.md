@@ -1,8 +1,10 @@
+**Flow:** Loops flow, step 2. Shows `← Back` (navigates to `/outer-loop`) per nav pattern in CLAUDE.md.
+
 Create a Next.js client component at `app/inner-loop/page.tsx` for route `/inner-loop`.
 
 Auth guard: on mount, if no `userProfile` in context, redirect to `/`. Return `null` while unauthenticated.
 
-# Layout
+## Layout
 
 Use the standard mobile-first page wrapper (see CLAUDE.md):
 ```tsx
@@ -13,21 +15,13 @@ Use the standard mobile-first page wrapper (see CLAUDE.md):
 </div>
 ```
 
-## Navigation
-
-This screen is part of the signed-in app. The global `BreadcrumbNav` header is shown (not suppressed).
-
-`BreadcrumbNav` renders the full trail: **Home › Add a Loop › Inner Loop**. The back arrow navigates to `/outer-loop`. This is controlled by `APP_ROUTE_ANCESTORS` in `components/breadcrumb-nav.tsx`.
-
-Do not use `router.back()` for navigation here — the breadcrumb component handles it via `router.push(parent)`.
-
 ## Invocation
 
 This page will normally be invoked with a query parameter: `?category=...`.
 
 When the page loads, decode the query into a local variable called `category`.
 
-## Layout
+## Content
 
 The page is centered vertically and horizontally with `p-6`. Content is constrained to `max-w-sm` and uses `space-y-8`.
 
@@ -59,5 +53,3 @@ Layout from top to bottom:
   The task data is defined as a static `CLEANING_DATA` object in the page component, mirroring `CLEANING.yaml`. Icons are resolved at runtime via `ICON_MAP`.
 
   The "Add Tasks" button is disabled when 0 cards are selected. It has no action yet.
-
-

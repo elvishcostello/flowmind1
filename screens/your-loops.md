@@ -1,3 +1,5 @@
+**Flow:** Loops flow, root. Stack root — no back button. Header suppressed; custom top bar instead (see CLAUDE.md Navigation).
+
 Create a Next.js client component at `app/your-loops/page.tsx` for route `/your-loops`.
 
 Auth guard: on mount, if no `userProfile` in context, redirect to `/`. Return `null` while unauthenticated.
@@ -13,7 +15,7 @@ Use the standard mobile-first page wrapper (see CLAUDE.md):
 </div>
 ```
 
-This page uses a custom top bar in place of the global BreadcrumbNav header. The global header is suppressed on `/your-loops` via `ConditionalHeader` in `components/conditional-header.tsx`.
+This page uses a custom top bar in place of the global header. The global header is suppressed on `/your-loops` via `ConditionalHeader` in `components/conditional-header.tsx`.
 
 The layout of the page is as follows:
 
