@@ -201,7 +201,15 @@ export default function InnerLoopPage() {
 
         <div className="flex-1" />
 
-        <Button className="w-full" disabled={selected.size === 0}>
+        <Button
+          className="w-full"
+          disabled={selected.size === 0}
+          onClick={() =>
+            router.push(
+              `/how-long?category=${encodeURIComponent(category)}&sub-category=${encodeURIComponent(JSON.stringify([...selected]))}`
+            )
+          }
+        >
           {addLabel}
         </Button>
       </div>

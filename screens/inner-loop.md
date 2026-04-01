@@ -44,16 +44,19 @@ Layout from top to bottom:
 
   At the bottom of the vertical stack, a button that says 'Add Tasks'.
 
-  If 0 cards are selected its label should say 'Add Tasks'.
-  If 1 cards is selected, it should say 'Add 1 Task'
-  If 2 or more are selected, it should say 'Add N tasks` where N is the number selected.
+  If 0 cards are selected its label should say 'Add Tasks', but it should not be enabled.
+  If 1 cards is selected, it should say 'Add 1 Task', and enable the button.
+  If 2 or more are selected, it should say 'Add N tasks` where N is the number selected and enable the button.
 
-  There should be no action for this button right now.
+  The "Add Tasks" button is disabled when 0 cards are selected.
+
+  When the button is pressed, it invoked the 'how-long' route, passing two parameters:
+  * category (which is a singleton)
+  * sub-category (which is a list of the 1 or more selected cards).
 
   Tapping a card toggles its selected state (multi-select). Selected cards use `bg-primary text-primary-foreground` styling.
 
-  The task data is defined as a static `CLEANING_DATA` object in the page component, mirroring `CLEANING.yaml`. Icons are resolved at runtime via `ICON_MAP`.
+  The task data is defined as a static `CLEANING_DATA` object in the page component, mirroring `yaml/CLEANING.yaml`. Icons are resolved at runtime via `ICON_MAP`.
 
-  The "Add Tasks" button is disabled when 0 cards are selected. It has no action yet.
 
 

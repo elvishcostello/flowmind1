@@ -27,7 +27,7 @@ Layout from top to bottom:
    - Where is it?
    - Pick the room or area
 
-2. A 2-column grid of Cards, one per top-level key in `CLEANING.yaml`.
+2. A 2-column grid of Cards, one per top-level key in `yaml/CLEANING.yaml`.
 
   Categories and their icons are defined as a static `CATEGORIES` array in the page component (no runtime YAML parsing). Each card shows:
   - the lucide icon for the category (centered)
