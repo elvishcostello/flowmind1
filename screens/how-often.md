@@ -34,14 +34,27 @@ const subCategories: string[] = JSON.parse(
 );
 const howLong = searchParams.get("how-long") ?? "";
 ```
-
+1
 ## Content
 
 A label at the top: "How often does this need doing?"
 
-Then a vertical set of buttons, for now leave the buttons inactive.
+Read the yaml/HOWOFTEN.yaml file for a list of dictionaries. The labels should be the key values, in the order given.
+The value of the 'action' key for each top-level key, should be attached to the given button.
 
-Read the yaml/HOWOFTEN.yaml file for a list of values.
+The buttons should be minimal width for the label, and then laid our left to right on multiple lines.
 
-The button labels should be these values, in the order given.
+Below the buttons should be DIV with name 'day-chooser'.
 
+Within the div should be a vertical stack of:
+- horizontal rule
+- a group of buttons (minimal width, left to right, wrapping) with these values:
+  + Mon
+  + Tues
+  + Wed
+  + Thu
+  + Fri
+  + Sat
+  + Sun
+
+The buttons will be in two modes, single-select and multi-select. For now implement them as multi-select, with no target.

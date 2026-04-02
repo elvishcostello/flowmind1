@@ -2,15 +2,27 @@ import fs from "fs";
 import path from "path";
 import { HowOftenClient } from "./how-often-client";
 
-function readHowOftenOptions(): string[] {
+export type HowOftenOption = { label: string; action: string };
+
+function readHowOftenOptions(): HowOftenOption[] {
   const content = fs.readFileSync(
     path.join(process.cwd(), "yaml/HOWOFTEN.yaml"),
     "utf-8"
   );
-  return content
-    .split("\n")
-    .filter((l) => l.startsWith("- "))
-    .map((l) => l.slice(2).trim());
+  const lines = content.split("\n").filter((l) => l.trim());
+  const options: HowOftenOption[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (!line.startsWith(" ") && line.endsWith(":")) {
+      const label = line.slice(0, -1).trim();
+      const actionLine = lines[i + 1]?.trim() ?? "";
+      const action = actionLine.startsWith("action:")
+        ? actionLine.slice("action:".length).trim()
+        : "";
+      options.push({ label, action });
+    }
+  }
+  return options;
 }
 
 export default function HowOftenPage() {

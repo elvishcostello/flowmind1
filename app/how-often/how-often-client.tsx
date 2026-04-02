@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUserProfile } from "@/lib/user-profile-context";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import type { HowOftenOption } from "./page";
+
+const DAYS = ["Mon", "Tues", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 interface HowOftenClientProps {
-  options: string[];
+  options: HowOftenOption[];
 }
 
 export function HowOftenClient({ options }: HowOftenClientProps) {
@@ -20,6 +24,15 @@ export function HowOftenClient({ options }: HowOftenClientProps) {
   );
   const howLong = searchParams.get("how-long") ?? "";
 
+  const [selectedFrequency, setSelectedFrequency] = useState<HowOftenOption | null>(null);
+  const [selectedDays, setSelectedDays] = useState<Set<string>>(new Set());
+
+  const showDayChooser =
+    selectedFrequency?.action === "day-chooser-single" ||
+    selectedFrequency?.action === "day-chooser-multi";
+
+  const isMultiSelect = selectedFrequency?.action === "day-chooser-multi";
+
   useEffect(() => {
     if (!userProfile) {
       router.push("/");
@@ -28,22 +41,65 @@ export function HowOftenClient({ options }: HowOftenClientProps) {
 
   if (!userProfile) return null;
 
+  const handleFrequencySelect = (option: HowOftenOption) => {
+    setSelectedFrequency(option);
+    setSelectedDays(new Set());
+  };
+
+  const handleDayToggle = (day: string) => {
+    if (isMultiSelect) {
+      setSelectedDays((prev) => {
+        const next = new Set(prev);
+        next.has(day) ? next.delete(day) : next.add(day);
+        return next;
+      });
+    } else {
+      setSelectedDays(new Set([day]));
+    }
+  };
+
   return (
     <div className="flex flex-1 justify-center">
       <div className="w-full max-w-sm flex flex-col flex-1 p-6 space-y-8">
         <p className="text-base">How often does this need doing?</p>
 
-        <div className="space-y-3">
+        <div className="flex flex-wrap gap-2">
           {options.map((option) => (
             <Button
-              key={option}
+              key={option.label}
               variant="outline"
-              className="w-full"
+              data-action={option.action}
+              className={cn(
+                selectedFrequency?.label === option.label &&
+                  "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground"
+              )}
+              onClick={() => handleFrequencySelect(option)}
             >
-              {option}
+              {option.label}
             </Button>
           ))}
         </div>
+
+        {showDayChooser && (
+          <div id="day-chooser">
+            <hr className="border-border" />
+            <div className="flex flex-wrap gap-2 mt-4">
+              {DAYS.map((day) => (
+                <Button
+                  key={day}
+                  variant="outline"
+                  className={cn(
+                    selectedDays.has(day) &&
+                      "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground"
+                  )}
+                  onClick={() => handleDayToggle(day)}
+                >
+                  {day}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
