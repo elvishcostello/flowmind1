@@ -80,6 +80,12 @@ export function HowOftenClient({ options }: HowOftenClientProps) {
           ))}
         </div>
 
+        <div className="-mt-6">
+          <Button variant="link" className="px-0 text-muted-foreground underline">
+            skip
+          </Button>
+        </div>
+
         {showDayChooser && (
           <div id="day-chooser">
             <hr className="border-border" />

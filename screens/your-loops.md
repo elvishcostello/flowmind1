@@ -23,7 +23,7 @@ A horizontal div with the following items:
 * a text label that says FLOWMIND
 * a horizontal spacer 
 * a rounded button with two elements in the text
-  + a lucided star
+  + a lucide  star
   + a numeric counter (set to 0 for now)
 * a rounded button that says 'reflect' targets nothing
 * a settings button (that does nothing)

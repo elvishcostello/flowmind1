@@ -49,6 +49,16 @@ This is a **monorepo** — frontend and backend live together in a single Next.j
 ```
 
 ---
+## Specifcations
+
+* configuration files will go in `yaml/*.yaml`
+* coding instructions will be at the root of the repo:
+  + CLAUDE.md (this file)
+  + PERSISTENCE.md = how to persist data (and sign in /out)
+  + ANALYTICS.md - how do analytics
+  + SCREENS.md - overall plan for screens
+* specifications for indidual screens will be:
+  + screens/*.md
 
 ## Demo Mode
 

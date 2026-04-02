@@ -44,6 +44,8 @@ The value of the 'action' key for each top-level key, should be attached to the 
 
 The buttons should be minimal width for the label, and then laid our left to right on multiple lines.
 
+Below this button group should be a single button labeled 'skip'. This should be styled as a URL, with no border, so it is a low cognitive affordance. Behavior of the button is TBD.
+
 Below the buttons should be DIV with name 'day-chooser'.
 
 Within the div should be a vertical stack of:
