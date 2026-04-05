@@ -206,7 +206,7 @@ export default function InnerLoopPage() {
           disabled={selected.size === 0}
           onClick={() =>
             router.push(
-              `/how-long?category=${encodeURIComponent(category)}&sub-category=${encodeURIComponent(JSON.stringify([...selected]))}`
+              `/how-long?category=${encodeURIComponent(category)}&tasks=${encodeURIComponent(JSON.stringify([...selected]))}`
             )
           }
         >

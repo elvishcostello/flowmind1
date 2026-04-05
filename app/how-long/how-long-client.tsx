@@ -15,8 +15,8 @@ export function HowLongClient({ options }: HowLongClientProps) {
   const searchParams = useSearchParams();
 
   const category = searchParams.get("category") ?? "";
-  const subCategories: string[] = JSON.parse(
-    decodeURIComponent(searchParams.get("sub-category") ?? "[]")
+  const tasks: string[] = JSON.parse(
+    decodeURIComponent(searchParams.get("tasks") ?? "[]")
   );
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export function HowLongClient({ options }: HowLongClientProps) {
               className="w-full"
               onClick={() =>
                 router.push(
-                  `/how-often?category=${encodeURIComponent(category)}&sub-category=${encodeURIComponent(searchParams.get("sub-category") ?? "[]")}&how-long=${encodeURIComponent(option)}`
+                  `/how-often?category=${encodeURIComponent(category)}&tasks=${encodeURIComponent(searchParams.get("tasks") ?? "[]")}&how-long=${encodeURIComponent(option)}`
                 )
               }
             >

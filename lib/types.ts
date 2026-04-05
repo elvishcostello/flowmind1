@@ -26,7 +26,7 @@ export const OuterLoopParams = z.object({
 });
 
 export const InnerLoopParams = OuterLoopParams.extend({
-  "sub-category": z.string(), // JSON-encoded string[]
+  tasks: z.string(), // JSON-encoded string[]
 });
 
 export const HowLongParams = InnerLoopParams.extend({

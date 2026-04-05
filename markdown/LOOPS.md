@@ -11,9 +11,9 @@ create table public.loops (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references auth.users(id) not null,
   category text not null,
-  sub_categories text[] not null,
-  how_long text not null,
-  how_often text not null,
+  tasks text[] not null,
+  how_long text,
+  how_often text,
   days text[],                          -- null unless a day-chooser action was used
   completed boolean not null default false,
   created_at timestamptz default now(),
@@ -65,7 +65,7 @@ const { error } = await supabase
   .insert({
     user_id: session.user.id,
     category,
-    sub_categories: subCategories,
+    tasks,
     how_long: howLong,
     how_often: howOften,
     days: selectedDays.length > 0 ? selectedDays : null,

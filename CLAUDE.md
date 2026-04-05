@@ -215,7 +215,7 @@ Schemas chain via `.extend()` to reflect how params accumulate across the flow:
 
 ```typescript
 export const OuterLoopParams = z.object({ category: z.string() });
-export const InnerLoopParams = OuterLoopParams.extend({ "sub-category": z.string() });
+export const InnerLoopParams = OuterLoopParams.extend({ tasks: z.string() });
 // etc.
 ```
 

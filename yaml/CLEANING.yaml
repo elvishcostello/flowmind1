@@ -1,208 +1,208 @@
 Kitchen:
   icon: ChefHat
-  subcats:
-    - subcat: "Wash the dishes"
+  tasks:
+    - task: "Wash the dishes"
       icon: UtensilsCrossed
       hint:
-    - subcat: "Empty the trash"
+    - task: "Empty the trash"
       icon: Trash2
       hint:
-    - subcat: "Wipe down counters"
+    - task: "Wipe down counters"
       icon: Sparkles
       hint:
-    - subcat: "Wipe the stovetop"
+    - task: "Wipe the stovetop"
       icon: Sparkles
       hint:
-    - subcat: "Clean the floor"
+    - task: "Clean the floor"
       icon: Sparkles
       hint:
-    - subcat: "Clean the microwave"
+    - task: "Clean the microwave"
       icon: Microwave
       hint:
-    - subcat: "Organize the pantry"
+    - task: "Organize the pantry"
       icon: LayoutGrid
       hint:
-    - subcat: "Clean the fridge"
+    - task: "Clean the fridge"
       icon: Refrigerator
       hint:
-    - subcat: "Other"
+    - task: "Other"
       icon: Pencil
       hint:
 
 Bathroom:
   icon: Droplets
-  subcats:
-    - subcat: "Clean the sink"
+  tasks:
+    - task: "Clean the sink"
       icon: Drop
       hint:
-    - subcat: "Clean the toilet"
+    - task: "Clean the toilet"
       icon: Toilet
       hint:
-    - subcat: "Wipe the mirror"
+    - task: "Wipe the mirror"
       icon: Sparkles
       hint: "Get out the Windex and Paper Towels"
-    - subcat: "Replace towels"
+    - task: "Replace towels"
       icon: Layers
       hint:
-    - subcat: "Scrub the shower"
+    - task: "Scrub the shower"
       icon: ShowerHead
       hint:
-    - subcat: "Mop the floor"
+    - task: "Mop the floor"
       icon: Sparkles
       hint:
-    - subcat: "Restock supplies"
+    - task: "Restock supplies"
       icon: Box
       hint:
-    - subcat: "Other"
+    - task: "Other"
       icon: Pencil
       hint:
 
 Bedroom:
   icon: Bed
-  subcats:
-    - subcat: "Sort the laundry"
+  tasks:
+    - task: "Sort the laundry"
       icon: WashingMachine
       hint:
-    - subcat: "Pick up the floor"
+    - task: "Pick up the floor"
       icon: ArrowUpToLine
       hint:
-    - subcat: "Change the sheets"
+    - task: "Change the sheets"
       icon: Bed
       hint:
-    - subcat: "Dust surfaces"
+    - task: "Dust surfaces"
       icon: Feather
       hint:
-    - subcat: "Organize the closet"
+    - task: "Organize the closet"
       icon: Shirt
       hint:
-    - subcat: "Vacuum"
+    - task: "Vacuum"
       icon: Wind
       hint:
-    - subcat: "Other"
+    - task: "Other"
       icon: Pencil
       hint:
 
 Living Room:
   icon: Sofa
-  subcats:
-    - subcat: "Clear the surfaces"
+  tasks:
+    - task: "Clear the surfaces"
       icon: Sparkles
       hint:
-    - subcat: "Clear the clutter"
+    - task: "Clear the clutter"
       icon: Trash2
       hint:
-    - subcat: "Vacuum"
+    - task: "Vacuum"
       icon: Wind
       hint:
-    - subcat: "Wipe down furniture"
+    - task: "Wipe down furniture"
       icon: Sparkles
       hint:
-    - subcat: "Clean windows"
+    - task: "Clean windows"
       icon: Sparkles
       hint:
-    - subcat: "Organize shelves"
+    - task: "Organize shelves"
       icon: LayoutList
       hint:
-    - subcat: "Other"
+    - task: "Other"
       icon: Pencil
       hint:
 
 Office:
   icon: Monitor
-  subcats:
-    - subcat: "Clear the desk"
+  tasks:
+    - task: "Clear the desk"
       icon: Sparkles
       hint:
-    - subcat: "Sort the inbox pile"
+    - task: "Sort the inbox pile"
       icon: Mail
       hint:
-    - subcat: "File papers"
+    - task: "File papers"
       icon: Folder
       hint:
-    - subcat: "Wipe down surfaces"
+    - task: "Wipe down surfaces"
       icon: Sparkles
       hint:
-    - subcat: "Organize supplies"
+    - task: "Organize supplies"
       icon: Box
       hint:
-    - subcat: "Untangle cables"
+    - task: "Untangle cables"
       icon: Cable
       hint:
-    - subcat: "Other"
+    - task: "Other"
       icon: Pencil
       hint:
 
 Outside:
   icon: Trees
-  subcats:
-    - subcat: "Take out trash and recycling"
+  tasks:
+    - task: "Take out trash and recycling"
       icon: Trash2
       hint:
-    - subcat: "Sweep the porch"
+    - task: "Sweep the porch"
       icon: Wind
       hint:
-    - subcat: "Water plants"
+    - task: "Water plants"
       icon: Sprout
       hint:
-    - subcat: "Mow the lawn"
+    - task: "Mow the lawn"
       icon: Sprout
       hint:
-    - subcat: "Rake leaves"
+    - task: "Rake leaves"
       icon: Leaf
       hint:
-    - subcat: "Shovel snow"
+    - task: "Shovel snow"
       icon: CloudSnow
       hint:
-    - subcat: "Other"
+    - task: "Other"
       icon: Pencil
       hint:
 
 Car:
   icon: Car
-  subcats:
-    - subcat: "Clear out trash"
+  tasks:
+    - task: "Clear out trash"
       icon: Trash2
       hint:
-    - subcat: "Vacuum interior"
+    - task: "Vacuum interior"
       icon: Wind
       hint:
-    - subcat: "Wipe down dashboard"
+    - task: "Wipe down dashboard"
       icon: Sparkles
       hint:
-    - subcat: "Clean windows"
+    - task: "Clean windows"
       icon: Sparkles
       hint:
-    - subcat: "Wash the exterior"
+    - task: "Wash the exterior"
       icon: Droplets
       hint:
-    - subcat: "Tidy the trunk"
+    - task: "Tidy the trunk"
       icon: Package
       hint:
-    - subcat: "Other"
+    - task: "Other"
       icon: Pencil
       hint:
 
 Pet:
   icon: PawPrint
-  subcats:
-    - subcat: "Clean water bowl"
+  tasks:
+    - task: "Clean water bowl"
       icon: Drop
       hint:
-    - subcat: "Wash food bowl"
+    - task: "Wash food bowl"
       icon: UtensilsCrossed
       hint:
-    - subcat: "Clean litter box"
+    - task: "Clean litter box"
       icon: Box
       hint:
-    - subcat: "Vacuum pet hair"
+    - task: "Vacuum pet hair"
       icon: Wind
       hint:
-    - subcat: "Wash pet bedding"
+    - task: "Wash pet bedding"
       icon: Sparkles
       hint:
-    - subcat: "Give them a bath"
+    - task: "Give them a bath"
       icon: Droplets
       hint:
-    - subcat: "Other"
+    - task: "Other"
       icon: Pencil
       hint:

@@ -31,26 +31,26 @@ Layout from top to bottom:
 2. A text label that says `What needs doing?`
 3. A 2-column grid of Cards
 
-  All of the cards for this category can be found in CLEANING.md with the category as the key, and the sub categories as secondary dictionary.
+  All of the tasks for this category can be found in CLEANING.yaml with the category as the key, and the tasks as the secondary list.
 
   It must be possible to select one or more cards (multi-select)
 
-  For each sub-category, display in a vertical stack
+  For each task, display in a vertical stack
 
-  - the lucide icon for the sub category (centered)
-  - the sub category name below it.
+  - the lucide icon for the task (centered)
+  - the task name below it.
 
   At the bottom of the vertical stack, a button that says 'Add Tasks'.
 
   If 0 cards are selected its label should say 'Add Tasks', but it should not be enabled.
-  If 1 cards is selected, it should say 'Add 1 Task', and enable the button.
-  If 2 or more are selected, it should say 'Add N tasks` where N is the number selected and enable the button.
+  If 1 card is selected, it should say 'Add 1 Task', and enable the button.
+  If 2 or more are selected, it should say 'Add N Tasks' where N is the number selected and enable the button.
 
   The "Add Tasks" button is disabled when 0 cards are selected.
 
-  When the button is pressed, it invoked the 'how-long' route, passing two parameters:
+  When the button is pressed, it invokes the 'how-long' route, passing two parameters:
   * category (which is a singleton)
-  * sub-category (which is a list of the 1 or more selected cards).
+  * tasks (which is a list of the 1 or more selected task names).
 
   Tapping a card toggles its selected state (multi-select). Selected cards use `bg-primary text-primary-foreground` styling.
 

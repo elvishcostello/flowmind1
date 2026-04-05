@@ -19,8 +19,8 @@ export function HowOftenClient({ options }: HowOftenClientProps) {
   const searchParams = useSearchParams();
 
   const category = searchParams.get("category") ?? "";
-  const subCategories: string[] = JSON.parse(
-    decodeURIComponent(searchParams.get("sub-category") ?? "[]")
+  const tasks: string[] = JSON.parse(
+    decodeURIComponent(searchParams.get("tasks") ?? "[]")
   );
   const howLong = searchParams.get("how-long") ?? "";
 
