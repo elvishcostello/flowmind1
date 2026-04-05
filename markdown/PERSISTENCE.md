@@ -64,7 +64,7 @@ Import this wherever you need to read or write data. Do not instantiate the clie
 
 ## Schema
 
-Two tables covering user data only. Loops are handled in a separate sprint — see `LOOPS.md` when that file exists.
+Two tables covering user data only. See `LOOPS.md` for the loops feature schema and RLS policies.
 
 User data is vertically partitioned into profile (static) and activity (app logic cache). This keeps the frequently-written activity row separate from the rarely-changed profile row.
 
@@ -382,6 +382,6 @@ Always handle errors. Never assume a write succeeded without checking `error`.
 - Do not skip RLS policies on new tables — always enable RLS immediately after `create table`, and always add insert policies alongside select/update policies
 - Do not use insert without upsert in the auth callback — the callback can be re-entered on subsequent logins
 - Do not create `user_profiles` without also creating `user_activity` in the same operation — they must stay in sync
-- Do not implement loops persistence here — that belongs in `LOOPS.md` in a future sprint
+- Do not add feature-specific table schemas here — they belong in their own files (e.g. `LOOPS.md`)
 - Do not use Supabase to store behavioural analytics or compute DAU/WAU/MAU — that is Mixpanel's job (see `ANALYTICS.md`)
 - Do not add a `user_sessions` event log — Mixpanel's `session_started` event replaces it entirely
