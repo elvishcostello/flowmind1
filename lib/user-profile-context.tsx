@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-export type UserProfile = { username: string; email: string | undefined };
+export type UserProfile = { id: string; username: string; email: string | undefined };
 
 type UserProfileContextType = {
   userProfile: UserProfile | null;
@@ -22,6 +22,7 @@ export function UserProfileProvider({ children }: { children: React.ReactNode })
       const user = data.session?.user;
       if (user) {
         setUserProfile({
+          id: user.id,
           username: user.user_metadata?.full_name ?? user.email ?? "User",
           email: user.email,
         });
@@ -32,7 +33,7 @@ export function UserProfileProvider({ children }: { children: React.ReactNode })
       const user = session?.user;
       setUserProfile(
         user
-          ? { username: user.user_metadata?.full_name ?? user.email ?? "User", email: user.email }
+          ? { id: user.id, username: user.user_metadata?.full_name ?? user.email ?? "User", email: user.email }
           : null
       );
     });

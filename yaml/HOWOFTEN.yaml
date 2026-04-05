@@ -1,0 +1,10 @@
+one time:
+  action: advance
+daily:
+  action: enable
+weekly:
+  action: day-chooser-single
+specific days:
+  action: day-chooser-multi
+monthly:
+  action: enable

@@ -1,0 +1,208 @@
+Kitchen:
+  icon: ChefHat
+  tasks:
+    - task: "Wash the dishes"
+      icon: UtensilsCrossed
+      hint:
+    - task: "Empty the trash"
+      icon: Trash2
+      hint:
+    - task: "Wipe down counters"
+      icon: Sparkles
+      hint:
+    - task: "Wipe the stovetop"
+      icon: Sparkles
+      hint:
+    - task: "Clean the floor"
+      icon: Sparkles
+      hint:
+    - task: "Clean the microwave"
+      icon: Microwave
+      hint:
+    - task: "Organize the pantry"
+      icon: LayoutGrid
+      hint:
+    - task: "Clean the fridge"
+      icon: Refrigerator
+      hint:
+    - task: "Other"
+      icon: Pencil
+      hint:
+
+Bathroom:
+  icon: Droplets
+  tasks:
+    - task: "Clean the sink"
+      icon: Drop
+      hint:
+    - task: "Clean the toilet"
+      icon: Toilet
+      hint:
+    - task: "Wipe the mirror"
+      icon: Sparkles
+      hint: "Get out the Windex and Paper Towels"
+    - task: "Replace towels"
+      icon: Layers
+      hint:
+    - task: "Scrub the shower"
+      icon: ShowerHead
+      hint:
+    - task: "Mop the floor"
+      icon: Sparkles
+      hint:
+    - task: "Restock supplies"
+      icon: Box
+      hint:
+    - task: "Other"
+      icon: Pencil
+      hint:
+
+Bedroom:
+  icon: Bed
+  tasks:
+    - task: "Sort the laundry"
+      icon: WashingMachine
+      hint:
+    - task: "Pick up the floor"
+      icon: ArrowUpToLine
+      hint:
+    - task: "Change the sheets"
+      icon: Bed
+      hint:
+    - task: "Dust surfaces"
+      icon: Feather
+      hint:
+    - task: "Organize the closet"
+      icon: Shirt
+      hint:
+    - task: "Vacuum"
+      icon: Wind
+      hint:
+    - task: "Other"
+      icon: Pencil
+      hint:
+
+Living Room:
+  icon: Sofa
+  tasks:
+    - task: "Clear the surfaces"
+      icon: Sparkles
+      hint:
+    - task: "Clear the clutter"
+      icon: Trash2
+      hint:
+    - task: "Vacuum"
+      icon: Wind
+      hint:
+    - task: "Wipe down furniture"
+      icon: Sparkles
+      hint:
+    - task: "Clean windows"
+      icon: Sparkles
+      hint:
+    - task: "Organize shelves"
+      icon: LayoutList
+      hint:
+    - task: "Other"
+      icon: Pencil
+      hint:
+
+Office:
+  icon: Monitor
+  tasks:
+    - task: "Clear the desk"
+      icon: Sparkles
+      hint:
+    - task: "Sort the inbox pile"
+      icon: Mail
+      hint:
+    - task: "File papers"
+      icon: Folder
+      hint:
+    - task: "Wipe down surfaces"
+      icon: Sparkles
+      hint:
+    - task: "Organize supplies"
+      icon: Box
+      hint:
+    - task: "Untangle cables"
+      icon: Cable
+      hint:
+    - task: "Other"
+      icon: Pencil
+      hint:
+
+Outside:
+  icon: Trees
+  tasks:
+    - task: "Take out trash and recycling"
+      icon: Trash2
+      hint:
+    - task: "Sweep the porch"
+      icon: Wind
+      hint:
+    - task: "Water plants"
+      icon: Sprout
+      hint:
+    - task: "Mow the lawn"
+      icon: Sprout
+      hint:
+    - task: "Rake leaves"
+      icon: Leaf
+      hint:
+    - task: "Shovel snow"
+      icon: CloudSnow
+      hint:
+    - task: "Other"
+      icon: Pencil
+      hint:
+
+Car:
+  icon: Car
+  tasks:
+    - task: "Clear out trash"
+      icon: Trash2
+      hint:
+    - task: "Vacuum interior"
+      icon: Wind
+      hint:
+    - task: "Wipe down dashboard"
+      icon: Sparkles
+      hint:
+    - task: "Clean windows"
+      icon: Sparkles
+      hint:
+    - task: "Wash the exterior"
+      icon: Droplets
+      hint:
+    - task: "Tidy the trunk"
+      icon: Package
+      hint:
+    - task: "Other"
+      icon: Pencil
+      hint:
+
+Pet:
+  icon: PawPrint
+  tasks:
+    - task: "Clean water bowl"
+      icon: Drop
+      hint:
+    - task: "Wash food bowl"
+      icon: UtensilsCrossed
+      hint:
+    - task: "Clean litter box"
+      icon: Box
+      hint:
+    - task: "Vacuum pet hair"
+      icon: Wind
+      hint:
+    - task: "Wash pet bedding"
+      icon: Sparkles
+      hint:
+    - task: "Give them a bath"
+      icon: Droplets
+      hint:
+    - task: "Other"
+      icon: Pencil
+      hint:

@@ -7,11 +7,13 @@ All screens in the app with their navigation relationships.
 | home                  | Home                     | `/`                      | —                     | signin                |
 | signin-feeling        | You Know That Feeling    | `/signin/feeling`        | signin                | signin-cleaning-intro |
 | signin-cleaning-intro | Introduction to Cleaning | `/signin/cleaning-intro` | signin-feeling        | rewards-intro         |
-| loops                 | Loops                    | `/loops`                 | signin-cleaning-intro | —                     |
-| rewards-intro         | Introduction to Rewards  | `/rewards-intro`         | loops                 | your-loops            |
-| your-loops            | Your Loops               | `/your-loops`            | rewards-intro         | -                     |
-| outer-loop            | Outer Loop               | `/outer-loop`            | TBD                   | inner-loop            |
-| inner-loop            | Inner Loop               | `/inner-loop`            | outer-loop            | -                     |
+| rewards-intro         | Introduction to Rewards  | `/rewards-intro`         | signin-cleaning-intro | your-loops            |
+| your-loops            | Your Loops               | `/your-loops`            | rewards-intro         | outer-loop            |
+| outer-loop            | Outer Loop               | `/outer-loop`            | your-loops            | inner-loop            |
+| inner-loop            | Inner Loop               | `/inner-loop`            | outer-loop            | how-long              |
+| how-long              | How Long                 | `/how-long`              | inner-loop            | how-often             |
+| how-often             | How Often                | `/how-often`             | how-long              | —                     |
+| loops                 | Loops                    | `/loops`                 | — (stub)              | —                     |
 
 | settings              | Settings                 | overlay (Sheet)          | any main screen header  | signin-feeling / `/`  |
 
