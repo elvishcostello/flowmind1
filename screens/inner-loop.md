@@ -19,9 +19,7 @@ Loops flow, step 2. Shows `← Back` (navigates to `/outer-loop`) per nav patter
 
 ## Invocation
 
-This page will normally be invoked with a query parameter: `?category=...`.
-
-When the page loads, decode the query into a local variable called `category`.
+Params: see `InnerLoopParams` in `lib/types.ts`.
 
 ## Layout
 

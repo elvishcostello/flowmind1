@@ -19,22 +19,7 @@ Loops flow, step 4. Shows `← Back` (navigates to `/how-long`) per nav pattern 
 
 ## Invocation
 
-This page is invoked with two query parameters:
-
-- `?category=<string>` — the category selected on `/outer-loop` (e.g. `Kitchen`)
-- `?sub-category=<string>` — a JSON-encoded array of one or more sub-category names selected on `/inner-loop` (e.g. `["Wash the dishes","Empty the trash"]`)
-- `?how-long=<string>` — the duration selected on `/how-long` (e.g. `a few days`)
-
-When the page loads, decode into local variables:
-
-```ts
-const category = searchParams.get("category") ?? "";
-const subCategories: string[] = JSON.parse(
-  decodeURIComponent(searchParams.get("sub-category") ?? "[]")
-);
-const howLong = searchParams.get("how-long") ?? "";
-```
-1
+Params: see `HowOftenParams` in `lib/types.ts`.
 ## Content
 
 A label at the top: "How often does this need doing?"

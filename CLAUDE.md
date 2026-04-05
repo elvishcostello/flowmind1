@@ -203,6 +203,22 @@ Please add this to the package.json file:
 - Do not call `mixpanel.track()` directly — always use the `track()` utility from `lib/analytics.ts`
 - Do not point `.env.local` at the production Mixpanel token — use the `flowmind-dev` project locally
 
+## Route Parameter Contracts
+
+Query parameters passed between screens are defined as Zod schemas in `lib/types.ts` — not in the screen specs or inline in components.
+
+Schemas chain via `.extend()` to reflect how params accumulate across the flow:
+
+```typescript
+export const OuterLoopParams = z.object({ category: z.string() });
+export const InnerLoopParams = OuterLoopParams.extend({ "sub-category": z.string() });
+// etc.
+```
+
+Screen specs reference the schema by name (`see HowLongParams in lib/types.ts`) rather than duplicating the param list. `lib/types.ts` is the single source of truth.
+
+---
+
 ## Icons
 
 Use the icon library found at http:\\lucided.dev, importing via ```lucided-react```.

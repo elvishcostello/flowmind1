@@ -19,19 +19,7 @@ Loops flow, step 3. Shows `← Back` (navigates to `/inner-loop`) per nav patter
 
 ## Invocation
 
-This page is invoked with two query parameters:
-
-- `?category=<string>` — the category selected on `/outer-loop` (e.g. `Kitchen`)
-- `?sub-category=<string>` — a JSON-encoded array of one or more sub-category names selected on `/inner-loop` (e.g. `["Wash the dishes","Empty the trash"]`)
-
-When the page loads, decode both into local variables `category` (string) and `subCategories` (string[]):
-
-```ts
-const category = searchParams.get("category") ?? "";
-const subCategories: string[] = JSON.parse(
-  decodeURIComponent(searchParams.get("sub-category") ?? "[]")
-);
-```
+Params: see `HowLongParams` in `lib/types.ts`.
 
 ## Content
 
