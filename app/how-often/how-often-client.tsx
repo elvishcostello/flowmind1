@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUserProfile } from "@/lib/user-profile-context";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { HowOftenOption } from "./page";
@@ -41,12 +42,27 @@ export function HowOftenClient({ options }: HowOftenClientProps) {
 
   if (!userProfile) return null;
 
+  const persistLoop = async (howOften: string | null, days: string[] | null) => {
+    const supabase = createClient();
+    const { error } = await supabase.from("loops").insert({
+      user_id: userProfile.id,
+      category,
+      tasks,
+      how_long: howLong || null,
+      how_often: howOften,
+      days: days && days.length > 0 ? days : null,
+      completed: false,
+    });
+    if (error) console.error("loop insert failed:", error);
+  };
+
   const showAddThisLoop =
     selectedFrequency?.action === "enable" ||
     (showDayChooser && selectedDays.size > 0);
 
-  const handleFrequencySelect = (option: HowOftenOption) => {
+  const handleFrequencySelect = async (option: HowOftenOption) => {
     if (option.action === "advance") {
+      await persistLoop(option.label, null);
       router.push("/your-loops?refresh=true");
       return;
     }
@@ -97,7 +113,10 @@ export function HowOftenClient({ options }: HowOftenClientProps) {
         </div>
 
         <div className="-mt-6">
-          <Button variant="link" className="px-0 text-muted-foreground underline" onClick={() => router.push("/your-loops?refresh=true")}>
+          <Button variant="link" className="px-0 text-muted-foreground underline" onClick={async () => {
+            await persistLoop(null, null);
+            router.push("/your-loops?refresh=true");
+          }}>
             skip
           </Button>
         </div>
@@ -127,7 +146,13 @@ export function HowOftenClient({ options }: HowOftenClientProps) {
           <Button
             className="w-full"
             disabled={showDayChooser && selectedDays.size === 0}
-            onClick={() => router.push("/your-loops?refresh=true")}
+            onClick={async () => {
+              await persistLoop(
+                selectedFrequency?.label ?? null,
+                showDayChooser ? [...selectedDays] : null
+              );
+              router.push("/your-loops?refresh=true");
+            }}
           >
             Add This Loop
           </Button>

@@ -56,13 +56,37 @@ Inspect the `action` property attached to the selected how-often button.
 
 | action | behaviour |
 |---|---|
-| `advance` | Navigate immediately to `/your-loops?refresh=true` |
+| `advance` | Reposit the loop immediately, storing the button label as `how_often` |
 | `enable` | Show and enable the `Add This Loop` button |
 | `day-chooser-single` | Show the day-chooser in single-select mode |
 | `day-chooser-multi` | Show the day-chooser in multi-select mode |
 
 When the day-chooser is visible: `Add This Loop` is shown but disabled until at least one day is selected. Once a day is selected, enable it.
 
-When `Add This Loop` is tapped, navigate to `/your-loops?refresh=true`.
+## Repositing the loop
 
-When 'skip' is tapped, navigate to `/your-loops?refresh=true`.
+We will be created a new loop in the supabase `loops` table.
+
+For all cases, store these values:
+* category
+* tasks
+* howlong
+* created_at, updated_at updated to this moment in time, if that does not happen automatically
+* completed should be False
+
+### Add this loop
+
+In addition, set these values
+* how-often
+* days[] should reflect the selected days, if any
+
+Then navigate to `/your-loops?refresh=true`.
+
+### Skip
+
+When 'skip' is tapped, create a new loop in the supabase loops table.
+
+* how-often can be left null
+* days can be null
+
+Then navigate to `/your-loops?refresh=true`.
