@@ -41,7 +41,15 @@ export function HowOftenClient({ options }: HowOftenClientProps) {
 
   if (!userProfile) return null;
 
+  const showAddThisLoop =
+    selectedFrequency?.action === "enable" ||
+    (showDayChooser && selectedDays.size > 0);
+
   const handleFrequencySelect = (option: HowOftenOption) => {
+    if (option.action === "advance") {
+      router.push("/your-loops?refresh=true");
+      return;
+    }
     setSelectedFrequency(option);
     setSelectedDays(new Set());
   };
@@ -61,6 +69,14 @@ export function HowOftenClient({ options }: HowOftenClientProps) {
   return (
     <div className="flex flex-1 justify-center">
       <div className="w-full max-w-sm flex flex-col flex-1 p-6 space-y-8">
+        <Button
+          variant="ghost"
+          className="self-start -ml-2 text-muted-foreground"
+          onClick={() => router.back()}
+        >
+          ← Back
+        </Button>
+
         <p className="text-base">How often does this need doing?</p>
 
         <div className="flex flex-wrap gap-2">
@@ -81,7 +97,7 @@ export function HowOftenClient({ options }: HowOftenClientProps) {
         </div>
 
         <div className="-mt-6">
-          <Button variant="link" className="px-0 text-muted-foreground underline">
+          <Button variant="link" className="px-0 text-muted-foreground underline" onClick={() => router.push("/your-loops?refresh=true")}>
             skip
           </Button>
         </div>
@@ -105,6 +121,16 @@ export function HowOftenClient({ options }: HowOftenClientProps) {
               ))}
             </div>
           </div>
+        )}
+
+        {showAddThisLoop && (
+          <Button
+            className="w-full"
+            disabled={showDayChooser && selectedDays.size === 0}
+            onClick={() => router.push("/your-loops?refresh=true")}
+          >
+            Add This Loop
+          </Button>
         )}
       </div>
     </div>

@@ -15,6 +15,12 @@ export type SummaryResponse = z.infer<typeof SummaryResponseSchema>;
 // Loop creation flow — query params passed between outer-loop → inner-loop → how-long → how-often
 // Each screen receives all params from prior screens plus its own addition.
 
+export const YourLoopsParams = z.object({
+  refresh: z.string().optional(),
+});
+
+export type YourLoopsParams = z.infer<typeof YourLoopsParams>;
+
 export const OuterLoopParams = z.object({
   category: z.string(),
 });

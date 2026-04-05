@@ -3,147 +3,206 @@ Kitchen:
   subcats:
     - subcat: "Wash the dishes"
       icon: UtensilsCrossed
+      hint:
     - subcat: "Empty the trash"
       icon: Trash2
+      hint:
     - subcat: "Wipe down counters"
       icon: Sparkles
+      hint:
     - subcat: "Wipe the stovetop"
       icon: Sparkles
+      hint:
     - subcat: "Clean the floor"
       icon: Sparkles
+      hint:
     - subcat: "Clean the microwave"
       icon: Microwave
+      hint:
     - subcat: "Organize the pantry"
       icon: LayoutGrid
+      hint:
     - subcat: "Clean the fridge"
       icon: Refrigerator
+      hint:
     - subcat: "Other"
       icon: Pencil
+      hint:
 
 Bathroom:
   icon: Droplets
   subcats:
     - subcat: "Clean the sink"
       icon: Drop
+      hint:
     - subcat: "Clean the toilet"
       icon: Toilet
+      hint:
     - subcat: "Wipe the mirror"
       icon: Sparkles
+      hint: "Get out the Windex and Paper Towels"
     - subcat: "Replace towels"
       icon: Layers
+      hint:
     - subcat: "Scrub the shower"
       icon: ShowerHead
+      hint:
     - subcat: "Mop the floor"
       icon: Sparkles
+      hint:
     - subcat: "Restock supplies"
       icon: Box
+      hint:
     - subcat: "Other"
       icon: Pencil
+      hint:
 
 Bedroom:
   icon: Bed
   subcats:
     - subcat: "Sort the laundry"
       icon: WashingMachine
+      hint:
     - subcat: "Pick up the floor"
       icon: ArrowUpToLine
+      hint:
     - subcat: "Change the sheets"
       icon: Bed
+      hint:
     - subcat: "Dust surfaces"
       icon: Feather
+      hint:
     - subcat: "Organize the closet"
       icon: Shirt
+      hint:
     - subcat: "Vacuum"
       icon: Wind
+      hint:
     - subcat: "Other"
       icon: Pencil
+      hint:
 
 Living Room:
   icon: Sofa
   subcats:
     - subcat: "Clear the surfaces"
       icon: Sparkles
+      hint:
     - subcat: "Clear the clutter"
       icon: Trash2
+      hint:
     - subcat: "Vacuum"
       icon: Wind
+      hint:
     - subcat: "Wipe down furniture"
       icon: Sparkles
+      hint:
     - subcat: "Clean windows"
       icon: Sparkles
+      hint:
     - subcat: "Organize shelves"
       icon: LayoutList
+      hint:
     - subcat: "Other"
       icon: Pencil
+      hint:
 
 Office:
   icon: Monitor
   subcats:
     - subcat: "Clear the desk"
       icon: Sparkles
+      hint:
     - subcat: "Sort the inbox pile"
       icon: Mail
+      hint:
     - subcat: "File papers"
       icon: Folder
+      hint:
     - subcat: "Wipe down surfaces"
       icon: Sparkles
+      hint:
     - subcat: "Organize supplies"
       icon: Box
+      hint:
     - subcat: "Untangle cables"
       icon: Cable
+      hint:
     - subcat: "Other"
       icon: Pencil
+      hint:
 
 Outside:
   icon: Trees
   subcats:
     - subcat: "Take out trash and recycling"
       icon: Trash2
+      hint:
     - subcat: "Sweep the porch"
       icon: Wind
+      hint:
     - subcat: "Water plants"
       icon: Sprout
+      hint:
     - subcat: "Mow the lawn"
       icon: Sprout
+      hint:
     - subcat: "Rake leaves"
       icon: Leaf
+      hint:
     - subcat: "Shovel snow"
       icon: CloudSnow
+      hint:
     - subcat: "Other"
       icon: Pencil
+      hint:
 
 Car:
   icon: Car
   subcats:
     - subcat: "Clear out trash"
       icon: Trash2
+      hint:
     - subcat: "Vacuum interior"
       icon: Wind
+      hint:
     - subcat: "Wipe down dashboard"
       icon: Sparkles
+      hint:
     - subcat: "Clean windows"
       icon: Sparkles
+      hint:
     - subcat: "Wash the exterior"
       icon: Droplets
+      hint:
     - subcat: "Tidy the trunk"
       icon: Package
+      hint:
     - subcat: "Other"
       icon: Pencil
+      hint:
 
 Pet:
   icon: PawPrint
   subcats:
     - subcat: "Clean water bowl"
       icon: Drop
+      hint:
     - subcat: "Wash food bowl"
       icon: UtensilsCrossed
+      hint:
     - subcat: "Clean litter box"
       icon: Box
+      hint:
     - subcat: "Vacuum pet hair"
       icon: Wind
+      hint:
     - subcat: "Wash pet bedding"
       icon: Sparkles
+      hint:
     - subcat: "Give them a bath"
       icon: Droplets
+      hint:
     - subcat: "Other"
       icon: Pencil
+      hint:

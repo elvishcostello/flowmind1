@@ -2,6 +2,10 @@ Create a Next.js client component at `app/your-loops/page.tsx` for route `/your-
 
 Auth guard: on mount, if no `userProfile` in context, redirect to `/`. Return `null` while unauthenticated.
 
+## Invocation
+
+Params: see `YourLoopsParams` in `lib/types.ts`. The `refresh` param is optional — when present, the page should reload its loop data.
+
 # layout
 
 Use the standard mobile-first page wrapper (see CLAUDE.md):
