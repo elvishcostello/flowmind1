@@ -2,15 +2,7 @@ Create a Next.js client component at `app/your-loops/page.tsx` for route `/your-
 
 Auth guard: on mount, if no `userProfile` in context, redirect to `/`. Return `null` while unauthenticated.
 
-## Invocation
-
-None. The page fetches loop data unconditionally on mount.
-
-When invoked, do two querys (matching on user_id)
-* count how many loops exist for this user where completed is TRUE
-* return a list of all the loops for this user for which completed is not TRUE
-
-# layout
+# Layout
 
 Use the standard mobile-first page wrapper (see CLAUDE.md):
 ```tsx
@@ -23,84 +15,82 @@ Use the standard mobile-first page wrapper (see CLAUDE.md):
 
 This page uses a custom top bar in place of the global BreadcrumbNav header. The global header is suppressed on `/your-loops` via `ConditionalHeader` in `components/conditional-header.tsx`.
 
-The layout of the page is as follows:
+## Navigation
 
-## top bar
+Main screen — no back button. Entry point after onboarding and after saving a new loop.
 
-A horizontal div with the following items:
-* a text label that says FLOWMIND
-* a horizontal spacer 
-* a rounded button with two elements in the text
-  + a lucide  star
-  + a numeric counter (set this value to the number of completed loops above)
-* a rounded button that says 'reflect' targets nothing
-* a settings button (that does nothing)
+## Invocation
 
-## horizontal separator
+None. The page fetches loop data unconditionally on mount.
 
-## text
+On mount, run two queries (matching on `user_id`):
+- Count loops where `completed` is `TRUE`
+- Return all loops where `completed` is not `TRUE`
 
-```text
+## Content
+
+### Top bar
+
+A horizontal div with:
+- A text label: `FLOWMIND`
+- A horizontal spacer
+- A rounded button with a lucide `Star` icon and a numeric counter (count of completed loops)
+- A rounded button labeled `reflect` (targets nothing)
+- A settings button (does nothing)
+
+### Horizontal separator
+
+### Heading text
+
+```
 Your Loops
 What's been sitting in the back of the mind?
+```
+
+### Empty state
+
+If the open loops list is empty, show a card with:
+- A lucide `Repeat2` icon
+- Text:
+  ```
+  Nothing open right now.
+
+  That's a good feeling.
   ```
 
-## nothing open DIV
+### Loop list
 
-If the length of the open loops is exactly zero, then:
+If open loops exist, render a card for each loop:
 
-Create a card with the following contents
-* a lucide repeat-2 icon
-* text
-```text
-Nothing open right now.
+**Row 1:** Look up the category in `yaml/CLEANING.yaml`. If the `icon` field is non-null, display the corresponding lucide icon. Then display a label: `<category> Tasks`.
 
-That's a good feeling.
-```
+**Row 2:** The tasks array must not be empty — log a console error if it is. Display the first task with:
+- A lucide `Circle` icon
+- The first task value
+- If additional tasks exist, append `+N more` on the same row
 
-## list of active loops
+Each card has a close (X) button.
 
-If the length is greater than zero, then:
+### Footer
 
-For each loop, create a card with the following contents:
+A button pinned to the bottom right: `+ Add a Loop`
 
-In the first row:
-* Obtain the category. Look  this up in yaml/CLEANING.yaml, and if the icon field is non null, display that lucide icon.
-* Then display a label with the category, followed by this string ' Tasks'
+## Button Semantics
 
-The tasks array should NOT be empty, if it is please log an error on the console.
+| element | action |
+|---|---|
+| Close (X) button | Shows a confirmation dialog (see below) |
+| Add a Loop button | Navigates to `/outer-loop` |
 
-If the array is NOT empty, obtain the first task in the list, and put this on a single row:
-* a Lucide icon for a 'circle'
-* the value of the first task
-* if there are additional tasks beyond the first, append `+N more` (e.g. `+2 more`) on the same row
-* there should be a close (X) button for the card.
+**Close confirmation dialog:**
 
-## vertical spacer
+Label: `Remove this loop?`
 
-a button at the bottom right:
+| button | action |
+|---|---|
+| Yes, Remove it | Updates the loop row: sets `completed` to `TRUE` |
+| Keep it | Dismisses the dialog, returns to the loops page |
 
-```text
-+ Add a Loop
-```
+## Analytics
 
-## Button semantics
-
-
-### close button
-If the user pressed the 'close' button for a given card, a simple confirmation dialog should appear:
-
-Label: Remove this loop?
-Buttons:
-* Yes, Remove it
-* Keep it
-
-The action for the 'Yes' action is to close the loop.
-
-To do this, update this row in the loops table, marking the 'completed' field as TRUE.
-
-If the user selects 'Keep it' return to the loops page, effectively a browser back action.
-
-### Add a loops
-
-The Add a Loops button navigates to `/outer-loop`.
+TODO: Define any events this screen should fire in `markdown/ANALYTICS.md`, then call `track()` here.

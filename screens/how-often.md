@@ -20,18 +20,19 @@ Loops flow, step 4. Shows `← Back` (navigates to `/how-long`) per nav pattern 
 ## Invocation
 
 Params: see `HowOftenParams` in `lib/types.ts`.
+
 ## Content
 
 A label at the top: "How often does this need doing?"
 
 Read the yaml/HOWOFTEN.yaml file for a list of dictionaries. The labels should be the key values, in the order given.
-The value of the 'action' key for each top-level key, should be attached to the given button.
+The value of the `action` key for each top-level key should be attached to the given button.
 
-The buttons should be minimal width for the label, and then laid our left to right on multiple lines. This button group should be called internally 'how-often-group'.
+The buttons should be minimal width for the label, and laid out left to right on multiple lines. This button group should be called internally `how-often-group`.
 
-Below this button group should be a single button labeled 'skip'. This should be styled as a URL, with no border, so it is a low cognitive affordance.
+Below this button group should be a single button labeled `skip`. This should be styled as a URL, with no border, so it is a low cognitive affordance.
 
-Below the buttons should be a DIV with name 'day-chooser'. It is hidden by default.
+Below the buttons should be a DIV with name `day-chooser`. It is hidden by default.
 
 Within the div should be a vertical stack of:
 - horizontal rule
@@ -48,7 +49,7 @@ The day buttons support two modes, controlled by the action that triggered the d
 - `day-chooser-single` → single-select (only one day can be active at a time)
 - `day-chooser-multi` → multi-select (any number of days can be toggled)
 
-Below the day-chooser should be a button with the label 'Add This Loop'. This button is hidden by default.
+Below the day-chooser should be a button with the label `Add This Loop`. This button is hidden by default.
 
 ## Button Semantics
 
@@ -63,30 +64,23 @@ Inspect the `action` property attached to the selected how-often button.
 
 When the day-chooser is visible: `Add This Loop` is shown but disabled until at least one day is selected. Once a day is selected, enable it.
 
-## Repositing the loop
+**Skip:** When `skip` is tapped, create a new loop with `how_often` and `days` both null, then navigate away (see Data Requirements).
 
-We will be created a new loop in the supabase `loops` table.
+## Data Requirements
 
-For all cases, store these values:
-* category
-* tasks
-* howlong
-* created_at, updated_at updated to this moment in time, if that does not happen automatically
-* completed should be False
+Create a new loop in the Supabase `loops` table. For all cases, store:
+- `category`
+- `tasks`
+- `how_long`
+- `created_at`, `updated_at` — set to current time if not automatic
+- `completed` — `false`
 
-### Add this loop
+**Add This Loop:** additionally set `how_often` to the selected button label, and `days[]` to the selected days (if any).
 
-In addition, set these values
-* how-often
-* days[] should reflect the selected days, if any
+**Skip:** leave `how_often` and `days` as null.
 
-Then call `router.refresh()` followed by `router.replace('/your-loops')`. `router.refresh()` invalidates the Next.js router cache so the loops list reloads fresh data on mount; `router.replace()` makes `/your-loops` the new history root.
+After saving, call `router.refresh()` followed by `router.replace('/your-loops')`. `router.refresh()` invalidates the Next.js router cache so the loops list reloads fresh data on mount; `router.replace()` makes `/your-loops` the new history root.
 
-### Skip
+## Analytics
 
-When 'skip' is tapped, create a new loop in the supabase loops table.
-
-* how-often can be left null
-* days can be null
-
-Then call `router.refresh()` followed by `router.replace('/your-loops')`. `router.refresh()` invalidates the Next.js router cache so the loops list reloads fresh data on mount; `router.replace()` makes `/your-loops` the new history root.
+TODO: Define any events this screen should fire in `markdown/ANALYTICS.md`, then call `track()` here.

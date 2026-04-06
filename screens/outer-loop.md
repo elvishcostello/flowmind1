@@ -17,7 +17,11 @@ Use the standard mobile-first page wrapper (see CLAUDE.md):
 
 Loops flow, step 1. Shows `← Back` (navigates to `/your-loops`) per nav pattern in CLAUDE.md.
 
-## Layout
+## Invocation
+
+None. No params — this is the entry point of the loop creation flow.
+
+## Content
 
 The page is centered vertically and horizontally with `p-6`. Content is constrained to `max-w-sm` and uses `space-y-8`.
 
@@ -29,9 +33,16 @@ Layout from top to bottom:
 
 2. A 2-column grid of Cards, one per top-level key in `yaml/CLEANING.yaml`.
 
-  Categories and their icons are defined as a static `CATEGORIES` array in the page component (no runtime YAML parsing). Each card shows:
-  - the lucide icon for the category (centered)
-  - the category name below it
+   Categories and their icons are defined as a static `CATEGORIES` array in the page component (no runtime YAML parsing). Each card shows:
+   - the lucide icon for the category (centered)
+   - the category name below it
 
-  Tapping a card navigates to `/inner-loop?category=<name>` (URL-encoded).
+## Button Semantics
 
+| element | action |
+|---|---|
+| Category card | Navigates to `/inner-loop?category=<name>` (URL-encoded) |
+
+## Analytics
+
+TODO: Define any events this screen should fire in `markdown/ANALYTICS.md`, then call `track()` here.
