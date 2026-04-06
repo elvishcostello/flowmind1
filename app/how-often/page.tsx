@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { Suspense } from "react";
 import { HowOftenClient } from "./how-often-client";
 
 export type HowOftenOption = { label: string; action: string };
@@ -27,5 +28,9 @@ function readHowOftenOptions(): HowOftenOption[] {
 
 export default function HowOftenPage() {
   const options = readHowOftenOptions();
-  return <HowOftenClient options={options} />;
+  return (
+    <Suspense>
+      <HowOftenClient options={options} />
+    </Suspense>
+  );
 }

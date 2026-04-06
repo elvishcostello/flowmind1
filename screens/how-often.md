@@ -80,7 +80,7 @@ In addition, set these values
 * how-often
 * days[] should reflect the selected days, if any
 
-Then navigate to `/your-loops?refresh=true`.
+Then call `router.refresh()` followed by `router.replace('/your-loops')`. `router.refresh()` invalidates the Next.js router cache so the loops list reloads fresh data on mount; `router.replace()` makes `/your-loops` the new history root.
 
 ### Skip
 
@@ -89,4 +89,4 @@ When 'skip' is tapped, create a new loop in the supabase loops table.
 * how-often can be left null
 * days can be null
 
-Then navigate to `/your-loops?refresh=true`.
+Then call `router.refresh()` followed by `router.replace('/your-loops')`. `router.refresh()` invalidates the Next.js router cache so the loops list reloads fresh data on mount; `router.replace()` makes `/your-loops` the new history root.

@@ -63,7 +63,8 @@ export function HowOftenClient({ options }: HowOftenClientProps) {
   const handleFrequencySelect = async (option: HowOftenOption) => {
     if (option.action === "advance") {
       await persistLoop(option.label, null);
-      router.push("/your-loops?refresh=true");
+      router.refresh();
+      router.replace("/your-loops");
       return;
     }
     setSelectedFrequency(option);
@@ -115,7 +116,8 @@ export function HowOftenClient({ options }: HowOftenClientProps) {
         <div className="-mt-6">
           <Button variant="link" className="px-0 text-muted-foreground underline" onClick={async () => {
             await persistLoop(null, null);
-            router.push("/your-loops?refresh=true");
+            router.refresh();
+            router.replace("/your-loops");
           }}>
             skip
           </Button>
@@ -151,7 +153,8 @@ export function HowOftenClient({ options }: HowOftenClientProps) {
                 selectedFrequency?.label ?? null,
                 showDayChooser ? [...selectedDays] : null
               );
-              router.push("/your-loops?refresh=true");
+              router.refresh();
+            router.replace("/your-loops");
             }}
           >
             Add This Loop

@@ -12,14 +12,9 @@ export type IntakeResponse = z.infer<typeof IntakeResponseSchema>;
 export type TreatmentResponse = z.infer<typeof TreatmentResponseSchema>;
 export type SummaryResponse = z.infer<typeof SummaryResponseSchema>;
 
-// Loop creation flow — query params passed between outer-loop → inner-loop → how-long → how-often
+// Loop creation flow — query params passed between outer-loop → inner-loop → how-long → how-often.
 // Each screen receives all params from prior screens plus its own addition.
-
-export const YourLoopsParams = z.object({
-  refresh: z.string().optional(),
-});
-
-export type YourLoopsParams = z.infer<typeof YourLoopsParams>;
+// your-loops takes no params — it fetches fresh data on every mount.
 
 export const OuterLoopParams = z.object({
   category: z.string(),

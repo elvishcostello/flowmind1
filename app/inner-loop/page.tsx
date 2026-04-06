@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUserProfile } from "@/lib/user-profile-context";
 import { Card, CardContent } from "@/components/ui/card";
@@ -125,7 +125,7 @@ const CLEANING_DATA: Record<string, { icon: string; tasks: Task[] }> = {
   },
 };
 
-export default function InnerLoopPage() {
+function InnerLoopContent() {
   const { userProfile } = useUserProfile();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -214,5 +214,13 @@ export default function InnerLoopPage() {
         </Button>
       </div>
     </div>
+  );
+}
+
+export default function InnerLoopPage() {
+  return (
+    <Suspense>
+      <InnerLoopContent />
+    </Suspense>
   );
 }

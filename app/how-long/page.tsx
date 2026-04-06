@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { Suspense } from "react";
 import { HowLongClient } from "./how-long-client";
 
 function readHowLongOptions(): string[] {
@@ -15,5 +16,9 @@ function readHowLongOptions(): string[] {
 
 export default function HowLongPage() {
   const options = readHowLongOptions();
-  return <HowLongClient options={options} />;
+  return (
+    <Suspense>
+      <HowLongClient options={options} />
+    </Suspense>
+  );
 }

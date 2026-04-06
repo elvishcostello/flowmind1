@@ -81,8 +81,22 @@ const { error } = await supabase
 
 ---
 
+## Navigation After Save
+
+After persisting a loop, navigate to `/your-loops` using `router.refresh()` then `router.replace('/your-loops')`:
+
+```typescript
+router.refresh();           // invalidates Next.js router cache so your-loops re-fetches on mount
+router.replace('/your-loops'); // replaces history entry — no back-nav into the creation flow
+```
+
+Do **not** use `?refresh=<timestamp>` as a cache-busting param. `router.refresh()` is the correct mechanism.
+
+---
+
 ## What Not To Do
 
 - Do not store loop data in URL params beyond the creation flow — persist to Supabase on save
 - Do not skip the `user_id` filter on reads — RLS enforces it but explicit filters are clearer
 - Do not omit the delete RLS policy — loops must be deletable by their owner
+- Do not use `?refresh=<timestamp>` to bust the router cache — use `router.refresh()` instead
