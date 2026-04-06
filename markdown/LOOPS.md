@@ -15,6 +15,7 @@ create table public.loops (
   how_long text,
   how_often text,
   days text[],                          -- null unless a day-chooser action was used
+  task_state boolean not null default false,
   completed boolean not null default false,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
@@ -91,6 +92,18 @@ router.replace('/your-loops'); // replaces history entry — no back-nav into th
 ```
 
 Do **not** use `?refresh=<timestamp>` as a cache-busting param. `router.refresh()` is the correct mechanism.
+
+---
+
+## Migrations
+
+```sql
+-- Add task_state column
+alter table public.loops add column task_state boolean not null default false;
+
+-- Drop all rows (destructive — use only in dev/reset scenarios)
+truncate table public.loops;
+```
 
 ---
 
