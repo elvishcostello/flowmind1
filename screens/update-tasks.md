@@ -22,7 +22,7 @@ Use the standard mobile-first page wrapper (see CLAUDE.md):
 ## Navigation
 
 This tasks is called from the `your-loops` screen, it forms a new workflow with your-loops being the base state. 
-Shows `← Back` (navigates to `/your-loops`) per nav pattern in CLAUDE.md.
+Shows `← Back` — commits `task_state` to Supabase, then calls `router.back()` to return to the caller.
 
 ## Invocation
 
@@ -35,8 +35,8 @@ Additionally, query the loops table for the total number of loops completed by t
 ## Content
 
 The screen can be in one of two modes:
-- editing - this is the default
-- DONE (awaiting confirmation) - if the user has made ANY change, then DONE is enabled.
+- primary - what is shown when we are not in edit mode
+- edit - when the user is editing the task list
 
 ### Top bar
 
@@ -56,7 +56,7 @@ Below that is a mode button, it has two possible labels, based on the current mo
 - pencil + Edit steps
 - Done Editing
 
-### edit mode
+### primary mode
 
 In this mode, create a vertical stack of the tasks. Query the task_state.  For each task:
 
@@ -68,7 +68,7 @@ If it is false, use `circle`, followed by a ' ' and the name of the task.
 
 The tasks should be editable, and their action is to toggle the state.
 
-### done editing? mode
+### editing mode
 
 TODO: do not implement yet
 

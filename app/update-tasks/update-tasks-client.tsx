@@ -26,7 +26,7 @@ export function UpdateTasksClient() {
   const [loop, setLoop] = useState<Loop | null>(null);
   const [completedCount, setCompletedCount] = useState(0);
   const [taskState, setTaskState] = useState<boolean[]>([]);
-  const [isEditing, setIsEditing] = useState(false);
+  const [mode, setMode] = useState<"primary" | "edit">("primary");
 
   useEffect(() => {
     if (!userProfile) {
@@ -81,12 +81,12 @@ export function UpdateTasksClient() {
   };
 
   const handleModeToggle = async () => {
-    if (!isEditing) {
-      setIsEditing(true);
+    if (mode === "primary") {
+      setMode("edit");
       return;
     }
     const ok = await saveTaskState();
-    if (ok) setIsEditing(false);
+    if (ok) setMode("primary");
   };
 
   const handleBack = async () => {
@@ -130,7 +130,7 @@ export function UpdateTasksClient() {
             className="self-start flex items-center gap-2"
             onClick={handleModeToggle}
           >
-            {isEditing ? (
+            {mode === "edit" ? (
               "Done Editing"
             ) : (
               <>
