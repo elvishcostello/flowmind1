@@ -72,6 +72,22 @@ The tasks should be editable, and their action is to toggle the state.
 
 TODO: do not implement yet
 
+### Add a task
+
+Regardless of mode, an 'Add a task' button with a `Plus` icon is shown below the task list (full width, bordered, matching task button style).
+
+Tapping it sets `isAddingTask` to `true`, revealing an inline group of controls. Changes within the group are committed to the in-memory loop as they are made — no Supabase write until the back button is tapped. A 'Done' button within the group sets `isAddingTask` back to `false`, hiding the group.
+
+**Content of the add-task group:** TBD
+
+Obtain all possible tasks for this category, sourced from `yaml/CLEANING.yaml` using the category as key. Remove any categories that were already present in the loop.
+
+Display a 2-column grid of Cards — all remaining tasks, using the specified lucide options.
+
+Below this group should be a full-width editable button with the text 'Or type your own task...'. If the user types any text, then there should be an 'Add' button shown to the right of the text edit field.
+
+If the user clicks 'Add' then add this task (and a default task_state) to the local loop data.  The task list above should be updated.
+
 ## Button Semantics
 
 | element | action |

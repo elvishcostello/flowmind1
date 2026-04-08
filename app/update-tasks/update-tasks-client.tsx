@@ -5,8 +5,128 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useUserProfile } from "@/lib/user-profile-context";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Star, Circle, CircleCheckBig, Pencil } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  UtensilsCrossed, Trash2, Sparkles, Microwave, LayoutGrid, Refrigerator,
+  Pencil, Droplets, Toilet, Layers, ShowerHead, Box, Bed, ArrowUpToLine,
+  Feather, Shirt, Wind, Sofa, LayoutList, Mail, Folder, Monitor, Cable,
+  Trees, Sprout, Leaf, CloudSnow, Car, Package, PawPrint, Droplet,
+  Star, Circle, CircleCheckBig, Plus,
+  type LucideIcon,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 import { UpdateTasksParams } from "@/lib/types";
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  UtensilsCrossed, Trash2, Sparkles, Microwave, LayoutGrid, Refrigerator,
+  Pencil, Droplets, Toilet, Layers, ShowerHead, Box, Bed, ArrowUpToLine,
+  Feather, Shirt, Wind, Sofa, LayoutList, Mail, Folder, Monitor, Cable,
+  Trees, Sprout, Leaf, CloudSnow, Car, Package, PawPrint, Drop: Droplet,
+};
+
+type CleaningTask = { task: string; icon: string };
+
+const CLEANING_DATA: Record<string, { icon: string; tasks: CleaningTask[] }> = {
+  Kitchen: {
+    icon: "ChefHat",
+    tasks: [
+      { task: "Wash the dishes", icon: "UtensilsCrossed" },
+      { task: "Empty the trash", icon: "Trash2" },
+      { task: "Wipe down counters", icon: "Sparkles" },
+      { task: "Wipe the stovetop", icon: "Sparkles" },
+      { task: "Clean the floor", icon: "Sparkles" },
+      { task: "Clean the microwave", icon: "Microwave" },
+      { task: "Organize the pantry", icon: "LayoutGrid" },
+      { task: "Clean the fridge", icon: "Refrigerator" },
+      { task: "Other", icon: "Pencil" },
+    ],
+  },
+  Bathroom: {
+    icon: "Droplets",
+    tasks: [
+      { task: "Clean the sink", icon: "Drop" },
+      { task: "Clean the toilet", icon: "Toilet" },
+      { task: "Wipe the mirror", icon: "Sparkles" },
+      { task: "Replace towels", icon: "Layers" },
+      { task: "Scrub the shower", icon: "ShowerHead" },
+      { task: "Mop the floor", icon: "Sparkles" },
+      { task: "Restock supplies", icon: "Box" },
+      { task: "Other", icon: "Pencil" },
+    ],
+  },
+  Bedroom: {
+    icon: "Bed",
+    tasks: [
+      { task: "Sort the laundry", icon: "Layers" },
+      { task: "Pick up the floor", icon: "ArrowUpToLine" },
+      { task: "Change the sheets", icon: "Bed" },
+      { task: "Dust surfaces", icon: "Feather" },
+      { task: "Organize the closet", icon: "Shirt" },
+      { task: "Vacuum", icon: "Wind" },
+      { task: "Other", icon: "Pencil" },
+    ],
+  },
+  "Living Room": {
+    icon: "Sofa",
+    tasks: [
+      { task: "Clear the surfaces", icon: "Sparkles" },
+      { task: "Clear the clutter", icon: "Trash2" },
+      { task: "Vacuum", icon: "Wind" },
+      { task: "Wipe down furniture", icon: "Sparkles" },
+      { task: "Clean windows", icon: "Sparkles" },
+      { task: "Organize shelves", icon: "LayoutList" },
+      { task: "Other", icon: "Pencil" },
+    ],
+  },
+  Office: {
+    icon: "Monitor",
+    tasks: [
+      { task: "Clear the desk", icon: "Sparkles" },
+      { task: "Sort the inbox pile", icon: "Mail" },
+      { task: "File papers", icon: "Folder" },
+      { task: "Wipe down surfaces", icon: "Sparkles" },
+      { task: "Organize supplies", icon: "Box" },
+      { task: "Untangle cables", icon: "Cable" },
+      { task: "Other", icon: "Pencil" },
+    ],
+  },
+  Outside: {
+    icon: "Trees",
+    tasks: [
+      { task: "Take out trash and recycling", icon: "Trash2" },
+      { task: "Sweep the porch", icon: "Wind" },
+      { task: "Water plants", icon: "Sprout" },
+      { task: "Mow the lawn", icon: "Sprout" },
+      { task: "Rake leaves", icon: "Leaf" },
+      { task: "Shovel snow", icon: "CloudSnow" },
+      { task: "Other", icon: "Pencil" },
+    ],
+  },
+  Car: {
+    icon: "Car",
+    tasks: [
+      { task: "Clear out trash", icon: "Trash2" },
+      { task: "Vacuum interior", icon: "Wind" },
+      { task: "Wipe down dashboard", icon: "Sparkles" },
+      { task: "Clean windows", icon: "Sparkles" },
+      { task: "Wash the exterior", icon: "Droplets" },
+      { task: "Tidy the trunk", icon: "Package" },
+      { task: "Other", icon: "Pencil" },
+    ],
+  },
+  Pet: {
+    icon: "PawPrint",
+    tasks: [
+      { task: "Clean water bowl", icon: "Drop" },
+      { task: "Wash food bowl", icon: "UtensilsCrossed" },
+      { task: "Clean litter box", icon: "Box" },
+      { task: "Vacuum pet hair", icon: "Wind" },
+      { task: "Wash pet bedding", icon: "Sparkles" },
+      { task: "Give them a bath", icon: "Droplets" },
+      { task: "Other", icon: "Pencil" },
+    ],
+  },
+};
 
 type Loop = {
   id: string;
@@ -25,8 +145,11 @@ export function UpdateTasksClient() {
 
   const [loop, setLoop] = useState<Loop | null>(null);
   const [completedCount, setCompletedCount] = useState(0);
+  const [tasks, setTasks] = useState<string[]>([]);
   const [taskState, setTaskState] = useState<boolean[]>([]);
   const [mode, setMode] = useState<"primary" | "edit">("primary");
+  const [isAddingTask, setIsAddingTask] = useState(false);
+  const [customTaskText, setCustomTaskText] = useState("");
 
   useEffect(() => {
     if (!userProfile) {
@@ -53,7 +176,7 @@ export function UpdateTasksClient() {
           return;
         }
         setLoop(data);
-        // If task_state is null, initialise to all-false
+        setTasks(data.tasks);
         setTaskState(data.task_state ?? data.tasks.map(() => false));
       });
 
@@ -70,11 +193,11 @@ export function UpdateTasksClient() {
     const supabase = createClient();
     const { error } = await supabase
       .from("loops")
-      .update({ task_state: taskState })
+      .update({ tasks, task_state: taskState })
       .eq("id", loop.id)
       .eq("user_id", userProfile!.id);
     if (error) {
-      console.error("Failed to save task_state:", error);
+      console.error("Failed to save loop:", error);
       return false;
     }
     return true;
@@ -98,7 +221,25 @@ export function UpdateTasksClient() {
     setTaskState((prev) => prev.map((v, i) => (i === index ? !v : v)));
   };
 
+  const addTaskFromList = (task: string) => {
+    setTasks((prev) => [...prev, task]);
+    setTaskState((prev) => [...prev, false]);
+  };
+
+  const addCustomTask = () => {
+    const text = customTaskText.trim();
+    if (!text) return;
+    setTasks((prev) => [...prev, text]);
+    setTaskState((prev) => [...prev, false]);
+    setCustomTaskText("");
+  };
+
   if (!userProfile || !loop) return null;
+
+  // Tasks available to add: all category tasks not already in the loop
+  const availableTasks = (CLEANING_DATA[loop.category]?.tasks ?? []).filter(
+    (t) => !tasks.includes(t.task)
+  );
 
   return (
     <div className="flex flex-1 justify-center">
@@ -141,7 +282,7 @@ export function UpdateTasksClient() {
           </Button>
 
           <div className="flex flex-col gap-2 mt-2">
-            {loop.tasks.map((task, i) => {
+            {tasks.map((task, i) => {
               const done = taskState[i] ?? false;
               return (
                 <Button
@@ -162,6 +303,67 @@ export function UpdateTasksClient() {
               );
             })}
           </div>
+
+          {/* Add a task button */}
+          {!isAddingTask && (
+            <Button
+              variant="ghost"
+              className="justify-start gap-2 h-auto py-2 px-2 border border-border w-full"
+              onClick={() => setIsAddingTask(true)}
+            >
+              <Plus className="h-4 w-4" />
+              Add a task
+            </Button>
+          )}
+
+          {/* Add task group */}
+          {isAddingTask && (
+            <div className="flex flex-col gap-3 pt-2">
+              {availableTasks.length > 0 && (
+                <div className="grid grid-cols-2 gap-2">
+                  {availableTasks.map(({ task, icon }) => {
+                    const Icon = ICON_MAP[icon] ?? Pencil;
+                    return (
+                      <Card
+                        key={task}
+                        className="cursor-pointer hover:bg-accent transition-colors py-0"
+                        onClick={() => addTaskFromList(task)}
+                      >
+                        <CardContent className="flex flex-col items-center justify-center gap-2 px-4 py-4">
+                          <Icon className="h-6 w-6 text-muted-foreground" />
+                          <span className="text-sm font-medium text-center leading-tight">
+                            {task}
+                          </span>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={customTaskText}
+                  onChange={(e) => setCustomTaskText(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && addCustomTask()}
+                  placeholder="Or type your own task..."
+                  className="flex-1 border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-ring"
+                />
+                {customTaskText.trim() && (
+                  <Button onClick={addCustomTask}>Add</Button>
+                )}
+              </div>
+
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setIsAddingTask(false)}
+              >
+                Done
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
