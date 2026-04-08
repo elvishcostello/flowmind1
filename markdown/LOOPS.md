@@ -15,7 +15,7 @@ create table public.loops (
   how_long text,
   how_often text,
   days text[],                          -- null unless a day-chooser action was used
-  task_state boolean not null default false,
+  task_state boolean[],                         -- null until tasks are interacted with
   completed boolean not null default false,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
@@ -98,8 +98,12 @@ Do **not** use `?refresh=<timestamp>` as a cache-busting param. `router.refresh(
 ## Migrations
 
 ```sql
--- Add task_state column
-alter table public.loops add column task_state boolean not null default false;
+-- Add task_state column (boolean array, nullable — null until tasks are interacted with)
+alter table public.loops add column task_state boolean[];
+
+-- If task_state was previously added as a scalar boolean, drop and re-add:
+alter table public.loops drop column task_state;
+alter table public.loops add column task_state boolean[];
 
 -- Drop all rows (destructive — use only in dev/reset scenarios)
 truncate table public.loops;

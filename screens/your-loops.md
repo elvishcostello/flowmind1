@@ -36,7 +36,7 @@ A horizontal div with:
 - A horizontal spacer
 - A rounded button with a lucide `Star` icon and a numeric counter (count of completed loops)
 - A rounded button labeled `reflect` (targets nothing)
-- A settings button (does nothing)
+- A settings button — opens the `<SettingsSheet />` overlay (see `components/settings-sheet.tsx`)
 
 ### Horizontal separator
 

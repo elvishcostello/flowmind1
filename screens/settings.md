@@ -4,6 +4,16 @@
 
 Implement a Settings screen for the Flowmind app. Settings should be accessible via a gear icon in the top-right corner of the main app screens, sliding in as a `Sheet` component from the right side (shadcn/ui `<Sheet>`). It is **not** a full page navigation — it is an overlay panel that preserves the user's sense of place.
 
+### Why Sheet, not a popup dialog
+
+The use of `<Sheet>` here is a conscious decision:
+
+- **Mobile pattern** — sliding in from the right mirrors native mobile settings drawers (iOS/Android). A centered modal popup feels desktop-native and out of place on mobile.
+- **Space** — settings panels grow over time. A Sheet provides full height naturally; a popup becomes cramped or awkwardly tall.
+- **Sense of place** — the Sheet keeps the underlying screen visible, reinforcing that settings is a temporary overlay, not a destination.
+
+Settings does contain destructive actions (Sign Out, Return to Orientation). These should each use an `<AlertDialog>` confirmation triggered from *within* the Sheet — the Sheet is the container, the dialog guards the destructive action. This is the same pattern used on `/your-loops` for the close-loop confirmation.
+
 ---
 
 ## Files to Create or Modify
