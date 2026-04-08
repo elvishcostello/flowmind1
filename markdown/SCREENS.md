@@ -13,7 +13,7 @@ All screens in the app with their navigation relationships.
 | inner-loop            | Inner Loop               | `/inner-loop`            | outer-loop            | how-long              |
 | how-long              | How Long                 | `/how-long`              | inner-loop            | how-often             |
 | how-often             | How Often                | `/how-often`             | how-long              | —                     |
-| loops                 | Loops                    | `/loops`                 | — (stub)              | —                     |
+| update-tasks          | Update Tasks             | `/update-tasks`          | your-loops            | your-loops            |
 
 | settings              | Settings                 | overlay (Sheet)          | any main screen header  | signin-feeling / `/`  |
 

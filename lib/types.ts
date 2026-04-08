@@ -32,6 +32,10 @@ export const HowOftenParams = HowLongParams.extend({
   "how-often": z.string(),
 });
 
+export const UpdateTasksParams = z.object({
+  id: z.string(),
+});
+
 export type OuterLoopParams = z.infer<typeof OuterLoopParams>;
 export type InnerLoopParams = z.infer<typeof InnerLoopParams>;
 export type HowLongParams = z.infer<typeof HowLongParams>;

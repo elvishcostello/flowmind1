@@ -20,6 +20,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { SettingsSheet } from "@/components/settings-sheet";
+import { ProgressField } from "@/components/ui/progress-field";
 
 type Loop = {
   id: string;
@@ -28,6 +29,7 @@ type Loop = {
   how_long: string | null;
   how_often: string | null;
   days: string[] | null;
+  task_state: boolean[] | null;
 };
 
 const CATEGORY_ICON_MAP: Record<string, LucideIcon> = {
@@ -64,7 +66,7 @@ export default function YourLoopsPage() {
 
     supabase
       .from("loops")
-      .select("id, category, tasks, how_long, how_often, days")
+      .select("id, category, tasks, how_long, how_often, days, task_state")
       .eq("user_id", userProfile.id)
       .eq("completed", false)
       .order("created_at", { ascending: false })
@@ -134,6 +136,9 @@ export default function YourLoopsPage() {
             }
             const firstTask = loop.tasks?.[0];
             const extraCount = (loop.tasks?.length ?? 0) - 1;
+            const total = loop.tasks?.length ?? 0;
+            const done = (loop.task_state ?? []).filter(Boolean).length;
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
             return (
               <Card key={loop.id}>
                 <CardContent className="pt-4 pb-4 space-y-2">
@@ -159,6 +164,13 @@ export default function YourLoopsPage() {
                       )}
                     </div>
                   )}
+                  <ProgressField value={pct} />
+                  <button
+                    className="text-xs text-primary underline-offset-2 hover:underline self-start"
+                    onClick={() => router.push(`/update-tasks?id=${loop.id}`)}
+                  >
+                    See all
+                  </button>
                 </CardContent>
               </Card>
             );

@@ -69,7 +69,14 @@ If open loops exist, render a card for each loop:
 - The first task value
 - If additional tasks exist, append `+N more` on the same row
 
+For each loop, compute the percentage of tasks completed locally from `task_state[]` (count of `true` values / total tasks). Do not query Supabase for this — `task_state` is already in the fetched row.
+
+Render the progress bar using `<ProgressField value={pct} />` from `components/ui/progress-field.tsx`. This is a composite component that pairs the shadcn `<Progress>` primitive with a percentage label span — do not use `<Progress>` directly, as it cannot display the percentage text on its own.
+
+Below that should be an inline button (like a hypertext link) with the label 'See all'. The target of that button should be `update-tasks` with an `id` parameter for the loop id.
+
 Each card has a close (X) button.
+
 
 ### Footer
 
