@@ -99,7 +99,7 @@ Tapping a button toggles the completion state.
 
 The mode button is highlighted to make the CTA clearer.
 
-The leading icon on each row is replaced with `grip-vertical` (drag handle). Task rows are drag-and-drop sortable using `@dnd-kit/core` and `@dnd-kit/sortable`. Dragging a row reorders both `tasks` and `task_state` in memory — the new order is committed to Supabase when the back button is tapped.
+The leading icon on each row is replaced with `grip-vertical` (drag handle). Each row also shows an `X` button at the far right — tapping it deletes the task and removes the matching entry from `task_state`. Tap propagation is stopped so the delete does not also toggle the task. Task rows are drag-and-drop sortable using `@dnd-kit/core` and `@dnd-kit/sortable`. Dragging a row reorders both `tasks` and `task_state` in memory — the new order is committed to Supabase when the back button is tapped.
 
 Use `DndContext` + `SortableContext` (with `verticalListSortingStrategy`) to wrap the task list. Each row is a `useSortable` item keyed by task name. On `onDragEnd`, apply `arrayMove` to both `tasks` and `taskState` to keep them in sync.
 

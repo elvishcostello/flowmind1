@@ -27,7 +27,7 @@ import {
   Pencil, Droplets, Toilet, Layers, ShowerHead, Box, Bed, ArrowUpToLine,
   Feather, Shirt, Wind, Sofa, LayoutList, Mail, Folder, Monitor, Cable,
   Trees, Sprout, Leaf, CloudSnow, Car, Package, PawPrint, Droplet,
-  Star, Circle, CircleCheckBig, Plus, GripVertical,
+  Star, Circle, CircleCheckBig, Plus, GripVertical, X,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -50,12 +50,14 @@ function SortableTaskRow({
   done,
   mode,
   onToggle,
+  onDelete,
 }: {
   id: string;
   task: string;
   done: boolean;
   mode: "primary" | "edit";
   onToggle: () => void;
+  onDelete: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id });
@@ -82,9 +84,17 @@ function SortableTaskRow({
         ) : (
           <Circle className="h-5 w-5 shrink-0 text-muted-foreground" />
         )}
-        <span className={done ? "line-through text-muted-foreground" : ""}>
+        <span className={cn(done ? "line-through text-muted-foreground" : "", "flex-1 text-left")}>
           {task}
         </span>
+        {mode === "edit" && (
+          <span
+            className="ml-2 text-muted-foreground hover:text-destructive"
+            onClick={(e) => { e.stopPropagation(); onDelete(); }}
+          >
+            <X className="h-4 w-4" />
+          </span>
+        )}
       </Button>
     </div>
   );
@@ -225,6 +235,11 @@ export function UpdateTasksClient({
   const addTaskFromList = (task: string) => {
     setTasks((prev) => [...prev, task]);
     setTaskState((prev) => [...prev, false]);
+  };
+
+  const deleteTask = (index: number) => {
+    setTasks((prev) => prev.filter((_, i) => i !== index));
+    setTaskState((prev) => prev.filter((_, i) => i !== index));
   };
 
   const addCustomTask = () => {
@@ -410,6 +425,7 @@ export function UpdateTasksClient({
                     done={taskState[i] ?? false}
                     mode={mode}
                     onToggle={() => toggleTask(i)}
+                    onDelete={() => deleteTask(i)}
                   />
                 ))}
               </div>
