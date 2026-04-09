@@ -57,7 +57,7 @@ Below that is a mode button, it has two possible labels, based on the current mo
 - edit: Done Editing
 
 Below that is a horizontal group with two controls:
-- a small bordered button displaying the value for 'how_often'
+- a bold text label displaying the value for 'how_often'
 - a small inline button with the label 'Change' (refer to this button as change-save)
 
 If `how_often` is null (loop was saved via skip), default it to the first key in `HOWOFTEN.yaml` (currently `"one time"`).
@@ -67,7 +67,7 @@ If `how_often` is null (loop was saved via skip), default it to the first key in
 When the Change button is tapped, enter `change-mode`:
 - Load `HOWOFTEN.yaml` as a dictionary
 - Change the label of the change-save button to `Save`
-- Display a wrapping left-to-right group of buttons, one per dictionary key
+- Display a centered, wrapping left-to-right group of buttons, one per dictionary key
 
 Each button has its `action` value bound to it. When a button is tapped:
 - Set `how_often` in local state to the selected key's label
@@ -81,7 +81,9 @@ Each button has its `action` value bound to it. When a button is tapped:
 | `day-chooser-single` | Show the day-chooser in single-select mode (see below) |
 | `day-chooser-multi` | Show the day-chooser in multi-select mode (see below) |
 
-The day-chooser group is identical to the one in `how-often.md`: a horizontal rule followed by a wrapping group of day buttons (Mon–Sun). Mode is controlled by the triggering action. `Save` is shown but disabled until at least one day is selected; once selected, tapping Save commits `how_often` and `days` to local state and exits change-mode.
+The day-chooser group is identical to the one in `how-often.md`: a horizontal rule followed by a wrapping group of day buttons (Mon–Sun). Mode is controlled by the triggering action. The buttons should be centered and displayed left-to-right.
+
+When a day-chooser action is active, the change-save button label changes to `Save`. It remains disabled until at least one day is selected. Once a day is selected, the button switches to `variant="default"` (filled/primary) to make the CTA clearer. Tapping it commits `how_often` and `days` to local state and exits change-mode. There is no separate Save button at the bottom of the group.
 
 All changes are local — nothing is written to Supabase until the back button is tapped.
 

@@ -273,8 +273,6 @@ export function UpdateTasksClient({
     pendingFrequency?.action === "day-chooser-single" ||
     pendingFrequency?.action === "day-chooser-multi";
 
-  const saveDisabled = showDayChooser && selectedDays.size === 0;
-
   if (!userProfile || !loop) return null;
 
   const availableTasks = (cleaningData[loop.category]?.tasks ?? []).filter(
@@ -324,30 +322,37 @@ export function UpdateTasksClient({
 
           {/* How-often row */}
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="pointer-events-none">
+            <span className="text-sm font-bold">
               {(() => {
                 const action = howOftenOptions.find(o => o.label === howOften)?.action as HowOftenAction | undefined;
                 const showDays = (action === "day-chooser-single" || action === "day-chooser-multi") && days.length > 0;
                 return showDays ? days.join(" ") : howOften;
               })()}
-            </Button>
+            </span>
             <Button
-              variant="ghost"
+              variant={showDayChooser && selectedDays.size > 0 ? "default" : "ghost"}
               size="sm"
+              disabled={showDayChooser && selectedDays.size === 0}
               onClick={() => {
-                setIsChangingFrequency((prev) => !prev);
-                setPendingFrequency(null);
-                setSelectedDays(new Set());
+                if (showDayChooser) {
+                  handleFrequencySave();
+                } else if (isChangingFrequency) {
+                  setIsChangingFrequency(false);
+                  setPendingFrequency(null);
+                  setSelectedDays(new Set());
+                } else {
+                  setIsChangingFrequency(true);
+                }
               }}
             >
-              {isChangingFrequency ? "Cancel" : "Change"}
+              {showDayChooser ? "Save" : isChangingFrequency ? "Cancel" : "Change"}
             </Button>
           </div>
 
           {/* Change-mode frequency picker */}
           {isChangingFrequency && (
             <div className="flex flex-col gap-3">
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 justify-center">
                 {howOftenOptions.map((option) => (
                   <Button
                     key={option.label}
@@ -367,7 +372,7 @@ export function UpdateTasksClient({
               {showDayChooser && (
                 <div>
                   <hr className="border-border mb-3" />
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 justify-center">
                     {DAYS.map((day) => (
                       <Button
                         key={day}
@@ -386,15 +391,6 @@ export function UpdateTasksClient({
                 </div>
               )}
 
-              {showDayChooser && (
-                <Button
-                  className="w-full"
-                  disabled={saveDisabled}
-                  onClick={handleFrequencySave}
-                >
-                  Save
-                </Button>
-              )}
             </div>
           )}
 
