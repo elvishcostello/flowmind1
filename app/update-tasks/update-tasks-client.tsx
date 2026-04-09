@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { HowOftenPicker } from "@/components/how-often-picker";
+import { CompletedLoopsButton } from "@/components/completed-loops-button";
 import {
   DndContext,
   closestCenter,
@@ -28,7 +29,7 @@ import {
   Pencil, Droplets, Toilet, Layers, ShowerHead, Box, Bed, ArrowUpToLine,
   Feather, Shirt, Wind, Sofa, LayoutList, Mail, Folder, Monitor, Cable,
   Trees, Sprout, Leaf, CloudSnow, Car, Package, PawPrint, Droplet,
-  Star, Circle, CircleCheckBig, Plus, GripVertical, X,
+  Circle, CircleCheckBig, Plus, GripVertical, X,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -126,7 +127,6 @@ export function UpdateTasksClient({
   const loopId = parsed.success ? parsed.data.id : null;
 
   const [loop, setLoop] = useState<Loop | null>(null);
-  const [completedCount, setCompletedCount] = useState(0);
   const [tasks, setTasks] = useState<string[]>([]);
   const [taskState, setTaskState] = useState<boolean[]>([]);
   const [mode, setMode] = useState<"primary" | "edit">("primary");
@@ -183,12 +183,6 @@ export function UpdateTasksClient({
         setDays(data.days ?? []);
       });
 
-    supabase
-      .from("loops")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userProfile.id)
-      .eq("completed", true)
-      .then(({ count }) => setCompletedCount(count ?? 0));
   }, [userProfile, router, loopId]);
 
   const saveLoop = async (): Promise<boolean> => {
@@ -273,10 +267,7 @@ export function UpdateTasksClient({
             ← Back
           </Button>
           <div className="flex-1" />
-          <Button variant="outline" size="sm" className="rounded-full">
-            <Star className="h-4 w-4" />
-            {completedCount}
-          </Button>
+          <CompletedLoopsButton />
         </div>
 
         <hr className="border-border" />

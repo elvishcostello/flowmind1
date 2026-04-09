@@ -15,12 +15,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
-  Star, Repeat2, Circle, X,
+  Repeat2, Circle, X,
   ChefHat, Droplets, Bed, Sofa, Monitor, Trees, Car, PawPrint,
   type LucideIcon,
 } from "lucide-react";
 import { SettingsSheet } from "@/components/settings-sheet";
 import { ProgressField } from "@/components/ui/progress-field";
+import { CompletedLoopsButton } from "@/components/completed-loops-button";
 
 type Loop = {
   id: string;
@@ -47,7 +48,6 @@ export default function YourLoopsPage() {
   const { userProfile } = useUserProfile();
   const router = useRouter();
   const [openLoops, setOpenLoops] = useState<Loop[] | null>(null);
-  const [completedCount, setCompletedCount] = useState(0);
   const [pendingRemoveId, setPendingRemoveId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -56,13 +56,6 @@ export default function YourLoopsPage() {
       return;
     }
     const supabase = createClient();
-
-    supabase
-      .from("loops")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userProfile.id)
-      .eq("completed", true)
-      .then(({ count }) => setCompletedCount(count ?? 0));
 
     supabase
       .from("loops")
@@ -98,10 +91,7 @@ export default function YourLoopsPage() {
         <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
           <span className="tracking-widest text-xs font-medium">FLOWMIND</span>
           <div className="flex-1" />
-          <Button variant="outline" size="sm" className="rounded-full">
-            <Star className="h-4 w-4" />
-            {completedCount}
-          </Button>
+          <CompletedLoopsButton />
           <Button variant="outline" size="sm" className="rounded-full">
             reflect
           </Button>

@@ -7,6 +7,7 @@ Specifications for shared UI components live in `screens/components/`. These com
 | Component | File | Used by |
 |---|---|---|
 | `HowOftenPicker` | `screens/components/how-often-picker.md` | `how-often`, `update-tasks` |
+| `CompletedLoopsButton` | `screens/components/completed-loops-button.md` | `your-loops`, `update-tasks` |
 
 ## Conventions
 
