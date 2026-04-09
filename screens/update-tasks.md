@@ -56,6 +56,35 @@ Below that is a mode button, it has two possible labels, based on the current mo
 - primary: pencil + Edit steps
 - edit: Done Editing
 
+Below that is a horizontal group with two controls:
+- a small bordered button displaying the value for 'how_often'
+- a small inline button with the label 'Change' (refer to this button as change-save)
+
+If `how_often` is null (loop was saved via skip), default it to the first key in `HOWOFTEN.yaml` (currently `"one time"`).
+
+#### Change semantics
+
+When the Change button is tapped, enter `change-mode`:
+- Load `HOWOFTEN.yaml` as a dictionary
+- Change the label of the change-save button to `Save`
+- Display a wrapping left-to-right group of buttons, one per dictionary key
+
+Each button has its `action` value bound to it. When a button is tapped:
+- Set `how_often` in local state to the selected key's label
+- Update the `how_often` display button to reflect the new value
+- Follow the same action logic as `how-often.md` ## Button Semantics:
+
+| action | behaviour |
+|---|---|
+| `advance` | Save `how_often` locally and exit change-mode |
+| `enable` | Save `how_often` locally and exit change-mode (no day-chooser needed) |
+| `day-chooser-single` | Show the day-chooser in single-select mode (see below) |
+| `day-chooser-multi` | Show the day-chooser in multi-select mode (see below) |
+
+The day-chooser group is identical to the one in `how-often.md`: a horizontal rule followed by a wrapping group of day buttons (Mon–Sun). Mode is controlled by the triggering action. `Save` is shown but disabled until at least one day is selected; once selected, tapping Save commits `how_often` and `days` to local state and exits change-mode.
+
+All changes are local — nothing is written to Supabase until the back button is tapped.
+
 ### primary mode
 
 A vertical stack of task buttons. The leading icon reflects task completion state:
