@@ -15,6 +15,7 @@ create table public.loops (
   how_long text,
   how_often text,
   days text[],                          -- null unless a day-chooser action was used
+  task_state boolean[],                         -- null until tasks are interacted with
   completed boolean not null default false,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
@@ -81,8 +82,38 @@ const { error } = await supabase
 
 ---
 
+## Navigation After Save
+
+After persisting a loop, navigate to `/your-loops` using `router.refresh()` then `router.replace('/your-loops')`:
+
+```typescript
+router.refresh();           // invalidates Next.js router cache so your-loops re-fetches on mount
+router.replace('/your-loops'); // replaces history entry — no back-nav into the creation flow
+```
+
+Do **not** use `?refresh=<timestamp>` as a cache-busting param. `router.refresh()` is the correct mechanism.
+
+---
+
+## Migrations
+
+```sql
+-- Add task_state column (boolean array, nullable — null until tasks are interacted with)
+alter table public.loops add column task_state boolean[];
+
+-- If task_state was previously added as a scalar boolean, drop and re-add:
+alter table public.loops drop column task_state;
+alter table public.loops add column task_state boolean[];
+
+-- Drop all rows (destructive — use only in dev/reset scenarios)
+truncate table public.loops;
+```
+
+---
+
 ## What Not To Do
 
 - Do not store loop data in URL params beyond the creation flow — persist to Supabase on save
 - Do not skip the `user_id` filter on reads — RLS enforces it but explicit filters are clearer
 - Do not omit the delete RLS policy — loops must be deletable by their owner
+- Do not use `?refresh=<timestamp>` to bust the router cache — use `router.refresh()` instead

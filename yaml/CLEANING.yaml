@@ -25,9 +25,6 @@ Kitchen:
     - task: "Clean the fridge"
       icon: Refrigerator
       hint:
-    - task: "Other"
-      icon: Pencil
-      hint:
 
 Bathroom:
   icon: Droplets
@@ -53,9 +50,6 @@ Bathroom:
     - task: "Restock supplies"
       icon: Box
       hint:
-    - task: "Other"
-      icon: Pencil
-      hint:
 
 Bedroom:
   icon: Bed
@@ -77,9 +71,6 @@ Bedroom:
       hint:
     - task: "Vacuum"
       icon: Wind
-      hint:
-    - task: "Other"
-      icon: Pencil
       hint:
 
 Living Room:
@@ -103,9 +94,6 @@ Living Room:
     - task: "Organize shelves"
       icon: LayoutList
       hint:
-    - task: "Other"
-      icon: Pencil
-      hint:
 
 Office:
   icon: Monitor
@@ -127,9 +115,6 @@ Office:
       hint:
     - task: "Untangle cables"
       icon: Cable
-      hint:
-    - task: "Other"
-      icon: Pencil
       hint:
 
 Outside:
@@ -153,9 +138,6 @@ Outside:
     - task: "Shovel snow"
       icon: CloudSnow
       hint:
-    - task: "Other"
-      icon: Pencil
-      hint:
 
 Car:
   icon: Car
@@ -178,9 +160,6 @@ Car:
     - task: "Tidy the trunk"
       icon: Package
       hint:
-    - task: "Other"
-      icon: Pencil
-      hint:
 
 Pet:
   icon: PawPrint
@@ -202,7 +181,4 @@ Pet:
       hint:
     - task: "Give them a bath"
       icon: Droplets
-      hint:
-    - task: "Other"
-      icon: Pencil
       hint:
