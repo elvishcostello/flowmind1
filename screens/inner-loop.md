@@ -1,21 +1,6 @@
-Create a Next.js client component at `app/inner-loop/page.tsx` for route `/inner-loop`.
+**Flow:** Loops flow, step 2.
 
-Auth guard: on mount, if no `userProfile` in context, redirect to `/`. Return `null` while unauthenticated.
-
-# Layout
-
-Use the standard mobile-first page wrapper (see CLAUDE.md):
-```tsx
-<div className="flex flex-1 justify-center">
-  <div className="w-full max-w-sm flex flex-col flex-1">
-    {/* page content */}
-  </div>
-</div>
-```
-
-## Navigation
-
-Loops flow, step 2. Shows `← Back` (navigates to `/outer-loop`) per nav pattern in CLAUDE.md.
+**Route:** `/inner-loop`
 
 ## Invocation
 

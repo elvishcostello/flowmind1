@@ -240,7 +240,58 @@ Screen specs reference the schema by name (`see HowLongParams in lib/types.ts`) 
 
 Use the icon library found at http:\\lucided.dev, importing via ```lucided-react```.
 
-## use of breadcrumbs
+## Screen Spec Conventions
 
-For all page to page navigation, implement a back button which takes the user to the prior page.
+All screen specs in `screens/*.md` follow a standard format. The following are **implicit** for every protected screen — specs do not repeat them:
+
+- **Auth guard:** On mount, redirect to `/` if `userProfile` is absent. Return `null` while unauthenticated.
+- **Mobile wrapper:** Every screen uses the standard `flex flex-1 justify-center` / `max-w-sm` wrapper from "Mobile-First Layout" below. Specs do not include the code block.
+- **Standard padding:** Content area uses `p-6 space-y-8` unless the spec notes otherwise.
+
+### Spec format
+
+```
+**Flow:** [label]
+**Route:** /path  (or **Component:** for overlays)
+
+## Invocation
+None  — or —  ?param=<type>  description
+
+## Content
+Numbered list of UI elements, top to bottom.
+Interactions inline (e.g. "tap → /next-route").
+
+## Behavior   ← optional, only for non-obvious interactions
+```
+
+---
+
+## Navigation
+
+All in-app navigation uses a single `← Back` button. There are no breadcrumb trails.
+
+### Back button
+- Rendered by `BackNav` in `components/breadcrumb-nav.tsx`
+- Uses `router.back()` — follows real browser history, no hardcoded route map
+- Lives in the global sticky header managed by `ConditionalHeader`
+
+### Stack roots (no back button)
+The global header is suppressed on these routes — they are navigation dead ends with no back:
+- `/` — sign-in / auth gate
+- `/your-loops` — main home screen (has its own custom top bar)
+
+To add more stack roots, add the path to `SUPPRESS_HEADER` in `components/conditional-header.tsx`.
+
+### Stack reset
+When navigating to a stack root programmatically, use `router.replace()` instead of `router.push()`. This replaces the current history entry so the user cannot back-navigate into the previous flow.
+
+```tsx
+// Completing onboarding → your-loops becomes the new root
+router.replace("/your-loops");
+```
+
+### What not to do
+- Do not use `router.push(explicitParent)` for back navigation — use `router.back()`
+- Do not add a route parent map — history is the source of truth
+- Do not show breadcrumb trails
 
