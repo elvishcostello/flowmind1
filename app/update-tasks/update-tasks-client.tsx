@@ -7,11 +7,27 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import {
   UtensilsCrossed, Trash2, Sparkles, Microwave, LayoutGrid, Refrigerator,
   Pencil, Droplets, Toilet, Layers, ShowerHead, Box, Bed, ArrowUpToLine,
   Feather, Shirt, Wind, Sofa, LayoutList, Mail, Folder, Monitor, Cable,
   Trees, Sprout, Leaf, CloudSnow, Car, Package, PawPrint, Droplet,
-  Star, Circle, CircleCheckBig, Plus,
+  Star, Circle, CircleCheckBig, Plus, GripVertical,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -128,6 +144,52 @@ const CLEANING_DATA: Record<string, { icon: string; tasks: CleaningTask[] }> = {
   },
 };
 
+function SortableTaskRow({
+  id,
+  task,
+  done,
+  mode,
+  onToggle,
+}: {
+  id: string;
+  task: string;
+  done: boolean;
+  mode: "primary" | "edit";
+  onToggle: () => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <Button
+        variant="ghost"
+        className="justify-start gap-2 h-auto py-2 px-2 border border-border w-full"
+        onClick={onToggle}
+      >
+        {mode === "edit" ? (
+          <span {...attributes} {...listeners} className="cursor-grab touch-none">
+            <GripVertical className="h-5 w-5 shrink-0 text-muted-foreground" />
+          </span>
+        ) : done ? (
+          <CircleCheckBig className="h-5 w-5 shrink-0 text-primary" />
+        ) : (
+          <Circle className="h-5 w-5 shrink-0 text-muted-foreground" />
+        )}
+        <span className={done ? "line-through text-muted-foreground" : ""}>
+          {task}
+        </span>
+      </Button>
+    </div>
+  );
+}
+
 type Loop = {
   id: string;
   category: string;
@@ -150,6 +212,22 @@ export function UpdateTasksClient() {
   const [mode, setMode] = useState<"primary" | "edit">("primary");
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [customTaskText, setCustomTaskText] = useState("");
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 150, tolerance: 5 },
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = tasks.indexOf(active.id as string);
+    const newIndex = tasks.indexOf(over.id as string);
+    setTasks((prev) => arrayMove(prev, oldIndex, newIndex));
+    setTaskState((prev) => arrayMove(prev, oldIndex, newIndex));
+  };
 
   useEffect(() => {
     if (!userProfile) {
@@ -281,28 +359,26 @@ export function UpdateTasksClient() {
             )}
           </Button>
 
-          <div className="flex flex-col gap-2 mt-2">
-            {tasks.map((task, i) => {
-              const done = taskState[i] ?? false;
-              return (
-                <Button
-                  key={i}
-                  variant="ghost"
-                  className="justify-start gap-2 h-auto py-2 px-2 border border-border"
-                  onClick={() => toggleTask(i)}
-                >
-                  {done ? (
-                    <CircleCheckBig className="h-5 w-5 shrink-0 text-primary" />
-                  ) : (
-                    <Circle className="h-5 w-5 shrink-0 text-muted-foreground" />
-                  )}
-                  <span className={done ? "line-through text-muted-foreground" : ""}>
-                    {task}
-                  </span>
-                </Button>
-              );
-            })}
-          </div>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
+              <div className="flex flex-col gap-2 mt-2">
+                {tasks.map((task, i) => (
+                  <SortableTaskRow
+                    key={task}
+                    id={task}
+                    task={task}
+                    done={taskState[i] ?? false}
+                    mode={mode}
+                    onToggle={() => toggleTask(i)}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
 
           {/* Add a task button */}
           {!isAddingTask && (

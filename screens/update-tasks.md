@@ -53,24 +53,25 @@ We are following the pattern established in your-loops, but simpler:
 The heading is shown, it is the value of `category` + ' Tasks'
 
 Below that is a mode button, it has two possible labels, based on the current mode:
-- pencil + Edit steps
-- Done Editing
+- primary: pencil + Edit steps
+- edit: Done Editing
 
 ### primary mode
 
-In this mode, create a vertical stack of the tasks. Query the task_state.  For each task:
+A vertical stack of task buttons. The leading icon reflects task completion state:
+- Complete (TRUE): `circle-check-big`
+- Incomplete (FALSE): `circle`
 
-Create a toggle-able list of buttons. 
+Tapping a button toggles the completion state.
 
-If the task is complete (TRUE), use `circle-check-big` for the incon, followed by a ' ' and the name of the task
+### edit mode
 
-If it is false, use `circle`, followed by a ' ' and the name of the task.
+The mode button is highlighted to make the CTA clearer.
 
-The tasks should be editable, and their action is to toggle the state.
+The leading icon on each row is replaced with `grip-vertical` (drag handle). Task rows are drag-and-drop sortable using `@dnd-kit/core` and `@dnd-kit/sortable`. Dragging a row reorders both `tasks` and `task_state` in memory — the new order is committed to Supabase when the back button is tapped.
 
-### editing mode
+Use `DndContext` + `SortableContext` (with `verticalListSortingStrategy`) to wrap the task list. Each row is a `useSortable` item keyed by task name. On `onDragEnd`, apply `arrayMove` to both `tasks` and `taskState` to keep them in sync.
 
-TODO: do not implement yet
 
 ### Add a task
 
