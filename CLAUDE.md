@@ -36,33 +36,46 @@ This is a **monorepo** — frontend and backend live together in a single Next.j
 │   ├── components/           # Shared UI components
 │   ├── api/                  # API routes (server-side, never exposed to client)
 │   └── auth/callback/        # OAuth callback route (see markdown/PERSISTENCE.md)
+├── components/
+│   ├── ui/                   # shadcn/ui primitives (owned source, edit freely)
+│   └── how-often-picker.tsx  # Shared frequency picker (see markdown/COMPONENTS.md)
 ├── lib/
 │   ├── supabase/
 │   │   └── client.ts         # Supabase browser client utility
 │   ├── analytics.ts          # Mixpanel track() utility and event catalogue
 │   ├── canned-responses.ts   # Hardcoded demo responses, keyed by workflow
+│   ├── config.ts             # Single source of record for all YAML config data (server-side only)
 │   └── types.ts              # Shared TypeScript types and Zod schemas
-├── middleware.ts              # Demo mode router + Supabase session refresh
+├── yaml/                     # Configuration data files (SOR for all app config)
+│   ├── HOWOFTEN.yaml         # Frequency options for loop scheduling
+│   ├── HOWLONG.yaml          # Duration options for loop creation
+│   └── CLEANING.yaml         # Task catalogue keyed by category
+├── screens/                  # Screen specifications
+│   ├── components/           # Shared component specs (see markdown/COMPONENTS.md)
+│   └── *.md                  # One spec per screen
+├── proxy.ts                  # Demo mode router + Supabase session refresh
 ├── markdown/
 │   ├── PERSISTENCE.md        # Data layer: Supabase, auth, schema, RLS
 │   ├── ANALYTICS.md          # Mixpanel event catalogue and integration pattern
-│   ├── LOOPS.md              # Loops feature schema, RLS, data access
+│   ├── COMPONENTS.md         # Shared component inventory and index
 │   └── SCREENS.md            # App screen inventory and navigation
 └── .env.local                # Local secrets (never commit this)
 ```
 
 ---
-## Specifcations
+## Specifications
 
-* configuration files will go in `yaml/*.yaml`
+* configuration data lives in `yaml/*.yaml` — parsed at build/request time via `lib/config.ts` (never import YAML directly in components)
 * coding instructions will be at the root of the repo:
   + CLAUDE.md (this file)
   + markdown/PERSISTENCE.md = how to persist data (auth, client setup, middleware)
-  + markdown/LOOPS.md = loops feature schema, RLS, and data access patterns
-  + markdown/ANALYTICS.md - how do analytics
-  + markdown/SCREENS.md - overall plan for screens
-* specifications for indidual screens will be:
-  + screens/*.md
+  + markdown/ANALYTICS.md = Mixpanel event catalogue and integration pattern
+  + markdown/SCREENS.md = overall screen inventory and navigation map
+  + markdown/COMPONENTS.md = shared component inventory (components used by 2+ screens)
+* specifications for individual screens:
+  + screens/*.md — one file per screen
+* specifications for shared components:
+  + screens/components/*.md — one file per shared component
 
 ## Demo Mode
 

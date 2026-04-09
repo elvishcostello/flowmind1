@@ -6,6 +6,7 @@ import { useUserProfile } from "@/lib/user-profile-context";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { HowOftenPicker } from "@/components/how-often-picker";
 import {
   DndContext,
   closestCenter,
@@ -32,10 +33,9 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UpdateTasksParams } from "@/lib/types";
-import type { HowOftenOption, HowOftenAction } from "@/lib/types";
+import type { HowOftenAction } from "@/lib/types";
+import type { HowOftenOption } from "@/lib/types";
 import type { CleaningData } from "./page";
-
-const DAYS = ["Mon", "Tues", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const ICON_MAP: Record<string, LucideIcon> = {
   UtensilsCrossed, Trash2, Sparkles, Microwave, LayoutGrid, Refrigerator,
@@ -117,6 +117,7 @@ export function UpdateTasksClient({
   cleaningData: CleaningData;
 }) {
   const DEFAULT_HOW_OFTEN = howOftenOptions[0]?.label ?? "";
+
   const { userProfile } = useUserProfile();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -131,13 +132,9 @@ export function UpdateTasksClient({
   const [mode, setMode] = useState<"primary" | "edit">("primary");
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [customTaskText, setCustomTaskText] = useState("");
-
-  // how_often / change-mode state
   const [howOften, setHowOften] = useState<string>(DEFAULT_HOW_OFTEN);
   const [days, setDays] = useState<string[]>([]);
   const [isChangingFrequency, setIsChangingFrequency] = useState(false);
-  const [pendingFrequency, setPendingFrequency] = useState<HowOftenOption | null>(null);
-  const [selectedDays, setSelectedDays] = useState<Set<string>>(new Set());
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -232,14 +229,14 @@ export function UpdateTasksClient({
     setTaskState((prev) => prev.map((v, i) => (i === index ? !v : v)));
   };
 
-  const addTaskFromList = (task: string) => {
-    setTasks((prev) => [...prev, task]);
-    setTaskState((prev) => [...prev, false]);
-  };
-
   const deleteTask = (index: number) => {
     setTasks((prev) => prev.filter((_, i) => i !== index));
     setTaskState((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const addTaskFromList = (task: string) => {
+    setTasks((prev) => [...prev, task]);
+    setTaskState((prev) => [...prev, false]);
   };
 
   const addCustomTask = () => {
@@ -250,43 +247,12 @@ export function UpdateTasksClient({
     setCustomTaskText("");
   };
 
-  const handleFrequencySelect = (option: HowOftenOption) => {
-    setPendingFrequency(option);
-    setSelectedDays(new Set());
-
-    if (option.action === "advance" || option.action === "enable") {
-      setHowOften(option.label);
-      setDays([]);
-      setIsChangingFrequency(false);
-      setPendingFrequency(null);
-    }
-    // day-chooser actions stay in change-mode — wait for Save
-  };
-
-  const handleDayToggle = (day: string) => {
-    if (pendingFrequency?.action === "day-chooser-multi") {
-      setSelectedDays((prev) => {
-        const next = new Set(prev);
-        next.has(day) ? next.delete(day) : next.add(day);
-        return next;
-      });
-    } else {
-      setSelectedDays(new Set([day]));
-    }
-  };
-
-  const handleFrequencySave = () => {
-    if (!pendingFrequency) return;
-    setHowOften(pendingFrequency.label);
-    setDays([...selectedDays]);
-    setIsChangingFrequency(false);
-    setPendingFrequency(null);
-    setSelectedDays(new Set());
-  };
-
-  const showDayChooser =
-    pendingFrequency?.action === "day-chooser-single" ||
-    pendingFrequency?.action === "day-chooser-multi";
+  // Derive display value for how_often label
+  const howOftenDisplayValue = (() => {
+    const action = howOftenOptions.find(o => o.label === howOften)?.action as HowOftenAction | undefined;
+    const showDays = (action === "day-chooser-single" || action === "day-chooser-multi") && days.length > 0;
+    return showDays ? days.join(" ") : howOften;
+  })();
 
   if (!userProfile || !loop) return null;
 
@@ -337,76 +303,28 @@ export function UpdateTasksClient({
 
           {/* How-often row */}
           <div className="flex items-center gap-2">
-            <span className="text-sm font-bold">
-              {(() => {
-                const action = howOftenOptions.find(o => o.label === howOften)?.action as HowOftenAction | undefined;
-                const showDays = (action === "day-chooser-single" || action === "day-chooser-multi") && days.length > 0;
-                return showDays ? days.join(" ") : howOften;
-              })()}
-            </span>
+            <span className="text-sm font-bold">{howOftenDisplayValue}</span>
             <Button
-              variant={showDayChooser && selectedDays.size > 0 ? "default" : "ghost"}
+              variant="ghost"
               size="sm"
-              disabled={showDayChooser && selectedDays.size === 0}
-              onClick={() => {
-                if (showDayChooser) {
-                  handleFrequencySave();
-                } else if (isChangingFrequency) {
-                  setIsChangingFrequency(false);
-                  setPendingFrequency(null);
-                  setSelectedDays(new Set());
-                } else {
-                  setIsChangingFrequency(true);
-                }
-              }}
+              onClick={() => setIsChangingFrequency((prev) => !prev)}
             >
-              {showDayChooser ? "Save" : isChangingFrequency ? "Cancel" : "Change"}
+              {isChangingFrequency ? "Cancel" : "Change"}
             </Button>
           </div>
 
           {/* Change-mode frequency picker */}
           {isChangingFrequency && (
-            <div className="flex flex-col gap-3">
-              <div className="flex flex-wrap gap-2 justify-center">
-                {howOftenOptions.map((option) => (
-                  <Button
-                    key={option.label}
-                    variant="outline"
-                    size="sm"
-                    className={cn(
-                      pendingFrequency?.label === option.label &&
-                        "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground"
-                    )}
-                    onClick={() => handleFrequencySelect(option)}
-                  >
-                    {option.label}
-                  </Button>
-                ))}
-              </div>
-
-              {showDayChooser && (
-                <div>
-                  <hr className="border-border mb-3" />
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {DAYS.map((day) => (
-                      <Button
-                        key={day}
-                        variant="outline"
-                        size="sm"
-                        className={cn(
-                          selectedDays.has(day) &&
-                            "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground"
-                        )}
-                        onClick={() => handleDayToggle(day)}
-                      >
-                        {day}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-            </div>
+            <HowOftenPicker
+              options={howOftenOptions}
+              value={howOften}
+              days={days}
+              onChange={(value, newDays) => {
+                setHowOften(value);
+                setDays(newDays);
+                setIsChangingFrequency(false);
+              }}
+            />
           )}
 
           {/* Task list */}

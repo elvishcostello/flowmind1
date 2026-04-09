@@ -64,26 +64,11 @@ If `how_often` is null (loop was saved via skip), default it to the first key in
 
 #### Change semantics
 
-When the Change button is tapped, enter `change-mode`:
-- Load `HOWOFTEN.yaml` as a dictionary
-- Change the label of the change-save button to `Save`
-- Display a centered, wrapping left-to-right group of buttons, one per dictionary key
+When the Change button is tapped, `isChangingFrequency` is set to `true`, revealing `<HowOftenPicker>` (see `screens/components/how-often-picker.md`).
 
-Each button has its `action` value bound to it. When a button is tapped:
-- Set `how_often` in local state to the selected key's label
-- Update the `how_often` display button to reflect the new value
-- Follow the same action logic as `how-often.md` ## Button Semantics:
+The picker's `onChange` callback sets `howOften` and `days` in local state and sets `isChangingFrequency` back to `false`, hiding the picker. No `onAdvance` is needed — all changes are local until the back button is tapped.
 
-| action | behaviour |
-|---|---|
-| `advance` | Save `how_often` locally and exit change-mode |
-| `enable` | Save `how_often` locally and exit change-mode (no day-chooser needed) |
-| `day-chooser-single` | Show the day-chooser in single-select mode (see below) |
-| `day-chooser-multi` | Show the day-chooser in multi-select mode (see below) |
-
-The day-chooser group is identical to the one in `how-often.md`: a horizontal rule followed by a wrapping group of day buttons (Mon–Sun). Mode is controlled by the triggering action. The buttons should be centered and displayed left-to-right.
-
-When a day-chooser action is active, the change-save button label changes to `Save`. It remains disabled until at least one day is selected. Once a day is selected, the button switches to `variant="default"` (filled/primary) to make the CTA clearer. Tapping it commits `how_often` and `days` to local state and exits change-mode. There is no separate Save button at the bottom of the group.
+The Change button label toggles to `Cancel` while the picker is visible, allowing the user to dismiss without making a change.
 
 All changes are local — nothing is written to Supabase until the back button is tapped.
 
