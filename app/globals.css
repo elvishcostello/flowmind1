@@ -5,17 +5,16 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ─────────────────────────────────────────────────────────────────────────
-   Fonts: DM Sans (body), Instrument Serif (display), DM Mono (labels)
-   Load via next/font/google in app/layout.tsx and set these variables:
-     --font-dm-sans, --font-instrument-serif, --font-dm-mono
+   Fonts: Nunito (body), Cormorant Garamond (display)
+   Load via next/font/google in app/layout.tsx — variables set directly
+   on --font-sans and --font-serif by the font loader.
    ───────────────────────────────────────────────────────────────────────── */
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans:  var(--font-dm-sans);
-  --font-serif: var(--font-instrument-serif);
-  --font-mono:  var(--font-dm-mono);
+  --font-sans:  var(--font-sans), 'Nunito', sans-serif;
+  --font-serif: var(--font-serif), 'Cormorant Garamond', serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -55,39 +54,29 @@
 }
 
 :root {
-  /* ── Flowmind Palette ────────────────────────────────────────────────── */
+  /* ── Flowmind Brand Palette ──────────────────────────────────────────── */
 
-  /* Foundation — Sands & Clays */
-  --sand-50:  #FDFAF5;
-  --sand-100: #F5EFE2;
-  --sand-200: #EAE0CC;
-  --sand-300: #D9CBB0;
-  --clay-400: #C4A882;
-  --clay-500: #A8865C;
+  /* Core brand */
+  --brand-blue:   #011635;
+  --brand-pink:   #EED8FE;
+  --pink-deep:    #C9A8F0;
 
-  /* Action & Completion — Sage */
-  --sage-100: #E8EDDF;
-  --sage-200: #CDD9C5;
-  --sage-400: #88A47C;
-  --sage-600: #4E7A5F;
+  /* Backgrounds */
+  --lavender-bg:  #F3EEF8;
+  --surface:      #FFFFFF;
 
-  /* Information & Navigation — Mist */
-  --mist-100: #DDE8F0;
-  --mist-400: #7AAFC7;
-  --mist-600: #3D7FA6;
+  /* Text */
+  --text-primary: #011635;
+  --text-muted:   #4A5568;
 
-  /* Celebration & Rewards — Amber */
-  --amber-soft: #F5C87A;
-  --amber-warm: #E8A93A;
+  /* Dividers */
+  --divider:      #D8CCE8;
 
-  /* Text — Ink */
-  --ink-900: #2B2318;
-  --ink-600: #5C4D3A;
-  --ink-400: #8A7A66;
-  --ink-200: #B8A896;
+  /* Destructive — warm, never red */
+  --destructive-color: #C87850;
 
   /* ── Radius System ───────────────────────────────────────────────────── */
-  --radius:  0.875rem; /* 14px — base (r-md) */
+  --radius:  0.875rem;
   --r-sm:    8px;
   --r-md:    14px;
   --r-lg:    20px;
@@ -102,10 +91,10 @@
   --sp-xl:  40px;
   --sp-2xl: 64px;
 
-  /* ── Shadows (warm ink-tinted, never cold grey) ──────────────────────── */
-  --shadow-sm: 0 1px 4px rgba(43, 35, 24, 0.06), 0 0 0 1px rgba(43, 35, 24, 0.04);
-  --shadow-md: 0 4px 16px rgba(43, 35, 24, 0.08), 0 0 0 1px rgba(43, 35, 24, 0.04);
-  --shadow-lg: 0 8px 32px rgba(43, 35, 24, 0.10), 0 0 0 1px rgba(43, 35, 24, 0.05);
+  /* ── Shadows ─────────────────────────────────────────────────────────── */
+  --shadow-sm: 0 1px 4px rgba(1, 22, 53, 0.06), 0 0 0 1px rgba(1, 22, 53, 0.04);
+  --shadow-md: 0 4px 16px rgba(1, 22, 53, 0.08), 0 0 0 1px rgba(1, 22, 53, 0.04);
+  --shadow-lg: 0 8px 32px rgba(1, 22, 53, 0.10), 0 0 0 1px rgba(1, 22, 53, 0.05);
 
   /* ── Motion ──────────────────────────────────────────────────────────── */
   --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
@@ -115,99 +104,99 @@
   --t-slow:  500ms;
 
   /* ── shadcn/ui Semantic Tokens ───────────────────────────────────────── */
-  --background:          var(--sand-50);
-  --foreground:          var(--ink-900);
+  --background:          var(--lavender-bg);
+  --foreground:          var(--text-primary);
 
-  --card:                #FFFFFF;
-  --card-foreground:     var(--ink-900);
+  --card:                var(--surface);
+  --card-foreground:     var(--text-primary);
 
-  --popover:             #FFFFFF;
-  --popover-foreground:  var(--ink-900);
+  --popover:             var(--surface);
+  --popover-foreground:  var(--text-primary);
 
-  /* Primary = ink on sand — the main CTA */
-  --primary:             var(--ink-900);
-  --primary-foreground:  var(--sand-100);
+  /* Primary = Brand Blue — headers, CTAs, navigation */
+  --primary:             var(--brand-blue);
+  --primary-foreground:  var(--surface);
 
-  /* Secondary = sand-100 surface — subtle, resting */
-  --secondary:           var(--sand-100);
-  --secondary-foreground: var(--ink-600);
+  /* Secondary = lavender surface */
+  --secondary:           var(--lavender-bg);
+  --secondary-foreground: var(--text-primary);
 
-  /* Muted = sand-100 bg, ink-400 text */
-  --muted:               var(--sand-100);
-  --muted-foreground:    var(--ink-400);
+  /* Muted = lavender bg, muted text */
+  --muted:               var(--lavender-bg);
+  --muted-foreground:    var(--text-muted);
 
-  /* Accent = sage — action, completion, gentle positive */
-  --accent:              var(--sage-100);
-  --accent-foreground:   var(--sage-600);
+  /* Accent = Brand Pink — badges, highlights, rewards */
+  --accent:              var(--brand-pink);
+  --accent-foreground:   var(--brand-blue);
 
   /* Destructive = warm blush orange — never red */
-  --destructive:         #C87850;
+  --destructive:         var(--destructive-color);
 
-  --border:              var(--sand-200);
-  --input:               var(--sand-200);
-  --ring:                var(--clay-400);
+  --border:              var(--divider);
+  --input:               var(--divider);
+  --ring:                var(--pink-deep);
 
   /* ── Charts ──────────────────────────────────────────────────────────── */
-  --chart-1: var(--sage-400);
-  --chart-2: var(--mist-400);
-  --chart-3: var(--clay-400);
-  --chart-4: var(--amber-warm);
-  --chart-5: var(--mist-600);
+  --chart-1: var(--brand-blue);
+  --chart-2: var(--pink-deep);
+  --chart-3: var(--brand-pink);
+  --chart-4: #7AAFC7;
+  --chart-5: #4A5568;
 
   /* ── Sidebar ─────────────────────────────────────────────────────────── */
-  --sidebar:                    var(--sand-100);
-  --sidebar-foreground:         var(--ink-900);
-  --sidebar-primary:            var(--ink-900);
-  --sidebar-primary-foreground: var(--sand-50);
-  --sidebar-accent:             var(--sage-100);
-  --sidebar-accent-foreground:  var(--sage-600);
-  --sidebar-border:             var(--sand-200);
-  --sidebar-ring:               var(--clay-400);
+  --sidebar:                    var(--lavender-bg);
+  --sidebar-foreground:         var(--text-primary);
+  --sidebar-primary:            var(--brand-blue);
+  --sidebar-primary-foreground: var(--surface);
+  --sidebar-accent:             var(--brand-pink);
+  --sidebar-accent-foreground:  var(--brand-blue);
+  --sidebar-border:             var(--divider);
+  --sidebar-ring:               var(--pink-deep);
 }
 
 .dark {
-  /* Dark mode: ink tones as surfaces, sand tones as text */
-  --background:          var(--ink-900);
-  --foreground:          var(--sand-100);
+  /* Dark mode: deep navy surfaces, light text */
+  --background:          #0A1628;
+  --foreground:          #F3EEF8;
 
-  --card:                #3D3025;
-  --card-foreground:     var(--sand-50);
+  --card:                #0F2040;
+  --card-foreground:     #F3EEF8;
 
-  --popover:             #3D3025;
-  --popover-foreground:  var(--sand-50);
+  --popover:             #0F2040;
+  --popover-foreground:  #F3EEF8;
 
-  --primary:             var(--sand-200);
-  --primary-foreground:  var(--ink-900);
+  --primary:             var(--brand-pink);
+  --primary-foreground:  var(--brand-blue);
 
-  --secondary:           #3D3025;
-  --secondary-foreground: var(--sand-200);
+  --secondary:           #162848;
+  --secondary-foreground: #F3EEF8;
 
-  --muted:               #3D3025;
-  --muted-foreground:    var(--ink-200);
+  --muted:               #162848;
+  --muted-foreground:    #A89CC0;
 
-  --accent:              #243020;
-  --accent-foreground:   var(--sage-200);
+  --accent:              #1E1040;
+  --accent-foreground:   var(--brand-pink);
 
   --destructive:         #D4916A;
 
-  --border:              rgba(212, 200, 180, 0.12);
-  --input:               rgba(212, 200, 180, 0.15);
-  --ring:                var(--ink-400);
+  --border:              rgba(238, 216, 254, 0.12);
+  --input:               rgba(238, 216, 254, 0.15);
+  --ring:                var(--pink-deep);
 
-  --chart-1: var(--sage-400);
-  --chart-2: var(--mist-400);
-  --chart-3: var(--clay-400);
-  --chart-4: var(--amber-soft);
-  --chart-5: var(--mist-600);
+  --chart-1: var(--brand-pink);
+  --chart-2: var(--pink-deep);
+  --chart-3: #7AAFC7;
+  --chart-4: #A89CC0;
+  --chart-5: #4A5568;
 
-  --sidebar:                    #3D3025;
-  --sidebar-foreground:         var(--sand-100);
-  --sidebar-primary:            var(--sage-400);
-  --sidebar-primary-foreground: var(--sand-50);
-  --sidebar-accent:             #243020;
-  --sidebar-accent-foreground:  var(--sage-200);
-  --sidebar-border:             rgba(212, 200, 180, 0.12);
-  --sidebar-ring:               var(--ink-400);
+  --sidebar:                    #0F2040;
+  --sidebar-foreground:         #F3EEF8;
+  --sidebar-primary:            var(--brand-pink);
+  --sidebar-primary-foreground: var(--brand-blue);
+  --sidebar-accent:             #1E1040;
+  --sidebar-accent-foreground:  var(--brand-pink);
+  --sidebar-border:             rgba(238, 216, 254, 0.12);
+  --sidebar-ring:               var(--pink-deep);
 }
 
 @layer base {
@@ -216,9 +205,9 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+    font-family: var(--font-sans), 'Nunito', sans-serif;
     font-size: 15px;
-    line-height: 1.6;
+    line-height: 1.75;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

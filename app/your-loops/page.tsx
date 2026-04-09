@@ -77,7 +77,6 @@ export default function YourLoopsPage() {
       console.error("Failed to mark loop complete:", error);
     } else {
       setOpenLoops((prev) => prev?.filter((l) => l.id !== pendingRemoveId) ?? null);
-      setCompletedCount((n) => n + 1);
     }
     setPendingRemoveId(null);
   };
