@@ -42,7 +42,7 @@ At the bottom, a button whose label updates based on selection state:
 - 1 selected → `Add 1 Task` (enabled)
 - 2+ selected → `Add N Tasks` (enabled)
 
-The task data is defined as a static `CLEANING_DATA` object in the page component, mirroring `yaml/CLEANING.yaml`. Icons are resolved at runtime via `ICON_MAP`.
+Task data is sourced from `lib/config.ts` (`getCleaningData()`), read server-side and passed as props to the client component. Icons are resolved at runtime via `ICON_MAP` in the client component.
 
 ## Button Semantics
 

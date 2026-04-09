@@ -32,17 +32,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UpdateTasksParams } from "@/lib/types";
-
-// Static mirror of yaml/HOWOFTEN.yaml
-type HowOftenOption = { label: string; action: string };
-const HOW_OFTEN_OPTIONS: HowOftenOption[] = [
-  { label: "one time",      action: "advance" },
-  { label: "daily",         action: "enable" },
-  { label: "weekly",        action: "day-chooser-single" },
-  { label: "specific days", action: "day-chooser-multi" },
-  { label: "monthly",       action: "enable" },
-];
-const DEFAULT_HOW_OFTEN = HOW_OFTEN_OPTIONS[0].label;
+import type { HowOftenOption, HowOftenAction } from "@/lib/types";
+import type { CleaningData } from "./page";
 
 const DAYS = ["Mon", "Tues", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -51,110 +42,6 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Pencil, Droplets, Toilet, Layers, ShowerHead, Box, Bed, ArrowUpToLine,
   Feather, Shirt, Wind, Sofa, LayoutList, Mail, Folder, Monitor, Cable,
   Trees, Sprout, Leaf, CloudSnow, Car, Package, PawPrint, Drop: Droplet,
-};
-
-type CleaningTask = { task: string; icon: string };
-
-const CLEANING_DATA: Record<string, { icon: string; tasks: CleaningTask[] }> = {
-  Kitchen: {
-    icon: "ChefHat",
-    tasks: [
-      { task: "Wash the dishes", icon: "UtensilsCrossed" },
-      { task: "Empty the trash", icon: "Trash2" },
-      { task: "Wipe down counters", icon: "Sparkles" },
-      { task: "Wipe the stovetop", icon: "Sparkles" },
-      { task: "Clean the floor", icon: "Sparkles" },
-      { task: "Clean the microwave", icon: "Microwave" },
-      { task: "Organize the pantry", icon: "LayoutGrid" },
-      { task: "Clean the fridge", icon: "Refrigerator" },
-      { task: "Other", icon: "Pencil" },
-    ],
-  },
-  Bathroom: {
-    icon: "Droplets",
-    tasks: [
-      { task: "Clean the sink", icon: "Drop" },
-      { task: "Clean the toilet", icon: "Toilet" },
-      { task: "Wipe the mirror", icon: "Sparkles" },
-      { task: "Replace towels", icon: "Layers" },
-      { task: "Scrub the shower", icon: "ShowerHead" },
-      { task: "Mop the floor", icon: "Sparkles" },
-      { task: "Restock supplies", icon: "Box" },
-      { task: "Other", icon: "Pencil" },
-    ],
-  },
-  Bedroom: {
-    icon: "Bed",
-    tasks: [
-      { task: "Sort the laundry", icon: "Layers" },
-      { task: "Pick up the floor", icon: "ArrowUpToLine" },
-      { task: "Change the sheets", icon: "Bed" },
-      { task: "Dust surfaces", icon: "Feather" },
-      { task: "Organize the closet", icon: "Shirt" },
-      { task: "Vacuum", icon: "Wind" },
-      { task: "Other", icon: "Pencil" },
-    ],
-  },
-  "Living Room": {
-    icon: "Sofa",
-    tasks: [
-      { task: "Clear the surfaces", icon: "Sparkles" },
-      { task: "Clear the clutter", icon: "Trash2" },
-      { task: "Vacuum", icon: "Wind" },
-      { task: "Wipe down furniture", icon: "Sparkles" },
-      { task: "Clean windows", icon: "Sparkles" },
-      { task: "Organize shelves", icon: "LayoutList" },
-      { task: "Other", icon: "Pencil" },
-    ],
-  },
-  Office: {
-    icon: "Monitor",
-    tasks: [
-      { task: "Clear the desk", icon: "Sparkles" },
-      { task: "Sort the inbox pile", icon: "Mail" },
-      { task: "File papers", icon: "Folder" },
-      { task: "Wipe down surfaces", icon: "Sparkles" },
-      { task: "Organize supplies", icon: "Box" },
-      { task: "Untangle cables", icon: "Cable" },
-      { task: "Other", icon: "Pencil" },
-    ],
-  },
-  Outside: {
-    icon: "Trees",
-    tasks: [
-      { task: "Take out trash and recycling", icon: "Trash2" },
-      { task: "Sweep the porch", icon: "Wind" },
-      { task: "Water plants", icon: "Sprout" },
-      { task: "Mow the lawn", icon: "Sprout" },
-      { task: "Rake leaves", icon: "Leaf" },
-      { task: "Shovel snow", icon: "CloudSnow" },
-      { task: "Other", icon: "Pencil" },
-    ],
-  },
-  Car: {
-    icon: "Car",
-    tasks: [
-      { task: "Clear out trash", icon: "Trash2" },
-      { task: "Vacuum interior", icon: "Wind" },
-      { task: "Wipe down dashboard", icon: "Sparkles" },
-      { task: "Clean windows", icon: "Sparkles" },
-      { task: "Wash the exterior", icon: "Droplets" },
-      { task: "Tidy the trunk", icon: "Package" },
-      { task: "Other", icon: "Pencil" },
-    ],
-  },
-  Pet: {
-    icon: "PawPrint",
-    tasks: [
-      { task: "Clean water bowl", icon: "Drop" },
-      { task: "Wash food bowl", icon: "UtensilsCrossed" },
-      { task: "Clean litter box", icon: "Box" },
-      { task: "Vacuum pet hair", icon: "Wind" },
-      { task: "Wash pet bedding", icon: "Sparkles" },
-      { task: "Give them a bath", icon: "Droplets" },
-      { task: "Other", icon: "Pencil" },
-    ],
-  },
 };
 
 function SortableTaskRow({
@@ -212,7 +99,14 @@ type Loop = {
   days: string[] | null;
 };
 
-export function UpdateTasksClient() {
+export function UpdateTasksClient({
+  howOftenOptions,
+  cleaningData,
+}: {
+  howOftenOptions: HowOftenOption[];
+  cleaningData: CleaningData;
+}) {
+  const DEFAULT_HOW_OFTEN = howOftenOptions[0]?.label ?? "";
   const { userProfile } = useUserProfile();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -383,7 +277,7 @@ export function UpdateTasksClient() {
 
   if (!userProfile || !loop) return null;
 
-  const availableTasks = (CLEANING_DATA[loop.category]?.tasks ?? []).filter(
+  const availableTasks = (cleaningData[loop.category]?.tasks ?? []).filter(
     (t) => !tasks.includes(t.task)
   );
 
@@ -431,9 +325,11 @@ export function UpdateTasksClient() {
           {/* How-often row */}
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" className="pointer-events-none">
-              {(howOften === "specific days" || howOften === "weekly") && days.length > 0
-                ? days.join(" ")
-                : howOften}
+              {(() => {
+                const action = howOftenOptions.find(o => o.label === howOften)?.action as HowOftenAction | undefined;
+                const showDays = (action === "day-chooser-single" || action === "day-chooser-multi") && days.length > 0;
+                return showDays ? days.join(" ") : howOften;
+              })()}
             </Button>
             <Button
               variant="ghost"
@@ -452,7 +348,7 @@ export function UpdateTasksClient() {
           {isChangingFrequency && (
             <div className="flex flex-col gap-3">
               <div className="flex flex-wrap gap-2">
-                {HOW_OFTEN_OPTIONS.map((option) => (
+                {howOftenOptions.map((option) => (
                   <Button
                     key={option.label}
                     variant="outline"

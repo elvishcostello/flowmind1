@@ -6,7 +6,7 @@ import { useUserProfile } from "@/lib/user-profile-context";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { HowOftenOption } from "./page";
+import type { HowOftenOption } from "@/lib/types";
 
 const DAYS = ["Mon", "Tues", "Wed", "Thu", "Fri", "Sat", "Sun"];
 

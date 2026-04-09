@@ -36,6 +36,10 @@ export const UpdateTasksParams = z.object({
   id: z.string(),
 });
 
+// How-often frequency options — action values are structural constants, not user-facing labels.
+export type HowOftenAction = "advance" | "enable" | "day-chooser-single" | "day-chooser-multi";
+export type HowOftenOption = { label: string; action: HowOftenAction };
+
 export type OuterLoopParams = z.infer<typeof OuterLoopParams>;
 export type InnerLoopParams = z.infer<typeof InnerLoopParams>;
 export type HowLongParams = z.infer<typeof HowLongParams>;
