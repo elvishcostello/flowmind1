@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { HowOftenPicker } from "@/components/how-often-picker";
-import { CompletedLoopsButton } from "@/components/completed-loops-button";
+import { StarCountBadge } from "@/components/star-count-badge";
 import {
   DndContext,
   closestCenter,
@@ -267,7 +267,7 @@ export function UpdateTasksClient({
             ← Back
           </Button>
           <div className="flex-1" />
-          <CompletedLoopsButton />
+          <StarCountBadge />
         </div>
 
         <hr className="border-border" />

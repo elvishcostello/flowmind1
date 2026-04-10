@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
 
-export function CompletedLoopsButton() {
+export function StarCountBadge() {
   const { userProfile } = useUserProfile();
   const [count, setCount] = useState(0);
 
@@ -14,11 +14,11 @@ export function CompletedLoopsButton() {
     if (!userProfile) return;
     const supabase = createClient();
     supabase
-      .from("loops")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userProfile.id)
-      .eq("completed", true)
-      .then(({ count }) => setCount(count ?? 0));
+      .from("user_activity")
+      .select("star_count")
+      .eq("id", userProfile.id)
+      .single()
+      .then(({ data }) => setCount(data?.star_count ?? 0));
   }, [userProfile]);
 
   return (

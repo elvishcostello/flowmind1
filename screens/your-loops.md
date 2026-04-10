@@ -32,11 +32,27 @@ On mount, run two queries (matching on `user_id`):
 ### Top bar
 
 A horizontal div with:
-- A text label: `FLOWMIND`
+- A ghost button labeled `Feedback` — opens the `<FeedbackSheet />` overlay (see `components/feedback-sheet.tsx`)
 - A horizontal spacer
 - A rounded button with a lucide `Star` icon and a numeric counter (count of completed loops)
 - A rounded button labeled `reflect` (targets nothing)
 - A settings button — opens the `<SettingsSheet />` overlay (see `components/settings-sheet.tsx`)
+
+### Feedback sheet
+
+Slides up from the bottom. Content:
+
+1. Heading: `We Welcome Your Feedback!`
+2. Multiline textarea with placeholder `type your feedback here`, initial height ~40% of screen height
+3. A horizontal button group:
+   - `ThumbsUp` icon button — toggles on/off; when active uses `default` variant; tapping when active deselects it; mutually exclusive with thumbs down
+   - `ThumbsDown` icon button — same toggle semantics, mutually exclusive with thumbs up
+   - Horizontal spacer
+   - `Submit` button — disabled when textarea is empty
+
+**Submit semantics:** inserts a row into the `feedback` table (`user_id`, `feedback_text`, `thumbs_up`), then replaces the sheet content with a brief `Thanks!` message and auto-closes after 2 seconds. `thumbs_up` is `true` for thumbs up, `false` for thumbs down, `null` if neither was selected.
+
+See `markdown/FEEDBACK.md` for schema and RLS.
 
 ### Horizontal separator
 

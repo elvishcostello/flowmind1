@@ -16,6 +16,7 @@ create table public.loops (
   how_often text,
   days text[],                          -- null unless a day-chooser action was used
   task_state boolean[],                         -- null until tasks are interacted with
+  mood text,                                    -- nullable, set when a loop is closed
   completed boolean not null default false,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
@@ -104,6 +105,9 @@ alter table public.loops add column task_state boolean[];
 -- If task_state was previously added as a scalar boolean, drop and re-add:
 alter table public.loops drop column task_state;
 alter table public.loops add column task_state boolean[];
+
+-- Add mood column (nullable text)
+alter table public.loops add column mood text;
 
 -- Drop all rows (destructive — use only in dev/reset scenarios)
 truncate table public.loops;

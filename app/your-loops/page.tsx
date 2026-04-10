@@ -20,8 +20,9 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { SettingsSheet } from "@/components/settings-sheet";
+import { FeedbackSheet } from "@/components/feedback-sheet";
 import { ProgressField } from "@/components/ui/progress-field";
-import { CompletedLoopsButton } from "@/components/completed-loops-button";
+import { StarCountBadge } from "@/components/star-count-badge";
 
 type Loop = {
   id: string;
@@ -88,9 +89,9 @@ export default function YourLoopsPage() {
       <div className="w-full max-w-sm flex flex-col flex-1">
         {/* Custom top bar */}
         <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
-          <span className="tracking-widest text-xs font-medium">FLOWMIND</span>
+          <FeedbackSheet />
           <div className="flex-1" />
-          <CompletedLoopsButton />
+          <StarCountBadge />
           <Button variant="outline" size="sm" className="rounded-full">
             reflect
           </Button>
