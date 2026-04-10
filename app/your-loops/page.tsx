@@ -91,24 +91,29 @@ export default function YourLoopsPage() {
     setPendingRemoveId(null);
   };
 
-  const handleTaskTap = async (loop: Loop) => {
-    if (loop.tasks.length !== 1) return; // only acts on single-task loops
-    const current = taskStates[loop.id] ?? [false];
-    if (current[0]) return; // already complete, one-way only
-    const newState = [true];
+  const handleTaskTap = async (loop: Loop, taskIndex: number) => {
+    const current = taskStates[loop.id] ?? loop.task_state ?? loop.tasks.map(() => false);
+    if (current[taskIndex]) return; // one-way only
 
+    const newState = current.map((v, i) => (i === taskIndex ? true : v));
     setTaskStates((prev) => ({ ...prev, [loop.id]: newState }));
-    setOpenLoops((prev) => prev?.filter((l) => l.id !== loop.id) ?? null);
 
     const supabase = createClient();
+    const allDone = newState.every(Boolean);
 
     await supabase
       .from("loops")
-      .update({ task_state: newState, completed: true })
+      .update({
+        task_state: newState,
+        ...(allDone ? { completed: true } : {}),
+      })
       .eq("id", loop.id)
       .eq("user_id", userProfile!.id);
 
-    router.replace(`/loop-closed?id=${loop.id}`);
+    if (allDone) {
+      setOpenLoops((prev) => prev?.filter((l) => l.id !== loop.id) ?? null);
+      router.replace(`/loop-closed?id=${loop.id}`);
+    }
   };
 
   if (!userProfile) return null;
@@ -153,14 +158,13 @@ export default function YourLoopsPage() {
             if (!loop.tasks || loop.tasks.length === 0) {
               console.error(`Loop ${loop.id} has an empty tasks array`);
             }
-            const firstTask = loop.tasks?.[0];
-            const extraCount = (loop.tasks?.length ?? 0) - 1;
             const total = loop.tasks?.length ?? 0;
             const localState = taskStates[loop.id] ?? loop.task_state ?? loop.tasks.map(() => false);
-            const firstDone = localState[0] ?? false;
             const done = localState.filter(Boolean).length;
             const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-            const isSingleTask = loop.tasks.length === 1;
+            const nextIndex = localState.findIndex((v) => !v);
+            const nextTask = nextIndex >= 0 ? loop.tasks[nextIndex] : null;
+            const remaining = total - done;
             return (
               <Card key={loop.id}>
                 <CardContent className="pt-4 pb-4 space-y-2">
@@ -177,21 +181,16 @@ export default function YourLoopsPage() {
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
-                  {firstTask && (
+                  {nextTask && (
                     <button
                       type="button"
                       className="flex items-center gap-2 w-full text-left"
-                      onClick={() => isSingleTask && handleTaskTap(loop)}
-                      disabled={!isSingleTask || firstDone}
+                      onClick={() => handleTaskTap(loop, nextIndex)}
                     >
-                      {firstDone ? (
-                        <CircleCheckBig className="h-4 w-4 text-primary shrink-0" />
-                      ) : (
-                        <Circle className="h-4 w-4 text-muted-foreground shrink-0" />
-                      )}
-                      <span className="text-sm text-muted-foreground">{firstTask}</span>
-                      {extraCount > 0 && (
-                        <span className="text-xs text-muted-foreground">+{extraCount} more</span>
+                      <Circle className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <span className="text-sm text-muted-foreground">{nextTask}</span>
+                      {remaining > 1 && (
+                        <span className="text-xs text-muted-foreground">+{remaining - 1} more</span>
                       )}
                     </button>
                   )}

@@ -80,11 +80,12 @@ If open loops exist, render a card for each loop:
 
 **Row 1:** Look up the category in `yaml/CLEANING.yaml`. If the `icon` field is non-null, display the corresponding lucide icon. Then display a label: `<category> Tasks`.
 
-**Row 2:** The tasks array must not be empty — log a console error if it is. Display the first task as a tappable row:
-- If the loop has exactly **one task** and it is incomplete, tapping marks it complete, saves to Supabase (`task_state`, `completed = true`), and navigates to `/loop-closed?id=<loopId>` via `router.replace()`
-- If the loop has more than one task, the row is not tappable — the user must use "See all"
-- Icon reflects completion state: `CircleCheckBig` (complete) or `Circle` (incomplete); one-way only
-- If additional tasks exist, append `+N more` on the same row
+**Row 2:** The tasks array must not be empty — log a console error if it is. Display the **first incomplete task** as a tappable row:
+- Tapping marks that task complete (one-way), saves `task_state` to Supabase immediately
+- If all tasks are now complete, also sets `completed = true` and navigates to `/loop-closed?id=<loopId>` via `router.replace()`
+- After a tap, the next incomplete task is shown in its place
+- Icon is always `Circle` (the shown task is always incomplete)
+- `+N more` shows the count of remaining incomplete tasks beyond the displayed one
 
 Task state is tracked in local `taskStates` map (keyed by loop id) initialised from the fetched `task_state` column.
 
