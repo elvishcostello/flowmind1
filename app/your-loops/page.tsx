@@ -133,7 +133,7 @@ export default function YourLoopsPage() {
         </div>
 
         {/* Content area */}
-        <div className="flex flex-1 flex-col p-6 space-y-4">
+        <div className="flex flex-col p-6 space-y-4">
           <h1 className="text-xl font-semibold">Your Loops</h1>
           <p className="text-sm text-muted-foreground">
             What&apos;s been sitting in the back of the mind?
@@ -205,8 +205,6 @@ export default function YourLoopsPage() {
               </Card>
             );
           })}
-
-          <div className="flex-1" />
 
           <div className="flex justify-end">
             <Button onClick={() => router.push("/outer-loop")}>+ Add a Loop</Button>

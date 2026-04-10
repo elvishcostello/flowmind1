@@ -185,8 +185,6 @@ export function InnerLoopClient({ cleaningData }: { cleaningData: CleaningData }
           </div>
         )}
 
-        <div className="flex-1" />
-
         <Button
           className="w-full"
           disabled={totalSelected === 0}

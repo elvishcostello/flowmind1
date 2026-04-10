@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { BackNav } from "@/components/breadcrumb-nav";
 
-const SUPPRESS_HEADER = ["/", "/your-loops", "/loop-closed"];
+const SUPPRESS_HEADER = ["/", "/your-loops", "/loop-closed", "/update-tasks"];
 
 export function ConditionalHeader() {
   const pathname = usePathname();
