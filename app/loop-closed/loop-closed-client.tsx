@@ -129,8 +129,6 @@ export function LoopClosedClient() {
           </div>
         </div>
 
-        <div className="flex-1" />
-
         <Button className="w-full" onClick={handleExit}>
           ← Back to My Loops
         </Button>
