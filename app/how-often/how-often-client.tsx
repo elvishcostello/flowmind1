@@ -42,7 +42,7 @@ export function HowOftenClient({ options }: HowOftenClientProps) {
       days: days && days.length > 0 ? days : null,
       completed: false,
     });
-    if (error) console.error("loop insert failed:", error);
+    if (error) console.error("loop insert failed:", error.message, error.details, error.hint);
   };
 
   const handleChange = async (value: string, days: string[]) => {

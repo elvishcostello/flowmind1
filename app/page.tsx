@@ -38,7 +38,7 @@ export default function Home() {
     supabase
       .rpc('increment', { row_id: session.user.id })
       .then(({ error }) => {
-        if (error) console.error('increment session_count failed:', error);
+        if (error) console.error('increment session_count failed:', error?.message, error?.details, error?.hint);
       });
 
     supabase
@@ -46,9 +46,9 @@ export default function Home() {
       .update({ last_access: new Date().toISOString() })
       .eq('id', session.user.id)
       .then(({ error }) => {
-        if (error) console.error('last_access update failed:', error);
+        if (error) console.error('last_access update failed:', error?.message, error?.details, error?.hint);
       });
-  }, [session?.user.id]);
+  }, [session?.user.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (session === undefined) return <div className="flex flex-1" />;
   if (!session) return <SignInScreen />;

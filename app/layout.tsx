@@ -1,27 +1,21 @@
 import type { Metadata } from "next";
-import { DM_Sans, Instrument_Serif, DM_Mono } from "next/font/google";
+import { Nunito, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import { ConditionalHeader } from "@/components/conditional-header";
 import { UserProfileProvider } from "@/lib/user-profile-context";
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const nunito = Nunito({
+  variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["300", "400", "500", "600", "700"],
   style: ["normal", "italic"],
 });
 
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
+const cormorantGaramond = Cormorant_Garamond({
+  variable: "--font-serif",
   subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "600"],
   style: ["normal", "italic"],
-});
-
-const dmMono = DM_Mono({
-  variable: "--font-dm-mono",
-  subsets: ["latin"],
-  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -36,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${dmSans.variable} ${instrumentSerif.variable} ${dmMono.variable} antialiased min-h-svh flex flex-col`}>
+      <body className={`${nunito.variable} ${cormorantGaramond.variable} antialiased min-h-svh flex flex-col`}>
         <ConditionalHeader />
         <main className="flex flex-1 flex-col">
           <UserProfileProvider>{children}</UserProfileProvider>

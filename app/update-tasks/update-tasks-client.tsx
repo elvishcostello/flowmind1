@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { HowOftenPicker } from "@/components/how-often-picker";
+import { StarCountBadge } from "@/components/star-count-badge";
 import {
   DndContext,
   closestCenter,
@@ -28,7 +29,7 @@ import {
   Pencil, Droplets, Toilet, Layers, ShowerHead, Box, Bed, ArrowUpToLine,
   Feather, Shirt, Wind, Sofa, LayoutList, Mail, Folder, Monitor, Cable,
   Trees, Sprout, Leaf, CloudSnow, Car, Package, PawPrint, Droplet,
-  Star, Circle, CircleCheckBig, Plus, GripVertical, X,
+  Circle, CircleCheckBig, Plus, GripVertical, X,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -126,7 +127,6 @@ export function UpdateTasksClient({
   const loopId = parsed.success ? parsed.data.id : null;
 
   const [loop, setLoop] = useState<Loop | null>(null);
-  const [completedCount, setCompletedCount] = useState(0);
   const [tasks, setTasks] = useState<string[]>([]);
   const [taskState, setTaskState] = useState<boolean[]>([]);
   const [mode, setMode] = useState<"primary" | "edit">("primary");
@@ -172,7 +172,7 @@ export function UpdateTasksClient({
       .single()
       .then(({ data, error }) => {
         if (error || !data) {
-          console.error("Failed to load loop:", error);
+          console.error("Failed to load loop:", error?.message, error?.details, error?.hint);
           router.push("/your-loops");
           return;
         }
@@ -183,13 +183,7 @@ export function UpdateTasksClient({
         setDays(data.days ?? []);
       });
 
-    supabase
-      .from("loops")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userProfile.id)
-      .eq("completed", true)
-      .then(({ count }) => setCompletedCount(count ?? 0));
-  }, [userProfile, router, loopId]);
+  }, [userProfile, router, loopId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const saveLoop = async (): Promise<boolean> => {
     if (!loop) return false;
@@ -205,7 +199,7 @@ export function UpdateTasksClient({
       .eq("id", loop.id)
       .eq("user_id", userProfile!.id);
     if (error) {
-      console.error("Failed to save loop:", error);
+      console.error("Failed to save loop:", error?.message, error?.details, error?.hint);
       return false;
     }
     return true;
@@ -225,8 +219,26 @@ export function UpdateTasksClient({
     router.back();
   };
 
-  const toggleTask = (index: number) => {
-    setTaskState((prev) => prev.map((v, i) => (i === index ? !v : v)));
+  const toggleTask = async (index: number) => {
+    const newTaskState = taskState.map((v, i) => (i === index ? !v : v));
+    setTaskState(newTaskState);
+
+    if (newTaskState.length > 0 && newTaskState.every(Boolean)) {
+      if (!loop) return;
+      const supabase = createClient();
+      await supabase
+        .from("loops")
+        .update({
+          tasks,
+          task_state: newTaskState,
+          how_often: howOften,
+          days: days.length > 0 ? days : null,
+          completed: true,
+        })
+        .eq("id", loop.id)
+        .eq("user_id", userProfile!.id);
+      router.replace(`/loop-closed?id=${loop.id}`);
+    }
   };
 
   const deleteTask = (index: number) => {
@@ -273,10 +285,7 @@ export function UpdateTasksClient({
             ← Back
           </Button>
           <div className="flex-1" />
-          <Button variant="outline" size="sm" className="rounded-full">
-            <Star className="h-4 w-4" />
-            {completedCount}
-          </Button>
+          <StarCountBadge />
         </div>
 
         <hr className="border-border" />

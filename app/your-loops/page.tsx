@@ -15,12 +15,14 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
-  Star, Repeat2, Circle, X,
+  Repeat2, Circle, X,
   ChefHat, Droplets, Bed, Sofa, Monitor, Trees, Car, PawPrint,
   type LucideIcon,
 } from "lucide-react";
 import { SettingsSheet } from "@/components/settings-sheet";
+import { FeedbackSheet } from "@/components/feedback-sheet";
 import { ProgressField } from "@/components/ui/progress-field";
+import { StarCountBadge } from "@/components/star-count-badge";
 
 type Loop = {
   id: string;
@@ -47,7 +49,7 @@ export default function YourLoopsPage() {
   const { userProfile } = useUserProfile();
   const router = useRouter();
   const [openLoops, setOpenLoops] = useState<Loop[] | null>(null);
-  const [completedCount, setCompletedCount] = useState(0);
+  const [taskStates, setTaskStates] = useState<Record<string, boolean[]>>({});
   const [pendingRemoveId, setPendingRemoveId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -59,18 +61,19 @@ export default function YourLoopsPage() {
 
     supabase
       .from("loops")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userProfile.id)
-      .eq("completed", true)
-      .then(({ count }) => setCompletedCount(count ?? 0));
-
-    supabase
-      .from("loops")
       .select("id, category, tasks, how_long, how_often, days, task_state")
       .eq("user_id", userProfile.id)
       .eq("completed", false)
       .order("created_at", { ascending: false })
-      .then(({ data }) => setOpenLoops(data ?? []));
+      .then(({ data }) => {
+        const loops = data ?? [];
+        setOpenLoops(loops);
+        const states: Record<string, boolean[]> = {};
+        loops.forEach((l) => {
+          states[l.id] = l.task_state ?? l.tasks.map(() => false);
+        });
+        setTaskStates(states);
+      });
   }, [userProfile, router]);
 
   const handleConfirmRemove = async () => {
@@ -78,15 +81,39 @@ export default function YourLoopsPage() {
     const supabase = createClient();
     const { error } = await supabase
       .from("loops")
-      .update({ completed: true })
+      .update({ completed: true, abandoned: true })
       .eq("id", pendingRemoveId);
     if (error) {
-      console.error("Failed to mark loop complete:", error);
+      console.error("Failed to mark loop complete:", error?.message, error?.details, error?.hint);
     } else {
       setOpenLoops((prev) => prev?.filter((l) => l.id !== pendingRemoveId) ?? null);
-      setCompletedCount((n) => n + 1);
     }
     setPendingRemoveId(null);
+  };
+
+  const handleTaskTap = async (loop: Loop, taskIndex: number) => {
+    const current = taskStates[loop.id] ?? loop.task_state ?? loop.tasks.map(() => false);
+    if (current[taskIndex]) return; // one-way only
+
+    const newState = current.map((v, i) => (i === taskIndex ? true : v));
+    setTaskStates((prev) => ({ ...prev, [loop.id]: newState }));
+
+    const supabase = createClient();
+    const allDone = newState.every(Boolean);
+
+    await supabase
+      .from("loops")
+      .update({
+        task_state: newState,
+        ...(allDone ? { completed: true } : {}),
+      })
+      .eq("id", loop.id)
+      .eq("user_id", userProfile!.id);
+
+    if (allDone) {
+      setOpenLoops((prev) => prev?.filter((l) => l.id !== loop.id) ?? null);
+      router.replace(`/loop-closed?id=${loop.id}`);
+    }
   };
 
   if (!userProfile) return null;
@@ -96,12 +123,9 @@ export default function YourLoopsPage() {
       <div className="w-full max-w-sm flex flex-col flex-1">
         {/* Custom top bar */}
         <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
-          <span className="tracking-widest text-xs font-medium">FLOWMIND</span>
+          <FeedbackSheet />
           <div className="flex-1" />
-          <Button variant="outline" size="sm" className="rounded-full">
-            <Star className="h-4 w-4" />
-            {completedCount}
-          </Button>
+          <StarCountBadge />
           <Button variant="outline" size="sm" className="rounded-full">
             reflect
           </Button>
@@ -134,11 +158,13 @@ export default function YourLoopsPage() {
             if (!loop.tasks || loop.tasks.length === 0) {
               console.error(`Loop ${loop.id} has an empty tasks array`);
             }
-            const firstTask = loop.tasks?.[0];
-            const extraCount = (loop.tasks?.length ?? 0) - 1;
             const total = loop.tasks?.length ?? 0;
-            const done = (loop.task_state ?? []).filter(Boolean).length;
+            const localState = taskStates[loop.id] ?? loop.task_state ?? loop.tasks.map(() => false);
+            const done = localState.filter(Boolean).length;
             const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+            const nextIndex = localState.findIndex((v) => !v);
+            const nextTask = nextIndex >= 0 ? loop.tasks[nextIndex] : null;
+            const remaining = total - done;
             return (
               <Card key={loop.id}>
                 <CardContent className="pt-4 pb-4 space-y-2">
@@ -155,14 +181,18 @@ export default function YourLoopsPage() {
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
-                  {firstTask && (
-                    <div className="flex items-center gap-2">
+                  {nextTask && (
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 w-full text-left"
+                      onClick={() => handleTaskTap(loop, nextIndex)}
+                    >
                       <Circle className="h-4 w-4 text-muted-foreground shrink-0" />
-                      <span className="text-sm text-muted-foreground">{firstTask}</span>
-                      {extraCount > 0 && (
-                        <span className="text-xs text-muted-foreground">+{extraCount} more</span>
+                      <span className="text-sm text-muted-foreground">{nextTask}</span>
+                      {remaining > 1 && (
+                        <span className="text-xs text-muted-foreground">+{remaining - 1} more</span>
                       )}
-                    </div>
+                    </button>
                   )}
                   <ProgressField value={pct} />
                   <button

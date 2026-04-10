@@ -109,13 +109,12 @@ If the user clicks 'Add' then add this task (and a default task_state) to the lo
 
 | element | action |
 |---|---|
-| back button | should commit the changes for this row, and then return control to your-loop |
+| back button | commit loop state to Supabase, then `router.back()` |
+| task buttons | toggle completion state; if all tasks are now `true`, commit to Supabase (including `completed = true`) then navigate to `/loop-closed?id=<loopId>` via `router.replace()` |
 
 ## Data Requirements
 
-TODO: do not implement yet
-
-TODO: Describe any Supabase reads or writes this screen performs. Reference `LOOPS.md` or `PERSISTENCE.md` as appropriate. Delete this section if the screen is display-only with no data access.
+If navigating back, persist the loop data.
 
 ```typescript
 const supabase = createClient()

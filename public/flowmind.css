@@ -1,0 +1,222 @@
+/*
+ * flowmind.css — Shared brand stylesheet
+ * Version 1.0 · April 9, 2026
+ *
+ * ─── FONT NOTE ────────────────────────────────────────────────────────────────
+ * Brand fonts per guidelines:
+ *   Display/serif  → Equity Sans       (commercial, creativemarket.com)
+ *   Body/sans      → MADE Tommy Soft   (commercial, creativemarket.com)
+ *
+ * Web-safe substitutes used here until licensed fonts are installed:
+ *   Display/serif  → Cormorant Garamond (Google Fonts — closest freely available)
+ *   Body/sans      → Nunito             (Google Fonts — rounded, low cognitive load)
+ *
+ * To swap in the real fonts, replace the @import below with your self-hosted
+ * @font-face declarations and update --font-display and --font-body accordingly.
+ * ──────────────────────────────────────────────────────────────────────────────
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@300;400;600&display=swap');
+
+/* ── Design Tokens ─────────────────────────────────────────────────────────── */
+:root {
+  /* Brand palette */
+  --color-blue:        #011635;   /* Brand Blue  — headers, primary text, borders */
+  --color-pink:        #EED8FE;   /* Brand Pink  — accents, highlights            */
+
+  /* Derived / supporting */
+  --color-bg:          #F3EEF8;   /* Lavender-tinted page background              */
+  --color-surface:     #FFFFFF;   /* Card / content surface                       */
+  --color-muted:       #4A5568;   /* Secondary body text — passes AA on white     */
+  --color-rule:        #D8CCE8;   /* Dividers                                     */
+  --color-pink-deep:   #C9A8F0;   /* Darker pink for highlight border accent      */
+
+  /* Typography */
+  --font-display:      'Cormorant Garamond', Georgia, serif;   /* swap → Equity Sans      */
+  --font-body:         'Nunito', 'Helvetica Neue', sans-serif; /* swap → MADE Tommy Soft  */
+
+  /* Sizing scale */
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.375rem;
+  --text-2xl:  1.75rem;
+
+  /* Spacing */
+  --space-xs:  0.5rem;
+  --space-sm:  1rem;
+  --space-md:  1.5rem;
+  --space-lg:  2.5rem;
+  --space-xl:  4rem;
+
+  /* Shape */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-pill: 100px;
+
+  /* Max content width */
+  --max-width: 680px;
+}
+
+/* ── Reset ─────────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Base ──────────────────────────────────────────────────────────────────── */
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-base);
+  line-height: 1.75;
+  color: var(--color-blue);
+  background-color: var(--color-bg);
+  min-height: 100vh;
+  padding: var(--space-lg) var(--space-md) var(--space-xl);
+}
+
+/* ── Layout ────────────────────────────────────────────────────────────────── */
+.fm-wrapper {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+/* ── Header ────────────────────────────────────────────────────────────────── */
+.fm-header {
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
+  border-bottom: 2px solid var(--color-blue);
+}
+
+.fm-brand {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: var(--text-2xl);
+  color: var(--color-blue);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.fm-doc-title {
+  margin-top: 0.25rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.fm-effective {
+  margin-top: var(--space-xs);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+
+/* ── Section ───────────────────────────────────────────────────────────────── */
+.fm-section {
+  margin-bottom: var(--space-lg);
+}
+
+/* ── Section heading ───────────────────────────────────────────────────────── */
+.fm-section h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-xl);
+  color: var(--color-blue);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+/* Numbered pill badge — Brand Pink accent per usage guidelines */
+.fm-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-blue);
+  background: var(--color-pink);
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Body text ─────────────────────────────────────────────────────────────── */
+p {
+  font-size: var(--text-base);
+  line-height: 1.8;
+  color: var(--color-muted);
+}
+
+ul {
+  padding-left: 1.25rem;
+  margin-top: var(--space-xs);
+}
+
+ul li {
+  font-size: var(--text-base);
+  line-height: 1.8;
+  color: var(--color-muted);
+  margin-bottom: 0.2rem;
+}
+
+strong {
+  font-weight: 600;
+  color: var(--color-blue);
+}
+
+/* ── Highlight block (e.g. "we do not sell your data") ─────────────────────── */
+.fm-highlight {
+  background: var(--color-pink);
+  border-left: 3px solid var(--color-pink-deep);
+  padding: 0.8rem 1.1rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: var(--text-base);
+  line-height: 1.75;
+  color: var(--color-blue);
+}
+
+/* ── Footer ────────────────────────────────────────────────────────────────── */
+.fm-footer {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-rule);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  body {
+    padding: var(--space-md) var(--space-sm) var(--space-xl);
+  }
+
+  .fm-brand {
+    font-size: 1.5rem;
+  }
+
+  .fm-section h2 {
+    font-size: var(--text-lg);
+    flex-wrap: wrap;
+  }
+}

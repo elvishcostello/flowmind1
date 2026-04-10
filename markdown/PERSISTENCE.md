@@ -87,6 +87,7 @@ create table public.user_profiles (
 create table public.user_activity (
   id uuid references auth.users(id) primary key,
   session_count integer default 0,  -- used for in-app logic e.g. show tip on 5th session
+  star_count integer not null default 0,  -- count of completed loops (stars earned)
   last_access timestamptz           -- used for 'last seen' in any future admin view
 );
 ```
@@ -369,6 +370,15 @@ const { error } = await supabase
 ```
 
 Always handle errors. Never assume a write succeeded without checking `error`.
+
+---
+
+## Migrations
+
+```sql
+-- Add star_count column to user_activity (non-nullable integer, default 0)
+alter table public.user_activity add column star_count integer not null default 0;
+```
 
 ---
 

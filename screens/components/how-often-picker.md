@@ -22,7 +22,7 @@ Renders a wrapping group of frequency buttons, one per `HowOftenOption`. Action 
 
 | action | behaviour |
 |---|---|
-| `advance` | Calls `onChange(label, [])` and `onAdvance?.(label)` immediately |
+| `advance` | If `onAdvance` is provided, calls `onAdvance(label)` only. Otherwise calls `onChange(label, [])`. Never calls both. |
 | `enable` | Calls `onChange(label, [])` and shows `Add This Loop` button |
 | `day-chooser-single` | Reveals day-chooser in single-select mode |
 | `day-chooser-multi` | Reveals day-chooser in multi-select mode |
