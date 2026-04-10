@@ -114,7 +114,7 @@ Label: `Remove this loop?`
 
 | button | action |
 |---|---|
-| Yes, Remove it | Updates the loop row: sets `completed` to `TRUE` |
+| Yes, Remove it | Updates the loop row: sets `completed = true` and `abandoned = true` |
 | Keep it | Dismisses the dialog, returns to the loops page |
 
 ## Analytics

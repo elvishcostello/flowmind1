@@ -18,6 +18,7 @@ create table public.loops (
   task_state boolean[],                         -- null until tasks are interacted with
   mood text,                                    -- nullable, set when a loop is closed
   completed boolean not null default false,
+  abandoned boolean not null default false,     -- true when user dismisses via X, not by completing tasks
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
@@ -108,6 +109,9 @@ alter table public.loops add column task_state boolean[];
 
 -- Add mood column (nullable text)
 alter table public.loops add column mood text;
+
+-- Add abandoned column (non-nullable boolean, default false)
+alter table public.loops add column abandoned boolean not null default false;
 
 -- Drop all rows (destructive — use only in dev/reset scenarios)
 truncate table public.loops;

@@ -81,7 +81,7 @@ export default function YourLoopsPage() {
     const supabase = createClient();
     const { error } = await supabase
       .from("loops")
-      .update({ completed: true })
+      .update({ completed: true, abandoned: true })
       .eq("id", pendingRemoveId);
     if (error) {
       console.error("Failed to mark loop complete:", error?.message, error?.details, error?.hint);
