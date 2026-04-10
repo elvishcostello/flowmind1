@@ -5,9 +5,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useUserProfile } from "@/lib/user-profile-context";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Circle, Sun, CloudSun, Cloud, CloudRain, CloudLightning } from "lucide-react";
+import { Repeat2, Sun, CloudSun, Cloud, CloudRain, CloudLightning } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LoopClosedParams } from "@/lib/types";
+import { getEmpathyLabel } from "@/lib/loop-utils";
 
 const MOOD_OPTIONS = [
   { label: "All good",        Icon: Sun },
@@ -60,13 +61,7 @@ export function LoopClosedClient() {
     ? new Date(loop.created_at)
     : new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000);
 
-  const daysDiff = Math.round(
-    (updatedAt.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24)
-  );
-  const empathy =
-    daysDiff <= 1
-      ? "You didn't let it sit long. That matters."
-      : "You got it done.";
+  const empathy = getEmpathyLabel(createdAt, updatedAt);
 
   const taskCount = loop.tasks.length;
   const displayName = (userProfile.username ?? userProfile.email ?? "friend").toLowerCase();
@@ -102,7 +97,7 @@ export function LoopClosedClient() {
     <div className="flex flex-1 justify-center">
       <div className="w-full max-w-sm flex flex-col flex-1 p-6 space-y-6">
         <div className="flex flex-col items-center gap-4 pt-8">
-          <Circle className="h-16 w-16 text-primary" />
+          <Repeat2 className="h-16 w-16 text-primary" />
           <h1 className="text-xl font-semibold text-center">
             {displayName}, loop closed.
           </h1>

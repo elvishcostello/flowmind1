@@ -31,7 +31,7 @@ On exit (back button tapped), clear the history stack and navigate to `/your-loo
 
 A vertical group, top to bottom:
 
-1. A centered `Circle` icon at 2× size (`h-16 w-16`)
+1. A centered `Repeat2` icon at 2× size (`h-16 w-16`)
 2. A centered heading: `{displayName}, loop closed.` — display name in lower case
 3. A centered empathy label:
    - Compute difference between `updated_at` and `created_at` in days
