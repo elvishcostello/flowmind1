@@ -219,8 +219,25 @@ export function UpdateTasksClient({
     router.back();
   };
 
-  const toggleTask = (index: number) => {
-    setTaskState((prev) => prev.map((v, i) => (i === index ? !v : v)));
+  const toggleTask = async (index: number) => {
+    const newTaskState = taskState.map((v, i) => (i === index ? !v : v));
+    setTaskState(newTaskState);
+
+    if (newTaskState.length > 0 && newTaskState.every(Boolean)) {
+      if (!loop) return;
+      const supabase = createClient();
+      await supabase
+        .from("loops")
+        .update({
+          tasks,
+          task_state: newTaskState,
+          how_often: howOften,
+          days: days.length > 0 ? days : null,
+        })
+        .eq("id", loop.id)
+        .eq("user_id", userProfile!.id);
+      router.replace(`/loop-closed?id=${loop.id}`);
+    }
   };
 
   const deleteTask = (index: number) => {

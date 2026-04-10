@@ -43,8 +43,11 @@ export function HowOftenPicker({
 
   const handleFrequencySelect = (option: HowOftenOption) => {
     if (option.action === "advance") {
-      onChange(option.label, []);
-      onAdvance?.(option.label);
+      if (onAdvance) {
+        onAdvance(option.label);
+      } else {
+        onChange(option.label, []);
+      }
       return;
     }
     if (option.action === "enable") {

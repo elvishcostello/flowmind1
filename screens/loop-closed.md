@@ -4,97 +4,72 @@ This screen is displayed whenever a user closes a loop.
 
 ---
 
-Create a Next.js client component at `app/TODO-ROUTE/page.tsx` for route `/TODO-ROUTE`.
+**Flow:** Invoked from `your-loops` or `update-tasks` when a loop is marked complete.
 
-Auth guard: on mount, if no `userProfile` in context, redirect to `/`. Return `null` while unauthenticated.
-
-# Layout
-
-Use the standard mobile-first page wrapper (see CLAUDE.md):
-```tsx
-<div className="flex flex-1 justify-center">
-  <div className="w-full max-w-sm flex flex-col flex-1">
-    {/* page content */}
-  </div>
-</div>
-```
-
-## Navigation
-
-This screen can be invoked from multiple places:
-- your-loops
-- update-tasks
-
-In either case navigation will return to your-loops. In both cases clear the history stack, and navigate directly there.
-
-Shows `← Back to My Loops` (navigates to `/your-loops`) per nav pattern in CLAUDE.md.
+**Route:** `/loop-closed`
 
 ## Invocation
 
-Invoked with 2 query parameter:
-- user id
-- loop id
+Params: see `LoopClosedParams` in `lib/types.ts`.
 
-### unpacking the data
+- `id` — the loop PK
 
-From the loop id, obtain the loop row.
+`user_id` is not passed — use `userProfile` from context.
 
-Capture `updated_at` and `created_at` in local variables.
+On load:
+- Query the `loops` table for the row matching `id`
+- Capture `created_at` and `updated_at`; if `updated_at` is null default to now; if `created_at` is null default to 10 days ago
+- Compute `taskCount` from `tasks.length`
 
-Compute the number of tasks.
+## Navigation
 
-If `updated_at` is null force it to be the current date.
-If `created_at` is null force it to be 10 days ago.
+Global header is suppressed on this route (added to `SUPPRESS_HEADER` in `components/conditional-header.tsx`). A custom `← Back to My Loops` button is rendered inline.
+
+On exit (back button tapped or all tasks complete), clear the history stack and navigate to `/your-loops` via `router.replace('/your-loops')`.
 
 ## Content
 
-A vertical group with the following elements:
-- a centered icon 'circle', however it should be 200% normal width and height.
-- a centered header that says '{user name}, loop closed.' Obtain the user name from the user id and display it in lower case.
+A vertical group, top to bottom:
 
-- a centered empathy label with the following logic:
-  + Compute the difference between update_at and created_at, in days.
-    - If it is one day or less the label should read: 'You didn't let it sit long. That matters.'
-    - Else: "You got it done."
-- Compute the total number of tasks. A label which says '+N stars', one for each task.
-- horizontal rule
-- A label: "How do you feel compared to before?"
-- A single select button group, left to right, centered. The buttons will set a mood variable with the given label. Each button group will show an icon with a label below:
-  + 'All good' - 'Sun'
-  + 'A little tense' - 'CloudSun'
-  + 'Pretty stressed' - 'Cloud'
-  + 'Overwhelmed' - 'CloudRain'
-  + 'CrashedOut' - 'CloudLightning'
-  No button is selected by default.
-- a 'Back to my Loops' button
+1. A centered `Circle` icon at 2× size (`h-16 w-16`)
+2. A centered heading: `{displayName}, loop closed.` — display name in lower case
+3. A centered empathy label:
+   - Compute difference between `updated_at` and `created_at` in days
+   - ≤ 1 day → `"You didn't let it sit long. That matters."`
+   - \> 1 day → `"You got it done."`
+4. A centered label: `+N stars` where N = `taskCount`
+5. A horizontal rule
+6. A label: `"How do you feel compared to before?"`
+7. A single-select button group (centered, left to right). Each button shows an icon above a label. Tapping sets `mood` in local state; tapping the active button deselects it.
+
+| Label | Icon |
+|---|---|
+| All good | `Sun` |
+| A little tense | `CloudSun` |
+| Pretty stressed | `Cloud` |
+| Overwhelmed | `CloudRain` |
+| Crashed Out | `CloudLightning` |
+
+No button selected by default.
+
+8. A full-width `← Back to My Loops` button
 
 ## Button Semantics
 
-TODO: Describe what each interactive element does. Use a table for screens with multiple actions:
-
 | element | action |
 |---|---|
-| mood buttons | updates the mood variable |
-| Back to my Loops | Honor data requirements, then navigate to `your-loops` |
+| Mood buttons | Set `mood` in local state (single-select, tapping active deselects) |
+| Back to My Loops | Commit data (see Data Requirements), then `router.replace('/your-loops')` |
 
 ## Data Requirements
 
-Compute the number of tasks in the loop, update the database value for 'user_activity.star_count' to this value.
+On exit, perform two writes:
 
-```typescript
-const supabase = createClient()
+1. **Increment `star_count`** on the user's `user_activity` row by `taskCount`
+2. **Update `mood`** on the loop row to the selected mood value (or `null` if none selected)
 
-// TODO: example query
-const { data, error } = await supabase
-  .from('loops')
-  .select('*')
-  .eq('user_id', session.user.id)
-```
+Both writes fire on exit regardless of mood selection.
 
 ## Analytics
 
-TODO: List any `track()` calls this screen fires. All events must be defined in `markdown/ANALYTICS.md` before use. Delete this section if no events are fired.
-
-```typescript
-track('TODO_EVENT_NAME', { param: value })
-```
+TODO: Define any events this screen should fire in `markdown/ANALYTICS.md`, then call `track()` here.
