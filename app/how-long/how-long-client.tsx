@@ -15,9 +15,6 @@ export function HowLongClient({ options }: HowLongClientProps) {
   const searchParams = useSearchParams();
 
   const category = searchParams.get("category") ?? "";
-  const tasks: string[] = JSON.parse(
-    decodeURIComponent(searchParams.get("tasks") ?? "[]")
-  );
 
   useEffect(() => {
     if (!userProfile) {

@@ -45,7 +45,7 @@ export function InnerLoopClient({ cleaningData }: { cleaningData: CleaningData }
   const toggleTask = (task: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
-      next.has(task) ? next.delete(task) : next.add(task);
+      if (next.has(task)) { next.delete(task); } else { next.add(task); }
       return next;
     });
   };

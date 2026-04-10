@@ -15,7 +15,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
-  Repeat2, Circle, CircleCheckBig, X,
+  Repeat2, Circle, X,
   ChefHat, Droplets, Bed, Sofa, Monitor, Trees, Car, PawPrint,
   type LucideIcon,
 } from "lucide-react";

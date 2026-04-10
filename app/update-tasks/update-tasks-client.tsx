@@ -183,7 +183,7 @@ export function UpdateTasksClient({
         setDays(data.days ?? []);
       });
 
-  }, [userProfile, router, loopId]);
+  }, [userProfile, router, loopId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const saveLoop = async (): Promise<boolean> => {
     if (!loop) return false;
