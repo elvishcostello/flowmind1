@@ -172,7 +172,7 @@ export function UpdateTasksClient({
       .single()
       .then(({ data, error }) => {
         if (error || !data) {
-          console.error("Failed to load loop:", error);
+          console.error("Failed to load loop:", error?.message, error?.details, error?.hint);
           router.push("/your-loops");
           return;
         }
@@ -199,7 +199,7 @@ export function UpdateTasksClient({
       .eq("id", loop.id)
       .eq("user_id", userProfile!.id);
     if (error) {
-      console.error("Failed to save loop:", error);
+      console.error("Failed to save loop:", error?.message, error?.details, error?.hint);
       return false;
     }
     return true;

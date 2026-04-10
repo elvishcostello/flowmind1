@@ -15,7 +15,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
-  Repeat2, Circle, X,
+  Repeat2, Circle, CircleCheckBig, X,
   ChefHat, Droplets, Bed, Sofa, Monitor, Trees, Car, PawPrint,
   type LucideIcon,
 } from "lucide-react";
@@ -49,6 +49,7 @@ export default function YourLoopsPage() {
   const { userProfile } = useUserProfile();
   const router = useRouter();
   const [openLoops, setOpenLoops] = useState<Loop[] | null>(null);
+  const [taskStates, setTaskStates] = useState<Record<string, boolean[]>>({});
   const [pendingRemoveId, setPendingRemoveId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -64,7 +65,15 @@ export default function YourLoopsPage() {
       .eq("user_id", userProfile.id)
       .eq("completed", false)
       .order("created_at", { ascending: false })
-      .then(({ data }) => setOpenLoops(data ?? []));
+      .then(({ data }) => {
+        const loops = data ?? [];
+        setOpenLoops(loops);
+        const states: Record<string, boolean[]> = {};
+        loops.forEach((l) => {
+          states[l.id] = l.task_state ?? l.tasks.map(() => false);
+        });
+        setTaskStates(states);
+      });
   }, [userProfile, router]);
 
   const handleConfirmRemove = async () => {
@@ -75,11 +84,31 @@ export default function YourLoopsPage() {
       .update({ completed: true })
       .eq("id", pendingRemoveId);
     if (error) {
-      console.error("Failed to mark loop complete:", error);
+      console.error("Failed to mark loop complete:", error?.message, error?.details, error?.hint);
     } else {
       setOpenLoops((prev) => prev?.filter((l) => l.id !== pendingRemoveId) ?? null);
     }
     setPendingRemoveId(null);
+  };
+
+  const handleTaskTap = async (loop: Loop) => {
+    if (loop.tasks.length !== 1) return; // only acts on single-task loops
+    const current = taskStates[loop.id] ?? [false];
+    if (current[0]) return; // already complete, one-way only
+    const newState = [true];
+
+    setTaskStates((prev) => ({ ...prev, [loop.id]: newState }));
+    setOpenLoops((prev) => prev?.filter((l) => l.id !== loop.id) ?? null);
+
+    const supabase = createClient();
+
+    await supabase
+      .from("loops")
+      .update({ task_state: newState, completed: true })
+      .eq("id", loop.id)
+      .eq("user_id", userProfile!.id);
+
+    router.replace(`/loop-closed?id=${loop.id}`);
   };
 
   if (!userProfile) return null;
@@ -127,8 +156,11 @@ export default function YourLoopsPage() {
             const firstTask = loop.tasks?.[0];
             const extraCount = (loop.tasks?.length ?? 0) - 1;
             const total = loop.tasks?.length ?? 0;
-            const done = (loop.task_state ?? []).filter(Boolean).length;
+            const localState = taskStates[loop.id] ?? loop.task_state ?? loop.tasks.map(() => false);
+            const firstDone = localState[0] ?? false;
+            const done = localState.filter(Boolean).length;
             const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+            const isSingleTask = loop.tasks.length === 1;
             return (
               <Card key={loop.id}>
                 <CardContent className="pt-4 pb-4 space-y-2">
@@ -146,13 +178,22 @@ export default function YourLoopsPage() {
                     </Button>
                   </div>
                   {firstTask && (
-                    <div className="flex items-center gap-2">
-                      <Circle className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 w-full text-left"
+                      onClick={() => isSingleTask && handleTaskTap(loop)}
+                      disabled={!isSingleTask || firstDone}
+                    >
+                      {firstDone ? (
+                        <CircleCheckBig className="h-4 w-4 text-primary shrink-0" />
+                      ) : (
+                        <Circle className="h-4 w-4 text-muted-foreground shrink-0" />
+                      )}
                       <span className="text-sm text-muted-foreground">{firstTask}</span>
                       {extraCount > 0 && (
                         <span className="text-xs text-muted-foreground">+{extraCount} more</span>
                       )}
-                    </div>
+                    </button>
                   )}
                   <ProgressField value={pct} />
                   <button
