@@ -71,7 +71,7 @@ export function FeedbackSheet() {
           ) : (
             <>
               <SheetHeader>
-                <SheetTitle>We Welcome Your Feedback!</SheetTitle>
+                <SheetTitle>We welcome your feedback!</SheetTitle>
               </SheetHeader>
 
               <textarea
