@@ -110,7 +110,7 @@ If the user clicks 'Add' then add this task (and a default task_state) to the lo
 | element | action |
 |---|---|
 | back button | commit loop state to Supabase, then `router.back()` |
-| task buttons | toggle completion state; if all tasks are now `true`, commit to Supabase then navigate to `/loop-closed?id=<loopId>` via `router.replace()` |
+| task buttons | toggle completion state; if all tasks are now `true`, commit to Supabase (including `completed = true`) then navigate to `/loop-closed?id=<loopId>` via `router.replace()` |
 
 ## Data Requirements
 

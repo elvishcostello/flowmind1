@@ -233,6 +233,7 @@ export function UpdateTasksClient({
           task_state: newTaskState,
           how_often: howOften,
           days: days.length > 0 ? days : null,
+          completed: true,
         })
         .eq("id", loop.id)
         .eq("user_id", userProfile!.id);
