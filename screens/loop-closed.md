@@ -25,7 +25,7 @@ On load:
 
 Global header is suppressed on this route (added to `SUPPRESS_HEADER` in `components/conditional-header.tsx`). A custom `← Back to My Loops` button is rendered inline.
 
-On exit (back button tapped or all tasks complete), clear the history stack and navigate to `/your-loops` via `router.replace('/your-loops')`.
+On exit (back button tapped), clear the history stack and navigate to `/your-loops` via `router.replace('/your-loops')`. Callers (`your-loops`, `update-tasks`) are responsible for saving loop state before navigating here.
 
 ## Content
 
@@ -59,7 +59,7 @@ No button selected by default.
 | element | action |
 |---|---|
 | Mood buttons | Set `mood` in local state (single-select, tapping active deselects) |
-| Back to My Loops | Commit data (see Data Requirements), then `router.replace('/your-loops')` |
+| Back to My Loops | Increment `star_count`, write `mood` to loop row, then `router.replace('/your-loops')` |
 
 ## Data Requirements
 

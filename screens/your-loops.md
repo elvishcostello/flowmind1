@@ -34,7 +34,7 @@ On mount, run two queries (matching on `user_id`):
 A horizontal div with:
 - A ghost button labeled `Feedback` — opens the `<FeedbackSheet />` overlay (see `components/feedback-sheet.tsx`)
 - A horizontal spacer
-- A rounded button with a lucide `Star` icon and a numeric counter (count of completed loops)
+- `<StarCountBadge />` — reads `user_activity.star_count` for the current user (see `screens/components/star-count-badge.md`)
 - A rounded button labeled `reflect` (targets nothing)
 - A settings button — opens the `<SettingsSheet />` overlay (see `components/settings-sheet.tsx`)
 
@@ -42,7 +42,7 @@ A horizontal div with:
 
 Slides up from the bottom. Content:
 
-1. Heading: `We Welcome Your Feedback!`
+1. Heading: `We welcome your feedback!`
 2. Multiline textarea with placeholder `type your feedback here`, initial height ~40% of screen height
 3. A horizontal button group:
    - `ThumbsUp` icon button — toggles on/off; when active uses `default` variant; tapping when active deselects it; mutually exclusive with thumbs down
@@ -80,12 +80,15 @@ If open loops exist, render a card for each loop:
 
 **Row 1:** Look up the category in `yaml/CLEANING.yaml`. If the `icon` field is non-null, display the corresponding lucide icon. Then display a label: `<category> Tasks`.
 
-**Row 2:** The tasks array must not be empty — log a console error if it is. Display the first task with:
-- A lucide `Circle` icon
-- The first task value
+**Row 2:** The tasks array must not be empty — log a console error if it is. Display the first task as a tappable row:
+- If the loop has exactly **one task** and it is incomplete, tapping marks it complete, saves to Supabase (`task_state`, `completed = true`), and navigates to `/loop-closed?id=<loopId>` via `router.replace()`
+- If the loop has more than one task, the row is not tappable — the user must use "See all"
+- Icon reflects completion state: `CircleCheckBig` (complete) or `Circle` (incomplete); one-way only
 - If additional tasks exist, append `+N more` on the same row
 
-For each loop, compute the percentage of tasks completed locally from `task_state[]` (count of `true` values / total tasks). Do not query Supabase for this — `task_state` is already in the fetched row.
+Task state is tracked in local `taskStates` map (keyed by loop id) initialised from the fetched `task_state` column.
+
+For each loop, compute the percentage of tasks completed locally from the `taskStates` map (count of `true` values / total tasks). Do not query Supabase for this — `task_state` is already in the fetched row.
 
 Render the progress bar using `<ProgressField value={pct} />` from `components/ui/progress-field.tsx`. This is a composite component that pairs the shadcn `<Progress>` primitive with a percentage label span — do not use `<Progress>` directly, as it cannot display the percentage text on its own.
 
