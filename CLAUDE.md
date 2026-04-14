@@ -86,6 +86,10 @@ DEMO_MODE=true   # Returns canned responses, no AI calls made
 DEMO_MODE=false  # Live mode, calls Anthropic API
 ```
 
+## Brand guidelines
+
+Refer to [./markdown/BRAND.md] for detailed guidelines on branding.
+
 ### How it works
 
 `proxy.ts` intercepts all incoming requests. In demo mode, it matches the request path against a set of regex patterns and returns the appropriate canned response. The real API route handlers never execute.
