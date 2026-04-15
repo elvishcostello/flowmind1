@@ -41,6 +41,14 @@ Here are the possible values:
 
 Given that there is no long running server code, any missing loops must be created when `your-loops` is displayed.
 
+### Demo mode — simulated date
+
+When `NEXT_PUBLIC_DEMO_MODE=true`, a date control is shown at the top of `your-loops` with buttons: **+1 day**, **+7 days**, **+1 month**, and **today**. Offsets are cumulative from the real system date. The displayed calendar date updates as offsets are applied.
+
+Tapping "today" resets the offset to zero, returning to the real system clock.
+
+The simulated date is passed to `shouldOpenLoop()` as an optional `now` override — production code paths are unaffected.
+
 ### how to handle closing of loops
 
 It is possible to close a loop from the 'your-loops' screen as well as within 'update-tasks'. If a repeating loop is closed, because all of its tasks are complete, then a new loop should be cloned, and leave 'completed' set as NULL. Save this in supabase as a new row in the table.
