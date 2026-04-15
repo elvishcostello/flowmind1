@@ -23,6 +23,7 @@ import { SettingsSheet } from "@/components/settings-sheet";
 import { FeedbackSheet } from "@/components/feedback-sheet";
 import { ProgressField } from "@/components/ui/progress-field";
 import { StarCountBadge } from "@/components/star-count-badge";
+import { shouldOpenLoop } from "@/lib/loop-utils";
 
 type Loop = {
   id: string;
@@ -32,6 +33,7 @@ type Loop = {
   how_often: string | null;
   days: string[] | null;
   task_state: boolean[] | null;
+  completed: boolean | null;
 };
 
 const CATEGORY_ICON_MAP: Record<string, LucideIcon> = {
@@ -45,12 +47,15 @@ const CATEGORY_ICON_MAP: Record<string, LucideIcon> = {
   Pet: PawPrint,
 };
 
+const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+
 export default function YourLoopsPage() {
   const { userProfile } = useUserProfile();
   const router = useRouter();
   const [openLoops, setOpenLoops] = useState<Loop[] | null>(null);
   const [taskStates, setTaskStates] = useState<Record<string, boolean[]>>({});
   const [pendingRemoveId, setPendingRemoveId] = useState<string | null>(null);
+  const [daysOffset, setDaysOffset] = useState(0);
 
   useEffect(() => {
     if (!userProfile) {
@@ -59,9 +64,31 @@ export default function YourLoopsPage() {
     }
     const supabase = createClient();
 
+    // Open any pending repeating loops that are due today (or simulated day in demo mode)
+    const nowOverride = daysOffset !== 0 ? (() => { const d = new Date(); d.setDate(d.getDate() + daysOffset); return d; })() : undefined;
     supabase
       .from("loops")
-      .select("id, category, tasks, how_long, how_often, days, task_state")
+      .select("id, how_often, days")
+      .eq("user_id", userProfile.id)
+      .is("completed", null)
+      .then(({ data: pendingLoops }) => {
+        const dueIds = (pendingLoops ?? [])
+          .filter((l) => l.how_often && shouldOpenLoop(l.how_often, l.days, nowOverride))
+          .map((l) => l.id);
+        if (dueIds.length > 0) {
+          supabase
+            .from("loops")
+            .update({ completed: false })
+            .in("id", dueIds)
+            .then(({ error }) => {
+              if (error) console.error("Failed to open due loops:", error?.message);
+            });
+        }
+      });
+
+    supabase
+      .from("loops")
+      .select("id, category, tasks, how_long, how_often, days, task_state, completed")
       .eq("user_id", userProfile.id)
       .eq("completed", false)
       .order("created_at", { ascending: false })
@@ -74,7 +101,7 @@ export default function YourLoopsPage() {
         });
         setTaskStates(states);
       });
-  }, [userProfile, router]);
+  }, [userProfile, router, daysOffset]);
 
   const handleConfirmRemove = async () => {
     if (!pendingRemoveId) return;
@@ -111,6 +138,19 @@ export default function YourLoopsPage() {
       .eq("user_id", userProfile!.id);
 
     if (allDone) {
+      const isRepeating = loop.how_often && loop.how_often !== "one time";
+      if (isRepeating) {
+        await supabase.from("loops").insert({
+          user_id: userProfile!.id,
+          category: loop.category,
+          tasks: loop.tasks,
+          how_long: loop.how_long,
+          how_often: loop.how_often,
+          days: loop.days,
+          task_state: loop.tasks.map(() => false),
+          completed: null,
+        });
+      }
       setOpenLoops((prev) => prev?.filter((l) => l.id !== loop.id) ?? null);
       router.replace(`/loop-closed?id=${loop.id}`);
     }
@@ -138,6 +178,36 @@ export default function YourLoopsPage() {
           <p className="text-sm text-muted-foreground">
             What&apos;s been sitting in the back of the mind?
           </p>
+
+          {IS_DEMO && (
+            <div className="flex flex-col gap-1 border border-dashed border-border rounded-lg p-3">
+              <span className="text-xs text-muted-foreground font-medium">
+                DEMO — {daysOffset === 0
+                  ? `today (${new Date().toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })})`
+                  : (() => { const d = new Date(); d.setDate(d.getDate() + daysOffset); return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }); })()
+                }
+              </span>
+              <div className="flex gap-1 flex-wrap">
+                {["+1 day", "+7 days", "+1 month"].map((label) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => setDaysOffset((prev) => prev + (label === "+1 day" ? 1 : label === "+7 days" ? 7 : 30))}
+                    className="text-xs px-2 py-1 rounded border border-border text-muted-foreground hover:bg-accent"
+                  >
+                    {label}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setDaysOffset(0)}
+                  className="text-xs px-2 py-1 rounded border border-border text-muted-foreground hover:bg-accent"
+                >
+                  today
+                </button>
+              </div>
+            </div>
+          )}
 
           {openLoops !== null && openLoops.length === 0 && (
             <Card>

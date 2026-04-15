@@ -107,6 +107,7 @@ type Loop = {
   tasks: string[];
   task_state: boolean[] | null;
   how_often: string | null;
+  how_long: string | null;
   days: string[] | null;
 };
 
@@ -166,7 +167,7 @@ export function UpdateTasksClient({
 
     supabase
       .from("loops")
-      .select("id, category, tasks, task_state, how_often, days")
+      .select("id, category, tasks, task_state, how_often, how_long, days")
       .eq("id", loopId)
       .eq("user_id", userProfile.id)
       .single()
@@ -237,6 +238,21 @@ export function UpdateTasksClient({
         })
         .eq("id", loop.id)
         .eq("user_id", userProfile!.id);
+
+      const isRepeating = howOften && howOften !== "one time";
+      if (isRepeating) {
+        await supabase.from("loops").insert({
+          user_id: userProfile!.id,
+          category: loop.category,
+          tasks,
+          how_long: loop.how_long,
+          how_often: howOften,
+          days: days.length > 0 ? days : null,
+          task_state: tasks.map(() => false),
+          completed: null,
+        });
+      }
+
       router.replace(`/loop-closed?id=${loop.id}`);
     }
   };

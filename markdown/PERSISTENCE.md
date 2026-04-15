@@ -312,7 +312,7 @@ Order matters:
 ```typescript
 export async function proxy(request: NextRequest) {
   // 1. Demo mode — return early with canned response if matched
-  if (process.env.DEMO_MODE === 'true') {
+  if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
     for (const route of mockedRoutes) {
       if (route.pattern.test(request.nextUrl.pathname)) {
         return Response.json(route.response)

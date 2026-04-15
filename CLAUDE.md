@@ -82,8 +82,8 @@ This is a **monorepo** — frontend and backend live together in a single Next.j
 The app has two operating modes controlled by an environment variable:
 
 ```
-DEMO_MODE=true   # Returns canned responses, no AI calls made
-DEMO_MODE=false  # Live mode, calls Anthropic API
+NEXT_PUBLIC_DEMO_MODE=true   # Returns canned responses, no AI calls made
+NEXT_PUBLIC_DEMO_MODE=false  # Live mode, calls Anthropic API
 ```
 
 ## Brand guidelines
@@ -181,7 +181,7 @@ Use the `cn()` utility (from `lib/utils.ts`) when merging Tailwind classes to av
 | Variable | Where set | Purpose |
 |---|---|---|
 | `ANTHROPIC_API_KEY` | `.env.local` / Vercel dashboard | Anthropic API access |
-| `DEMO_MODE` | `.env.local` / Vercel dashboard | Toggle canned responses |
+| `NEXT_PUBLIC_DEMO_MODE` | `.env.local` / Vercel dashboard | Toggle canned responses |
 | `NEXT_PUBLIC_SUPABASE_URL` | `.env.local` / Vercel dashboard | Supabase project endpoint |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `.env.local` / Vercel dashboard | Supabase public API key |
 | `NEXT_PUBLIC_MIXPANEL_TOKEN` | `.env.local` / Vercel dashboard | Mixpanel project token (use dev token locally, prod token on Vercel) |
@@ -198,7 +198,7 @@ Never put secrets in the codebase. Never commit `.env.local`.
 - **Preview:** Push any branch → Vercel generates a unique preview URL
 - **Local:** `npm run dev` with `.env.local`
 
-Preview deployments can have their own environment variable overrides (e.g. `DEMO_MODE=true` on preview, `false` on production).
+Preview deployments can have their own environment variable overrides (e.g. `NEXT_PUBLIC_DEMO_MODE=true` on preview, `false` on production).
 
 Please add this to the package.json file:
 ```json
