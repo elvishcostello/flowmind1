@@ -30,6 +30,7 @@ vi.mock('@/components/settings-sheet', () => ({
 
 const mockUpdate = vi.fn().mockResolvedValue({ error: null })
 const mockOrder = vi.fn()
+const mockInsert = vi.fn().mockResolvedValue({ error: null })
 
 vi.mock('@/lib/supabase/client', () => ({
   createClient: () => ({
@@ -40,13 +41,19 @@ vi.mock('@/lib/supabase/client', () => ({
             order: mockOrder,
             single: vi.fn(),
           }),
+          // pending loops query: .eq("user_id").is("completed", null).then(...)
+          is: () => ({
+            then: (resolve: (v: { data: [] }) => void) => Promise.resolve(resolve({ data: [] })),
+          }),
         }),
       }),
       update: () => ({
         eq: () => ({
           eq: () => mockUpdate(),
+          in: vi.fn().mockResolvedValue({ error: null }),
         }),
       }),
+      insert: mockInsert,
     }),
   }),
 }))

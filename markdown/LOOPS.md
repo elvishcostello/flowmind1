@@ -17,12 +17,49 @@ create table public.loops (
   days text[],                          -- null unless a day-chooser action was used
   task_state boolean[],                         -- null until tasks are interacted with
   mood text,                                    -- nullable, set when a loop is closed
-  completed boolean not null default false,
+  completed boolean default false,             -- null = not yet open, false = open, true = complete
   abandoned boolean not null default false,     -- true when user dismisses via X, not by completing tasks
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
 ```
+
+## Repeating Loops
+
+The `how_often` and `days` fields capture the possible states of repeating loops.
+See [HOWOFTEN.yaml](../yaml/HOWOFTEN.yaml) for possible states, as well as the `HowOftenPicker` component for implementation details.
+
+Here are the possible values:
+
+| how_often | days | meaning |
+|-----------|------|---------|
+| `one time` | NULL | the loop will stay open until it is closed, and is only ever finished once |
+| daily     | NULL | if not already open, the loop will open once / day. If it is closed it will not open again until the following day |
+| weekly    | a single day of the week | if not already open, the loop will open once / week, on the given day. If it is closed, it will not open until the given day on the following week |
+| specific days | one or more days of the week | same logic as weekly, but for multiple given days |
+| monthly | NULL | if not already open, the loop will open at the beginning of the month |
+
+Given that there is no long running server code, any missing loops must be created when `your-loops` is displayed.
+
+### Demo mode — simulated date
+
+When `NEXT_PUBLIC_DEMO_MODE=true`, a date control is shown at the top of `your-loops` with buttons: **+1 day**, **+7 days**, **+1 month**, and **today**. Offsets are cumulative from the real system date. The displayed calendar date updates as offsets are applied.
+
+Tapping "today" resets the offset to zero, returning to the real system clock.
+
+The simulated date is passed to `shouldOpenLoop()` as an optional `now` override — production code paths are unaffected.
+
+### how to handle closing of loops
+
+It is possible to close a loop from the 'your-loops' screen as well as within 'update-tasks'. If a repeating loop is closed, because all of its tasks are complete, then a new loop should be cloned, and leave 'completed' set as NULL. Save this in supabase as a new row in the table.
+
+### Meaning of completed
+
+| value | meaning |
+|-------|---------|
+| `NULL` | not yet open |
+| `false` | open, but not yet complete |
+| `true` | completed |
 
 ---
 
@@ -112,6 +149,9 @@ alter table public.loops add column mood text;
 
 -- Add abandoned column (non-nullable boolean, default false)
 alter table public.loops add column abandoned boolean not null default false;
+
+-- Make completed nullable (to support not-yet-open repeating loops)
+alter table public.loops alter column completed drop not null;
 
 -- Drop all rows (destructive — use only in dev/reset scenarios)
 truncate table public.loops;

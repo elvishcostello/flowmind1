@@ -10,7 +10,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "restart": "npm run lint && npm test && (pkill -TERM -f 'next dev' || true) && rm -rf .next && npm run dev"
+    "fresh": "npm run lint && npm test && (pkill -TERM -f 'next dev' || true) && rm -rf .next && npm run dev"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

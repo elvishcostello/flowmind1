@@ -312,7 +312,7 @@ Order matters:
 ```typescript
 export async function proxy(request: NextRequest) {
   // 1. Demo mode — return early with canned response if matched
-  if (process.env.DEMO_MODE === 'true') {
+  if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
     for (const route of mockedRoutes) {
       if (route.pattern.test(request.nextUrl.pathname)) {
         return Response.json(route.response)
@@ -370,6 +370,44 @@ const { error } = await supabase
 ```
 
 Always handle errors. Never assume a write succeeded without checking `error`.
+
+---
+
+## Time Data
+
+All timestamps are stored as `timestamptz` (timestamp with time zone), which provides UTC-based storage with sub-second precision. This is more granular than the app currently needs but costs nothing and preserves options.
+
+### Querying by date
+
+To fetch all rows matching a specific calendar date:
+
+```typescript
+const date = '2026-04-12'
+supabase
+  .from('loops')
+  .select('*')
+  .gte('created_at', `${date}T00:00:00Z`)
+  .lt('created_at', `${date}T24:00:00Z`)
+```
+
+### Querying by day of week
+
+To fetch all rows matching a given day of the week (0 = Sunday, 6 = Saturday):
+
+```typescript
+supabase
+  .from('loops')
+  .select('*')
+  .filter('EXTRACT(DOW FROM created_at)', 'eq', 1) // all Mondays
+```
+
+### Timezone note
+
+`timestamptz` values are stored in UTC. A loop created at 11pm EST on Monday is stored as Tuesday UTC. For alpha/beta with a single-timezone user base this is not an issue. If multi-timezone support is needed later, store the user's timezone in `user_profiles.timezone` and apply it at query time:
+
+```typescript
+.filter("EXTRACT(DOW FROM created_at AT TIME ZONE 'America/New_York')", 'eq', 1)
+```
 
 ---
 
