@@ -79,7 +79,7 @@ export function FeedbackSheet() {
                 onChange={(e) => setText(e.target.value)}
                 placeholder="type your feedback here"
                 className="mt-4 w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring resize-none"
-                style={{ height: "40svh" }}
+                style={{ height: "24svh" }}
               />
 
               <div className="flex items-center gap-2 mt-4">
