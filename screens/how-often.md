@@ -1,21 +1,5 @@
-Create a Next.js client component at `app/how-often/page.tsx` for route `/how-often`.
-
-Auth guard: on mount, if no `userProfile` in context, redirect to `/`. Return `null` while unauthenticated.
-
-# Layout
-
-Use the standard mobile-first page wrapper (see CLAUDE.md):
-```tsx
-<div className="flex flex-1 justify-center">
-  <div className="w-full max-w-sm flex flex-col flex-1">
-    {/* page content */}
-  </div>
-</div>
-```
-
-## Navigation
-
-Loops flow, step 4. Shows `← Back` (navigates to `/how-long`) per nav pattern in CLAUDE.md.
+**Flow:** Loop creation, step 4
+**Route:** `/how-often`
 
 ## Invocation
 
@@ -23,7 +7,9 @@ Params: see `HowOftenParams` in `lib/types.ts`.
 
 ## Content
 
-A label at the top: "How often does this need doing?"
+A `← Back` button at the top left (uses `router.back()`).
+
+A label below: "How often does this need doing?"
 
 Render `<HowOftenPicker>` (see `screens/components/how-often-picker.md`). Options are sourced from `lib/config.ts` via the server component.
 

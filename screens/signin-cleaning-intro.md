@@ -1,29 +1,11 @@
-Create a Next.js client component at `app/signin/cleaning-intro/page.tsx` for route `/signin/cleaning-intro`.
-
-Auth guard: on mount, if no `userProfile` in context, redirect to `/signin`. Return `null` while unauthenticated.
-
-# Layout
-
-Use the standard mobile-first page wrapper (see CLAUDE.md):
-```tsx
-<div className="flex flex-1 justify-center">
-  <div className="w-full max-w-sm flex flex-col flex-1">
-    {/* page content */}
-  </div>
-</div>
-```
-
-## Navigation
-
-Onboarding flow, step 2. Shows `← Back` (navigates to `/signin/feeling`) per nav pattern in CLAUDE.md.
+**Flow:** Onboarding, step 2
+**Route:** `/signin/cleaning-intro`
 
 ## Invocation
 
 None. No params.
 
 ## Content
-
-The page is centered vertically and horizontally with `p-6`. Content is constrained to `max-w-sm` and uses `space-y-8`.
 
 Layout from top to bottom:
 
