@@ -30,6 +30,7 @@ export function InnerLoopClient({ cleaningData }: { cleaningData: CleaningData }
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [customTasks, setCustomTasks] = useState<string[]>([]);
   const [showOtherGroup, setShowOtherGroup] = useState(false);
+  const [otherDismissed, setOtherDismissed] = useState(false);
   const [otherText, setOtherText] = useState("");
 
   useEffect(() => {
@@ -66,6 +67,7 @@ export function InnerLoopClient({ cleaningData }: { cleaningData: CleaningData }
   const handleOtherDismiss = () => {
     setOtherText("");
     setShowOtherGroup(false);
+    setOtherDismissed(true);
   };
 
   const totalSelected = selected.size;
@@ -142,7 +144,7 @@ export function InnerLoopClient({ cleaningData }: { cleaningData: CleaningData }
             );
           })}
 
-          {!showOtherGroup && (
+          {!showOtherGroup && !otherDismissed && (
             <Card
               className="cursor-pointer transition-colors py-0 hover:bg-accent"
               onClick={handleOtherClick}

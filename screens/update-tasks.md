@@ -1,137 +1,88 @@
 # Update Tasks
 
-This screen allows the user to update the tasks associated with a given loop.
-
----
-
-Create a Next.js client component at `app/update-tasks/page.tsx` for route `/update-tasks`.
-
-Auth guard: on mount, if no `userProfile` in context, redirect to `/`. Return `null` while unauthenticated.
-
-# Layout
-
-Use the standard mobile-first page wrapper (see CLAUDE.md):
-```tsx
-<div className="flex flex-1 justify-center">
-  <div className="w-full max-w-sm flex flex-col flex-1">
-    {/* page content */}
-  </div>
-</div>
-```
-
-## Navigation
-
-This tasks is called from the `your-loops` screen, it forms a new workflow with your-loops being the base state. 
-Shows `← Back` — commits `task_state` to Supabase, then calls `router.back()` to return to the caller.
+**Flow:** Loop management
+**Route:** `/update-tasks`
 
 ## Invocation
 
-This screen will be invoked with a `uuid` parameter. This parameter is the PK for the loops table.
+`?id=<string>` — see `UpdateTasksParams` in `lib/types.ts`.
 
-On load, query the loops table to bring this row into memory.
-
-Additionally, query the loops table for the total number of loops completed by this user.
+On mount, query the `loops` table for the row matching `id` and `user_id`. If the row is not found, redirect to `/your-loops`. Populate local state: `tasks`, `taskState`, `howOften` (defaulting to the first `HOWOFTEN.yaml` key if `how_often` is null), and `days`.
 
 ## Content
 
-The screen can be in one of two modes:
-- primary - what is shown when we are not in edit mode
-- edit - when the user is editing the task list
-
 ### Top bar
 
-We are following the pattern established in your-loops, but simpler:
+A horizontal bar (`px-4 py-3`) containing:
+1. `← Back` button (ghost, calls `handleBack` — see Button Semantics)
+2. Horizontal spacer
+3. `<StarCountBadge>` component
 
-- A horizontal div with:
-  + back button
-  + A horizontal spacer
-  + A rounded button with a lucide `Star` icon and a numeric counter (count of completed loops)
-- A horizontal rule
+Followed by a horizontal rule.
 
 ### Heading
 
-The heading is shown, it is the value of `category` + ' Tasks'
+`{loop.category} Tasks` in `text-xl font-semibold`.
 
-Below that is a mode button, it has two possible labels, based on the current mode:
-- primary: pencil + Edit steps
-- edit: Done Editing
+### Mode button
 
-Below that is a horizontal group with two controls:
-- a bold text label displaying the value for 'how_often'
-- a small inline button with the label 'Change' (refer to this button as change-save)
+A button that toggles between two modes:
+- **primary mode:** outline variant, `Pencil` icon + "Edit steps"
+- **edit mode:** default (filled) variant, "Done Editing"
 
-If `how_often` is null (loop was saved via skip), default it to the first key in `HOWOFTEN.yaml` (currently `"one time"`).
+Tapping in primary mode switches to edit mode immediately. Tapping in edit mode saves the loop to Supabase (`tasks`, `task_state`, `how_often`, `days`), then switches back to primary mode.
 
-#### Change semantics
+### Frequency row
 
-When the Change button is tapped, `isChangingFrequency` is set to `true`, revealing `<HowOftenPicker>` (see `screens/components/how-often-picker.md`).
+A horizontal group (`flex items-center gap-2`) showing:
+- Bold text label: the display value for `howOften`. If the selected option has action `day-chooser-single` or `day-chooser-multi` and days are selected, the label shows the days joined with spaces instead of the raw `howOften` value.
+- A ghost `sm` button labelled "Change" (or "Cancel" while the picker is visible).
 
-The picker's `onChange` callback sets `howOften` and `days` in local state and sets `isChangingFrequency` back to `false`, hiding the picker. No `onAdvance` is needed — all changes are local until the back button is tapped.
+Tapping Change/Cancel toggles `isChangingFrequency`. While `isChangingFrequency` is true, `<HowOftenPicker>` is rendered below the row (see `screens/components/how-often-picker.md`). The picker's `onChange` callback updates `howOften` and `days` in local state and hides the picker. No `onAdvance` is used. All changes are local until the back button or Done Editing is tapped.
 
-The Change button label toggles to `Cancel` while the picker is visible, allowing the user to dismiss without making a change.
+### Task list
 
-All changes are local — nothing is written to Supabase until the back button is tapped.
+Wrapped in `DndContext` + `SortableContext` (`verticalListSortingStrategy`). Each row is a `SortableTaskRow` keyed by task name.
 
-### primary mode
+**Primary mode** — each row shows:
+- Leading icon: `CircleCheckBig` (done) or `Circle` (not done)
+- Task label, struck through and muted when done
+- Tapping the row toggles completion state
 
-A vertical stack of task buttons. The leading icon reflects task completion state:
-- Complete (TRUE): `circle-check-big`
-- Incomplete (FALSE): `circle`
+**Edit mode** — each row shows:
+- Leading `GripVertical` drag handle (`touch-none`, drag-and-drop enabled via `@dnd-kit`)
+- Task label
+- Trailing `X` button — tapping deletes the task and its `task_state` entry (propagation stopped so it does not also toggle)
 
-Tapping a button toggles the completion state.
-
-### edit mode
-
-The mode button is highlighted to make the CTA clearer.
-
-The leading icon on each row is replaced with `grip-vertical` (drag handle). Each row also shows an `X` button at the far right — tapping it deletes the task and removes the matching entry from `task_state`. Tap propagation is stopped so the delete does not also toggle the task. Task rows are drag-and-drop sortable using `@dnd-kit/core` and `@dnd-kit/sortable`. Dragging a row reorders both `tasks` and `task_state` in memory — the new order is committed to Supabase when the back button is tapped.
-
-Use `DndContext` + `SortableContext` (with `verticalListSortingStrategy`) to wrap the task list. Each row is a `useSortable` item keyed by task name. On `onDragEnd`, apply `arrayMove` to both `tasks` and `taskState` to keep them in sync.
-
+Dragging reorders both `tasks` and `taskState` arrays in memory using `arrayMove`.
 
 ### Add a task
 
-Regardless of mode, an 'Add a task' button with a `Plus` icon is shown below the task list (full width, bordered, matching task button style).
+When `isAddingTask` is false, a full-width ghost button with a `Plus` icon and label "Add a task" is shown below the task list. Tapping sets `isAddingTask` to true, hiding this button and revealing the add-task group.
 
-Tapping it sets `isAddingTask` to `true`, revealing an inline group of controls. Changes within the group are committed to the in-memory loop as they are made — no Supabase write until the back button is tapped. A 'Done' button within the group sets `isAddingTask` back to `false`, hiding the group.
+**Add-task group** (visible when `isAddingTask` is true):
+1. A 2-column grid of `Card` components — one per task in `CLEANING.yaml` for the current category that is not already in `tasks`. Each card shows the task's Lucide icon and label. Tapping a card appends the task (with `false` state) to local arrays and removes it from the available list.
+2. A text input with placeholder "Or type your own task...". When the input has non-whitespace content, an "Add" button appears to its right. Pressing Enter or tapping Add appends the trimmed text as a new task (with `false` state) and clears the input.
+3. A full-width outline "Done" button that sets `isAddingTask` back to false.
 
-**Content of the add-task group:** TBD
-
-Obtain all possible tasks for this category, sourced from `yaml/CLEANING.yaml` using the category as key. Remove any categories that were already present in the loop.
-
-Display a 2-column grid of Cards — all remaining tasks, using the specified lucide options.
-
-Below this group should be a full-width editable button with the text 'Or type your own task...'. If the user types any text, then there should be an 'Add' button shown to the right of the text edit field.
-
-If the user clicks 'Add' then add this task (and a default task_state) to the local loop data.  The task list above should be updated.
+All add-task changes are local until the back button or Done Editing is tapped.
 
 ## Button Semantics
 
 | element | action |
 |---|---|
-| back button | commit loop state to Supabase, then `router.back()` |
-| task buttons | toggle completion state; if all tasks are now `true`, commit to Supabase (including `completed = true`) then navigate to `/loop-closed?id=<loopId>` via `router.replace()` |
+| ← Back | save loop (`tasks`, `task_state`, `how_often`, `days`) to Supabase, then `router.back()` |
+| task row (primary mode) | toggle completion; if all tasks become `true`, write `completed = true` to Supabase (plus current `tasks`, `task_state`, `how_often`, `days`); if `how_often` is not `"one time"`, insert a fresh copy of the loop with all tasks reset to `false`; then `router.replace("/loop-closed?id=<loopId>")` |
+| Done Editing | save loop to Supabase, switch to primary mode |
 
 ## Data Requirements
 
-If navigating back, persist the loop data.
+Reads: `loops` table — fields `id`, `category`, `tasks`, `task_state`, `how_often`, `how_long`, `days`, filtered by `id` and `user_id`.
 
-```typescript
-const supabase = createClient()
+Writes: `loops` table — updates `tasks`, `task_state`, `how_often`, `days` on back or Done Editing; additionally sets `completed = true` when all tasks are checked; inserts a new loop row for repeating loops upon completion.
 
-// TODO: example query
-const { data, error } = await supabase
-  .from('loops')
-  .select('*')
-  .eq('user_id', session.user.id)
-```
+Server component (`page.tsx`) pre-fetches `howOftenOptions` via `getHowOftenOptions()` and `cleaningData` via `getCleaningData()` from `lib/config.ts`, passing them as props to the client component.
 
 ## Analytics
 
-TODO: do not implement yet
-
-TODO: List any `track()` calls this screen fires. All events must be defined in `markdown/ANALYTICS.md` before use. Delete this section if no events are fired.
-
-```typescript
-track('TODO_EVENT_NAME', { param: value })
-```
+None implemented.

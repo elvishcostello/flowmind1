@@ -1,124 +1,133 @@
 # CLAUDE.md — Project Context for Claude Code
 
-This file provides context for Claude Code when working on this project. Read it before making changes.
+Read this file before making any changes. When in doubt, read the relevant spec before writing code.
 
 ---
 
-The goal of the application is to demo some advanced development features for mobile. It will run in the mobile browser. It would be nice if it works well on desktop as well, but for design decisions favor mobile every time.
+## What This App Is
 
-DO NOT implement the anthropic SDK features for now. That is in for completeness. It is ok to stub them out, but no implementation.
+**FlowMind** is a mobile-first productivity app designed specifically for people with ADHD. It runs in the mobile browser (desktop is acceptable but secondary — always favour mobile in design decisions).
+
+**Shame-free design is a first-order constraint.** Every icon choice, copy decision, and interaction pattern must avoid language or imagery that implies self-judgment or failure. This is not a preference — it is a product requirement. When in doubt, ask before implementing.
+
+> AI features (Anthropic SDK) are stubbed out. Do not implement them. Canned responses are used throughout — see Demo Mode below.
+
+---
+
+## Before You Write Any Code
+
+Read these documents in order:
+
+1. **This file** — architecture, conventions, rules
+2. **`markdown/SCREENS.md`** — full screen inventory and navigation map
+3. **`markdown/PERSISTENCE.md`** — Supabase auth, schema, and data access patterns
+4. **The relevant screen spec** — `screens/<screen-name>.md`
+
+Do not start implementing a screen until you have read its spec.
 
 ---
 
 ## Stack
 
-- **Framework:** Next.js (App Router) + TypeScript
-- **Styling:** Tailwind CSS
-- **Components:** shadcn/ui (source copied into `components/ui/`, not a black-box import, use the 'radix' components.)
-- **AI:** `@anthropic-ai/sdk` — raw SDK, no Vercel AI SDK or other abstraction layer (see note above, stub in, but do not implenent)
-- **Validation:** Zod — used to validate and type structured AI responses
-- **Persistence:** Supabase — hosted Postgres with built-in auth and row-level security. See `markdown/PERSISTENCE.md` for full details.
-- **Analytics:** Mixpanel — product analytics for DAU/WAU/MAU and feature instrumentation. See `markdown/ANALYTICS.md` for the event catalogue and integration pattern.
-- **Hosting:** Vercel (connected to GitHub, auto-deploys on push to `main`)
+| Layer | Technology | Notes |
+|---|---|---|
+| Framework | Next.js (App Router) + TypeScript | |
+| Styling | Tailwind CSS | Mobile-first, see layout rules below |
+| Components | shadcn/ui | Source copied into `components/ui/` — owned code, not a package import |
+| Icons | lucide-react | See Icons section below |
+| AI | `@anthropic-ai/sdk` | Stubbed only — do not implement |
+| Validation | Zod | All schemas live in `lib/types.ts` |
+| Persistence | Supabase | See `markdown/PERSISTENCE.md` |
+| Analytics | Mixpanel | See `markdown/ANALYTICS.md` — do not call directly |
+| Hosting | Vercel | Auto-deploys from `main` |
 
-Keep the package footprint minimal. Do not introduce new dependencies without discussion.
+The package footprint is intentionally minimal. New dependencies should have a clear, specific payoff — avoid packages that solve problems we don't have yet.
+
+---
+
+## Platform Scope
+
+This codebase currently targets **web only** (mobile browser + desktop). Several stack choices reflect that and will need revisiting if native iOS/Android apps are added:
+
+| Choice | Web | When native is added |
+|---|---|---|
+| Tailwind CSS | ✅ Standard | NativeWind or a separate styling layer for React Native |
+| shadcn/ui | ✅ Standard | Web-only — shared primitives will need RN equivalents |
+| `@dnd-kit` (drag and drop) | ✅ Standard | Web-only — `reanimated` + `gesture-handler` on native |
+| `lucide-react` | ✅ Standard | `lucide-react-native` on native (same icon names) |
+| Next.js routing | ✅ Standard | Expo Router on native (similar file-based convention) |
+
+Business logic, Zod schemas, Supabase queries, analytics, YAML config, and canned responses are all platform-agnostic and will carry forward unchanged.
+
+Screen specs may include a `## Platform Notes` section where web and native implementations diverge meaningfully. If you are implementing a web screen, you can ignore those notes.
 
 ---
 
 ## Architecture
 
-This is a **monorepo** — frontend and backend live together in a single Next.js project. There is no separate backend service.
+This is a single Next.js project — frontend and backend live together. There is no separate backend service.
 
 ```
 /
 ├── app/
-│   ├── page.tsx              # React pages (frontend)
-│   ├── components/           # Shared UI components
-│   ├── api/                  # API routes (server-side, never exposed to client)
-│   └── auth/callback/        # OAuth callback route (see markdown/PERSISTENCE.md)
+│   ├── page.tsx              # Route pages (frontend)
+│   ├── api/                  # API routes (server-side only — never import from client)
+│   └── auth/callback/        # OAuth callback (see markdown/PERSISTENCE.md)
 ├── components/
-│   ├── ui/                   # shadcn/ui primitives (owned source, edit freely)
-│   └── how-often-picker.tsx  # Shared frequency picker (see markdown/COMPONENTS.md)
+│   ├── ui/                   # shadcn/ui primitives — edit freely, they are owned source
+│   ├── conditional-header.tsx
+│   ├── breadcrumb-nav.tsx
+│   └── how-often-picker.tsx  # Shared picker (see markdown/COMPONENTS.md)
 ├── lib/
 │   ├── supabase/
-│   │   └── client.ts         # Supabase browser client utility
-│   ├── analytics.ts          # Mixpanel track() utility and event catalogue
-│   ├── canned-responses.ts   # Hardcoded demo responses, keyed by workflow
-│   ├── config.ts             # Single source of record for all YAML config data (server-side only)
-│   └── types.ts              # Shared TypeScript types and Zod schemas
-├── yaml/                     # Configuration data files (SOR for all app config)
-│   ├── HOWOFTEN.yaml         # Frequency options for loop scheduling
-│   ├── HOWLONG.yaml          # Duration options for loop creation
-│   └── CLEANING.yaml         # Task catalogue keyed by category
+│   │   └── client.ts         # Supabase browser client — use this, do not instantiate directly
+│   ├── analytics.ts          # Mixpanel track() wrapper — always use this, never call mixpanel directly
+│   ├── canned-responses.ts   # Demo mode responses, keyed by workflow
+│   ├── config.ts             # Parses yaml/ config files — server-side only
+│   └── types.ts              # All TypeScript types and Zod schemas — single source of truth
+├── yaml/                     # App configuration (source of record — never import directly in components)
+│   ├── HOWOFTEN.yaml
+│   ├── HOWLONG.yaml
+│   └── CLEANING.yaml
 ├── screens/                  # Screen specifications
-│   ├── components/           # Shared component specs (see markdown/COMPONENTS.md)
+│   ├── components/           # Specs for shared components
 │   └── *.md                  # One spec per screen
-├── proxy.ts                  # Demo mode router + Supabase session refresh
+├── proxy.ts                  # Request interceptor — demo mode + Supabase session refresh
 ├── markdown/
-│   ├── PERSISTENCE.md        # Data layer: Supabase, auth, schema, RLS
-│   ├── ANALYTICS.md          # Mixpanel event catalogue and integration pattern
-│   ├── COMPONENTS.md         # Shared component inventory and index
-│   └── SCREENS.md            # App screen inventory and navigation
-└── .env.local                # Local secrets (never commit this)
+│   ├── PERSISTENCE.md
+│   ├── ANALYTICS.md
+│   ├── COMPONENTS.md
+│   ├── SCREENS.md
+│   └── BRAND.md
+└── .env.local                # Never commit this
 ```
 
----
-## Specifications
+**`components/ui/`** — shadcn/ui primitives. These are owned source, not a package. Edit them freely.  
+**`components/`** (root level) — shared app-level components like `ConditionalHeader` and `BackNav`. These are part of the app, not primitives.  
+Do not confuse the two.
 
-* configuration data lives in `yaml/*.yaml` — parsed at build/request time via `lib/config.ts` (never import YAML directly in components)
-* coding instructions will be at the root of the repo:
-  + CLAUDE.md (this file)
-  + markdown/PERSISTENCE.md = how to persist data (auth, client setup, middleware)
-  + markdown/ANALYTICS.md = Mixpanel event catalogue and integration pattern
-  + markdown/SCREENS.md = overall screen inventory and navigation map
-  + markdown/COMPONENTS.md = shared component inventory (components used by 2+ screens)
-* specifications for individual screens:
-  + screens/*.md — one file per screen
-* specifications for shared components:
-  + screens/components/*.md — one file per shared component
+---
 
 ## Demo Mode
 
-The app has two operating modes controlled by an environment variable:
-
 ```
-NEXT_PUBLIC_DEMO_MODE=true   # Returns canned responses, no AI calls made
-NEXT_PUBLIC_DEMO_MODE=false  # Live mode, calls Anthropic API
+NEXT_PUBLIC_DEMO_MODE=true   # Returns canned responses — no AI calls made
+NEXT_PUBLIC_DEMO_MODE=false  # Live mode — calls Anthropic API
 ```
 
-## Brand guidelines
+`proxy.ts` intercepts all requests. In demo mode it matches paths against regex patterns and returns canned responses. The real route handlers never execute. A ~800ms artificial delay simulates realistic LLM latency.
 
-Refer to [./markdown/BRAND.md] for detailed guidelines on branding.
+`proxy.ts` also handles Supabase session refresh for non-demo requests. **Both concerns live in the same file — do not create a second proxy file.**
 
-### How it works
+> This project uses `proxy.ts` as a deliberate convention. Do not rename it to `middleware.ts`.
 
-`proxy.ts` intercepts all incoming requests. In demo mode, it matches the request path against a set of regex patterns and returns the appropriate canned response. The real API route handlers never execute.
-
-**Important:** `proxy.ts` also handles Supabase session refresh for non-demo requests. Both concerns live in the same file — do not create a second proxy. See `markdown/PERSISTENCE.md` for the composition pattern.
-
-> **Note:** Next.js 16 replaced `middleware.ts` with `proxy.ts`. The exported function must be named `proxy` (or a default export) rather than `middleware`.
-
-```typescript
-const mockedRoutes = [
-  { pattern: /\/api\/intake/, response: intakeResponse },
-  { pattern: /\/api\/recommend/, response: treatmentResponse },
-  { pattern: /\/api\/summary/, response: summaryResponse },
-];
-```
-
-**Important:** Canned responses must match the exact JSON shape that live API responses return. The frontend must never know which mode is active.
-
-### Why this matters
-
-- The app was built UI-first with canned responses. The AI was retrofitted later.
-- Demo mode is used for pitches and demos where connectivity cannot be guaranteed.
-- Adding a small artificial delay (`setTimeout ~800ms`) in demo mode simulates realistic LLM latency.
+Canned responses must match the exact JSON shape of live API responses. The frontend must never know which mode is active.
 
 ---
 
 ## AI Integration
 
-All Anthropic API calls live in `app/api/` routes — never in client-side code. The API key is server-side only.
+All Anthropic API calls live in `app/api/` routes — **never in client-side code.** The API key is server-side only.
 
 ```typescript
 // app/api/some-workflow/route.ts
@@ -128,24 +137,22 @@ const client = new Anthropic(); // reads ANTHROPIC_API_KEY from env
 
 export async function POST(req: Request) {
   const { userInput } = await req.json();
-
   const message = await client.messages.create({
     model: "claude-opus-4-6",
     max_tokens: 1024,
     messages: [{ role: "user", content: userInput }],
   });
-
   return Response.json(message.content);
 }
 ```
 
-Use Zod schemas to validate and type structured responses from the AI. Define schemas in `lib/types.ts` and share them between API routes and frontend components.
+Use Zod schemas (from `lib/types.ts`) to validate and type structured AI responses.
 
 ---
 
 ## Mobile-First Layout
 
-This app targets mobile browsers. All pages must use the mobile-first centered layout pattern:
+Every page must use this wrapper — no exceptions:
 
 ```tsx
 <div className="flex flex-1 justify-center">
@@ -155,102 +162,102 @@ This app targets mobile browsers. All pages must use the mobile-first centered l
 </div>
 ```
 
-- The outer div fills available height and centers horizontally
-- The inner `max-w-sm` container constrains content to a phone-width column
-- On desktop this renders as a tall narrow panel — that is intentional
-
-**Every page must use this wrapper.** Do not render full-width layouts.
+On desktop this renders as a tall narrow panel. That is intentional.
 
 ---
 
 ## Styling & Theming
 
-shadcn/ui components are in `components/ui/` as owned source code — edit them freely. Theming is via CSS custom properties in `globals.css`. To update branding:
+- **Colors / spacing / radius:** CSS variables in `globals.css`
+- **Fonts:** `next/font` in `app/layout.tsx` + Tailwind config
+- **Icons:** `lucide-react` — see Icons section below
+- **Class merging:** Always use `cn()` from `lib/utils.ts`
+- **Brand:** See `markdown/BRAND.md`
 
-- **Colors:** Edit CSS variables in `globals.css`
-- **Fonts:** Update `next/font` configuration in `app/layout.tsx` and the Tailwind config
-- **Border radius / spacing:** CSS variables in `globals.css`
-- **Icons:** Lucide React is the default; swap per-component as needed
+---
 
-Use the `cn()` utility (from `lib/utils.ts`) when merging Tailwind classes to avoid specificity conflicts.
+## Icons
+
+Import from `lucide-react`. Browse available icons at https://lucide.dev.
+
+```typescript
+import { Star, CircleCheck, GripVertical } from "lucide-react"
+```
+
+---
+
+## Navigation
+
+All in-app navigation uses a single `← Back` button. There are no breadcrumb trails.
+
+- **Back button:** Rendered by `BackNav` in `components/breadcrumb-nav.tsx`. Uses `router.back()` — do not hardcode a parent route.
+- **Stack roots** (no back button): `/` and `/your-loops`. The global header is suppressed on these routes. To add a stack root, add its path to `SUPPRESS_HEADER` in `components/conditional-header.tsx`.
+- **Stack reset:** When navigating to a stack root programmatically, use `router.replace()` not `router.push()`.
+
+```tsx
+router.replace("/your-loops"); // user cannot back-navigate into the previous flow
+```
+
+---
+
+## Route Parameter Contracts
+
+Query parameters between screens are defined as Zod schemas in `lib/types.ts`. **Do not define params inline in a component or in a screen spec.**
+
+Schemas chain via `.extend()`:
+
+```typescript
+export const OuterLoopParams = z.object({ category: z.string() });
+export const InnerLoopParams = OuterLoopParams.extend({ tasks: z.string() });
+```
+
+When you need to add a route parameter: define the schema in `lib/types.ts` first, then reference it by name in the screen spec and component.
+
+---
+
+## Persistence
+
+Use the Supabase client from `lib/supabase/client.ts`. Do not instantiate a new client. Do not use `localStorage` or `sessionStorage` — Supabase is the only persistence layer.
+
+See `markdown/PERSISTENCE.md` for the full schema, auth flow, and RLS patterns.
+
+---
+
+## Analytics
+
+Do not call `mixpanel.track()` directly. Always use the `track()` utility from `lib/analytics.ts`. All events must be defined in `markdown/ANALYTICS.md` before use. Do not invent new event names inline.
 
 ---
 
 ## Environment Variables
 
-| Variable | Where set | Purpose |
-|---|---|---|
-| `ANTHROPIC_API_KEY` | `.env.local` / Vercel dashboard | Anthropic API access |
-| `NEXT_PUBLIC_DEMO_MODE` | `.env.local` / Vercel dashboard | Toggle canned responses |
-| `NEXT_PUBLIC_SUPABASE_URL` | `.env.local` / Vercel dashboard | Supabase project endpoint |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `.env.local` / Vercel dashboard | Supabase public API key |
-| `NEXT_PUBLIC_MIXPANEL_TOKEN` | `.env.local` / Vercel dashboard | Mixpanel project token (use dev token locally, prod token on Vercel) |
+| Variable | Purpose |
+|---|---|
+| `ANTHROPIC_API_KEY` | Anthropic API — server-side only |
+| `NEXT_PUBLIC_DEMO_MODE` | Toggle canned responses |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase endpoint |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase public key |
+| `NEXT_PUBLIC_MIXPANEL_TOKEN` | Use `flowmind-dev` token locally; prod token on Vercel only |
 
-See `markdown/PERSISTENCE.md` for Supabase configuration. See `markdown/ANALYTICS.md` for Mixpanel configuration and event catalogue.
-
-Never put secrets in the codebase. Never commit `.env.local`.
+Never put secrets in source code. Never commit `.env.local`.
 
 ---
 
 ## Deployment
 
 - **Production:** Push to `main` → Vercel auto-deploys
-- **Preview:** Push any branch → Vercel generates a unique preview URL
-- **Local:** `npm run dev` with `.env.local`
-
-Preview deployments can have their own environment variable overrides (e.g. `NEXT_PUBLIC_DEMO_MODE=true` on preview, `false` on production).
-
-Please add this to the package.json file:
-```json
-"scripts": {
-  "dev": "next dev",
-  "dev:mobile": "next dev -H 0.0.0.0",
-  "build": "next build",
-  "start": "next start"
-}
-```
+- **Preview:** Push any branch → unique Vercel preview URL
+- **Local:** `npm run dev` — or `npm run dev:mobile` to expose on local network for device testing
 
 ---
-
-## What Not To Do
-
-- Do not add the Vercel AI SDK — we are using the raw Anthropic SDK deliberately
-- Do not put API keys or secrets in source code or commit them
-- Do not make Anthropic API calls from client-side components
-- Do not install the full shadcn/ui package — components are added individually via the CLI and owned as source
-- Do not use `localStorage` or `sessionStorage` — this is a stateless app; use Supabase for all persistence (see `markdown/PERSISTENCE.md`)
-- Do not create a second `proxy.ts` — demo mode and Supabase session refresh are composed in the same file
-- Do not fire ad-hoc analytics events — all events must be defined in the catalogue in `markdown/ANALYTICS.md`
-- Do not call `mixpanel.track()` directly — always use the `track()` utility from `lib/analytics.ts`
-- Do not point `.env.local` at the production Mixpanel token — use the `flowmind-dev` project locally
-
-## Route Parameter Contracts
-
-Query parameters passed between screens are defined as Zod schemas in `lib/types.ts` — not in the screen specs or inline in components.
-
-Schemas chain via `.extend()` to reflect how params accumulate across the flow:
-
-```typescript
-export const OuterLoopParams = z.object({ category: z.string() });
-export const InnerLoopParams = OuterLoopParams.extend({ tasks: z.string() });
-// etc.
-```
-
-Screen specs reference the schema by name (`see HowLongParams in lib/types.ts`) rather than duplicating the param list. `lib/types.ts` is the single source of truth.
-
----
-
-## Icons
-
-Use the icon library found at http:\\lucided.dev, importing via ```lucided-react```.
 
 ## Screen Spec Conventions
 
-All screen specs in `screens/*.md` follow a standard format. The following are **implicit** for every protected screen — specs do not repeat them:
+The following are **implicit for every protected screen** — specs do not repeat them:
 
 - **Auth guard:** On mount, redirect to `/` if `userProfile` is absent. Return `null` while unauthenticated.
-- **Mobile wrapper:** Every screen uses the standard `flex flex-1 justify-center` / `max-w-sm` wrapper from "Mobile-First Layout" below. Specs do not include the code block.
-- **Standard padding:** Content area uses `p-6 space-y-8` unless the spec notes otherwise.
+- **Mobile wrapper:** Every screen uses the `flex flex-1 justify-center` / `max-w-sm` wrapper described above.
+- **Standard padding:** `p-6 space-y-8` unless the spec says otherwise.
 
 ### Spec format
 
@@ -266,36 +273,21 @@ Numbered list of UI elements, top to bottom.
 Interactions inline (e.g. "tap → /next-route").
 
 ## Behavior   ← optional, only for non-obvious interactions
+
+## Platform Notes   ← optional, only where web and mobile implementations diverge
 ```
 
 ---
 
-## Navigation
+## Hard Rules
 
-All in-app navigation uses a single `← Back` button. There are no breadcrumb trails.
+These are not suggestions. If you are unsure whether something violates one of these, ask before proceeding.
 
-### Back button
-- Rendered by `BackNav` in `components/breadcrumb-nav.tsx`
-- Uses `router.back()` — follows real browser history, no hardcoded route map
-- Lives in the global sticky header managed by `ConditionalHeader`
-
-### Stack roots (no back button)
-The global header is suppressed on these routes — they are navigation dead ends with no back:
-- `/` — sign-in / auth gate
-- `/your-loops` — main home screen (has its own custom top bar)
-
-To add more stack roots, add the path to `SUPPRESS_HEADER` in `components/conditional-header.tsx`.
-
-### Stack reset
-When navigating to a stack root programmatically, use `router.replace()` instead of `router.push()`. This replaces the current history entry so the user cannot back-navigate into the previous flow.
-
-```tsx
-// Completing onboarding → your-loops becomes the new root
-router.replace("/your-loops");
-```
-
-### What not to do
-- Do not use `router.push(explicitParent)` for back navigation — use `router.back()`
-- Do not add a route parent map — history is the source of truth
-- Do not show breadcrumb trails
-
+- **Do not make Anthropic API calls from client-side code** — API routes only
+- **Do not use `localStorage` or `sessionStorage`** — use Supabase
+- **Do not create a second `proxy.ts`** — demo mode and session refresh are composed in one file
+- **Do not call `mixpanel.track()` directly** — use `lib/analytics.ts`
+- **Do not define route params inline** — define in `lib/types.ts` first
+- **Do not install the full shadcn/ui package** — add components individually via CLI
+- **Do not use the Vercel AI SDK** — we use the raw Anthropic SDK deliberately
+- **Do not violate the shame-free design constraint** — if copy or iconography implies failure or self-judgment, change it
